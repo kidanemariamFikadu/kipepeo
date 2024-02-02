@@ -29,7 +29,7 @@
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
                     <label for="grade"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Grade</label>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">name</label>
                     <input type="text" wire:model='form.name' id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="name">
@@ -51,7 +51,7 @@
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
                     <label for="job_title_id"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">School</label>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Job title</label>
                     <select name="job_title_id" id="job_title_id" wire:model='form.job_title_id'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option value="">Select School</option>
