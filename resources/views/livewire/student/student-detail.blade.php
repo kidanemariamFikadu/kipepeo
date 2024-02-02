@@ -108,7 +108,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($this->studentDetails->guardians as $guardian)
+                        @foreach ($this->studentGuardians as $guardian)
                             <tr>
                                 <td class="px-6 py-4 flex">
                                     {{ $guardian->guardian_name }}
@@ -139,7 +139,7 @@
                                         Update
                                     </button>
                                     @if (!$guardian->is_primary)
-                                        <button wire:click="deleteGuardian({{ $guardian->id }})"
+                                        <button wire:click="deleteGuardian({{ $guardian->id }})" wire:confirm="You are about to remove a guardian. Are you sure?"
                                             class="px-3 py-1 bg-red-500 text-white rounded">
                                             Remove
                                         </button>
@@ -206,6 +206,7 @@
 
                                         <button
                                             wire:click="deleteSchool({{ $school->student_id }},{{ $school->school_id }})"
+                                            wire:confirm="You are about to remove a school. Are you sure?"
                                             class="px-3 py-1 bg-red-500 text-white rounded">
                                             Remove
                                         </button>
@@ -245,7 +246,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($this->studentDetails->grades as $grade)
+                        @foreach ($this->studentGrades as $grade)
                             <tr>
                                 <td class="px-6 py-4 flex">
                                     {{ $grade->gradeTable?->grade }}
@@ -270,6 +271,7 @@
 
                                     <button
                                         wire:click="deleteGrade({{ $grade->student_id }},{{ $grade->grade }})"
+                                        wire:confirm="You are about to remove a grade. Are you sure?"
                                         class="px-3 py-1 bg-red-500 text-white rounded">
                                         Remove
                                     </button>

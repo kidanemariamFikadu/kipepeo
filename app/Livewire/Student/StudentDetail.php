@@ -21,6 +21,9 @@ class StudentDetail extends Component
 
     public $studentDetails;
     public $studentId;
+    public $studentGuardians;
+    public $studentSchools;
+    public $studentGrades;
 
     #[On("student-changed")]
     function updateList()
@@ -29,12 +32,23 @@ class StudentDetail extends Component
 
     function mount()
     {
-        $student = Student::find(request()->route('student_id'))->load('guardians', 'schools', 'grades');
+        $student = Student::find(request()->route('student_id'));//->load('guardians', 'schools', 'grades');
+        // $student =  Student::find(request()->route('student_id'))->with(['schools' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }, 'guardians' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }, 'grades' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }])->first();
+
         if ($student) {
             $this->updateStudentForm->name = $student->name;
             $this->updateStudentForm->dob = $student->dob;
             $this->updateStudentForm->gender = $student->gender;
             $this->studentDetails = $student;
+            $this->studentGuardians = StudentGuardian::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            // $this->studentSchools = SchoolStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            $this->studentGrades = GradeStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
         } else {
             abort(404);
         }
@@ -113,20 +127,23 @@ class StudentDetail extends Component
     {
         $student_id = (request()->route('student_id')) ? request()->route('student_id') : $this->studentId;
 
-        $student = Student::with(['schools' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }, 'guardians' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }, 'grades' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->first();
+        // $student = Student::find($student_id)->with(['schools' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }, 'guardians' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }, 'grades' => function ($query) {
+        //     $query->orderBy('created_at', 'desc');
+        // }])->first();
+
+        $student = Student::find($student_id)->first();
 
 
         if ($student) {
             $this->studentId = $student_id;
-            return view('livewire.student.student-detail', [
-                'student' => $student
-            ])->title($student->name . ' Detail');
+            $this->studentGuardians = StudentGuardian::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            // $this->studentSchools = SchoolStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            $this->studentGrades = GradeStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            return view('livewire.student.student-detail')->title($student->name . ' Detail');
         } else {
             abort(404);
         }

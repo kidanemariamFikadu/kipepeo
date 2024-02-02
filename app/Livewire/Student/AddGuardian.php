@@ -33,14 +33,16 @@ class AddGuardian extends ModalComponent
     function createGuardian()
     {
         // dd($this->all());
-        $this->addStudentGuardianForm->student_id=$this->student_id;
+        if (!$this->guardian_id) {
+            $this->addStudentGuardianForm->student_id = $this->student_id;
+        }
         $this->addStudentGuardianForm->validate();
 
         if (!$this->guardian_id) {
             StudentGuardian::create([
                 'guardian_name' => $this->addStudentGuardianForm->guardian_name,
                 'guardian_phone' => $this->addStudentGuardianForm->guardian_phone,
-                'is_primary' => $this->addStudentGuardianForm->is_primary?true:false,
+                'is_primary' => $this->addStudentGuardianForm->is_primary ? true : false,
                 'student_id' => $this->addStudentGuardianForm->student_id,
             ]);
             session()->flash('success', 'Guardian added successfully.');
