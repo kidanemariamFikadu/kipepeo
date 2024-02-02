@@ -20,11 +20,18 @@ class CreateStudent extends ModalComponent
         return School::all();
     }
 
+    #[Computed]
+    public function getGradesProperty()
+    {
+        return \App\Models\Grade::all();
+    }
+
     function create()
     {
         $this->form->validate();
         $student = StudentService::create($this->form);
         session()->flash('success', 'Student created successfully');
+        $this->dispatch('student-changed', []);
         if ($this->show_details) {
             return redirect()->route('student-detail', $student->id);
         } else {

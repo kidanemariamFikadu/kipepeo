@@ -1,6 +1,10 @@
 <div>
-    <div class="flex">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 p-4">
+    <a href="{{ route('students') }}"
+    class="px-4 py-2 mb-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+       < Back to Students
+    </a>
+    <div class="flex mb-4">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 p-4 mr-4">
             <!-- Modal header -->
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -73,7 +77,7 @@
                     <div>
                         <button
                             wire:click="$dispatch('openModal', { component: 'student.add-guardian' , arguments: { studentId: {{ $this->studentId }} }})"
-                            class="px-3 py-1 bg-teal-500 text-white rounded">+ Add Guardian</button>
+                            class="px-3 py-1 bg-teal-500 text-white rounded mb-4 mt-2">+ Add Guardian</button>
                     </div>
                     <label for="table-search" class="sr-only">Search</label>
                     <div class="relative">
@@ -150,7 +154,7 @@
     </div>
 
     <div class="flex">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 p-4">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 p-4 mr-4">
             <!-- Modal header -->
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -164,7 +168,7 @@
                     <div>
                         <button
                             wire:click="$dispatch('openModal', { component: 'student.add-school' , arguments: { studentId: {{ $this->studentId }} }})"
-                            class="px-3 py-1 bg-teal-500 text-white rounded">+ Add School</button>
+                            class="px-3 py-1 bg-teal-500 text-white rounded mb-4 mt-2">+ Add School</button>
                     </div>
                 </div>
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -228,7 +232,7 @@
                     <div>
                         <button
                             wire:click="$dispatch('openModal', { component: 'student.add-grade' , arguments: { studentId: {{ $this->studentId }} }})"
-                            class="px-3 py-1 bg-teal-500 text-white rounded">+ Add Grade</button>
+                            class="px-3 py-1 bg-teal-500 text-white rounded mb-4 mt-2">+ Add Grade</button>
                     </div>
                 </div>
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -244,7 +248,7 @@
                         @foreach ($this->studentDetails->grades as $grade)
                             <tr>
                                 <td class="px-6 py-4 flex">
-                                    {{ $grade->grade }}
+                                    {{ $grade->gradeTable?->grade }}
                                     @if ($grade->is_current)
                                         <span class="me-2">
                                             <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"

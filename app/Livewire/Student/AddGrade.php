@@ -3,6 +3,7 @@
 namespace App\Livewire\Student;
 
 use App\Models\GradeStudent;
+use Livewire\Attributes\Computed;
 use LivewireUI\Modal\ModalComponent;
 
 class AddGrade extends ModalComponent
@@ -17,10 +18,16 @@ class AddGrade extends ModalComponent
         }
     }
 
+    #[Computed]
+    function getGradesProperty()
+    {
+        return \App\Models\Grade::all();
+    }
+
     function createGrade()
     {
         $this->validate([
-            'grade' => 'required|max:255',
+            'grade' => 'required|exists:grades,id',
         ]);
 
         $checkDuplicate=GradeStudent::where('student_id', $this->student_id)

@@ -19,7 +19,7 @@ class CreateStudentForm extends Form
     #[Validate('required|exists:schools,id')]
     public $school;
 
-    #[Validate('required')]
+    #[Validate('required|exists:grades,id')]
     public $grade;
 
     #[Validate('required|max:255')]

@@ -68,4 +68,9 @@ class User extends Authenticatable implements Auditable
     public function scopeSearch($query, $value){
         $query->where('name','like',"%{$value}%")->orWhere('email','like',"%{$value}%");
     }
+
+    public function jobTitle()
+    {
+        return $this->belongsTo(JobTitle::class);
+    }
 }

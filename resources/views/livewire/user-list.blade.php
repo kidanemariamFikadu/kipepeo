@@ -4,7 +4,7 @@
             <h2 class="text-2xl mb-3">User List</h2>
             <!-- Start coding here -->
             <button wire:click="$dispatch('openModal', { component: 'user.create-user' })"
-                class="px-3 py-1 bg-teal-500 text-white rounded">+ Add user</button>
+                class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add user</button>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900">User Type :</label>
+                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-300">User Type :</label>
                             <select wire:model.live="admin"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="">All</option>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
                                 @include('livewire.includes.table-sortable-th', [
@@ -45,6 +45,10 @@
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'email',
                                     'displayName' => 'Email',
+                                ])
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'job_title_id',
+                                    'displayName' => 'Job title',
                                 ])
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'is_admin',
@@ -67,6 +71,7 @@
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $user->name }}</th>
                                     <td class="px-4 py-3">{{ $user->email }}</td>
+                                    <td class="px-4 py-3">{{ $user->jobTitle?->name }}</td>
                                     <td
                                         class="px-4 py-3 {{ $user->role == 'admin' ? 'text-green-500' : 'text-blue-500' }}">
                                         {{ $user->role == 'admin' ? 'Admin' : 'User' }}</td>
@@ -74,7 +79,7 @@
                                     <td class="px-4 py-3">{{ $user->updated_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3 flex items-center justify-end">
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
-                                            <button
+                                            <button title="edit user"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                                 wire:click="$dispatch('openModal', { component: 'user.edit-user', arguments: { user: {{ $user->id }} }})">
                                                 <svg class="h-5 w-5 text-teal-500" viewBox="0 0 24 24" stroke-width="2"
@@ -87,10 +92,10 @@
                                                     <line x1="16" y1="5" x2="19" y2="8" />
                                                 </svg>
                                             </button>
-                                            <button
+                                            <button title="show user history"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                                 wire:click="$dispatch('openModal', { component: 'user.user-history', arguments: { user: {{ $user->id }} }})">
-                                                <svg class="h-5 w-5 text-green-700" width="24" height="24"
+                                                <svg class="h-5 w-5 text-green-500" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -109,7 +114,7 @@
                 <div class="py-4 px-3">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
                             <select wire:model.live='perPage'
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="5">5</option>

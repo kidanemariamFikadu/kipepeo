@@ -14,4 +14,14 @@ class GradeStudent extends Model
         'grade',
         'is_current',
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function gradeTable()
+    {
+        return $this->belongsTo(Grade::class, 'grade');
+    }
 }

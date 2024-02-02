@@ -4,7 +4,7 @@
             <h2 class="text-2xl mb-3">Student List</h2>
             <!-- Start coding here -->
             <button wire:click="$dispatch('openModal', { component: 'student.create-student' })"
-                class="px-3 py-1 bg-teal-500 text-white rounded">+ Add student</button>
+                class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add student</button>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900"> Current Status:</label>
+                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-300"> Current Status:</label>
                             <select wire:model.live="currentlyIn"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="">All</option>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
                                 @include('livewire.includes.table-sortable-th', [
@@ -65,7 +65,7 @@
                         </thead>
                         <tbody>
                             @foreach ($students as $student)
-                                <tr wire:key="{{ $student->id }}" class="border-b dark:border-gray-700">
+                                <tr wire:key="{{ $student->id }}" class="border-b text-gray-700 dark:text-gray-400 dark:border-gray-700">
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
@@ -144,10 +144,10 @@
 
                                     <div class="inline-flex rounded-md shadow-sm" role="group">
                                         @if ($student->currentAttendance)
-                                            <button
+                                            <button title="Check Out"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                                 wire:click="checkOut({{ $student->id }})">
-                                                <svg class="h-5 w-5 text-red-500" width="24" height="24"
+                                                <svg class="h-5 w-5 dark:text-red-300 text-red-600" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -157,10 +157,10 @@
                                                 </svg>
                                             </button>
                                         @else
-                                            <button
+                                            <button title="Check In"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                                 wire:click="checkIn({{ $student->id }})">
-                                                <svg class="h-5 w-5 text-teal-500" fill="none"
+                                                <svg class="h-5 w-5 dark:text-teal-300 text-teal-600" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
@@ -168,10 +168,10 @@
                                                 </svg>
                                             </button>
                                         @endif
-                                        <button
+                                        <button title="show attendance history"
                                             class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                             wire:click="$dispatch('openModal', { component: 'attendance.attendance-history', arguments: { student: {{ $student->id }} }})">
-                                            <svg class="h-5 w-5 text-green-700" width="24" height="24"
+                                            <svg class="h-5 w-5 dark:text-green-300 text-green-600" width="24" height="24"
                                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" />
@@ -190,7 +190,7 @@
             <div class="py-4 px-3">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
                         <select wire:model.live='perPage'
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                             <option value="5">5</option>

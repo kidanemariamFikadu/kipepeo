@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\School;
 use App\Models\Student;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -14,6 +15,11 @@ use Livewire\WithPagination;
 class StudentList extends Component
 {
     use WithPagination;
+
+    #[On('student-changed')]
+    public function refreshStudents()
+    {
+    }
 
     #[Url(history: true)]
     public $search = '';
@@ -54,8 +60,8 @@ class StudentList extends Component
                 ->when($this->school !== '', function ($query) {
                     // $query->where('current_school', $this->admin);
                     $query->whereHas('schools', function ($q) {
-                        $q->where('school_id',$this->school)
-                        ->where('is_current',true);
+                        $q->where('school_id', $this->school)
+                            ->where('is_current', true);
                     });
                 })
                 ->orderBy($this->sortBy, $this->sortDir)

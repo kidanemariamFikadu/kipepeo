@@ -64,7 +64,7 @@ class Student extends Model
 
     public function getCurrentGradeAttribute()
     {
-        return $this->grades()->where('is_current', true)->first();
+        return $this->grades()->where('is_current', true)->first()->gradeTable;
     }
 
     public function getCurrentAttendanceAttribute()

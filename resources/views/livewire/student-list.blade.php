@@ -3,7 +3,7 @@
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <h2 class="text-2xl mb-3">Student List</h2>
             <!-- Start coding here -->
-            <button wire:click="$dispatch('openModal', { component: 'student.create-student' })" class="px-3 py-1 bg-teal-500 text-white rounded">+ Add student</button>
+            <button wire:click="$dispatch('openModal', { component: 'student.create-student' })" class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add student</button>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900"> School:</label>
+                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-300"> School:</label>
                             <select wire:model.live="school"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="">All</option>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
                                 @include('livewire.includes.table-sortable-th', [
@@ -71,7 +71,7 @@
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
-                                    <td class="px-4 py-3">{{ $student->currentGrade?->grade }}</td>
+                                    <td class="px-4 py-3">{{ $student->currentGrade?->grade}}</td>
                                     <td class="px-4 py-3">
                                         {{ $student->currentSchool?->name }}</td>
                                     <td>
@@ -116,7 +116,7 @@
                                 <td class="px-4 py-3">{{ $student->updated_at->format('Y-m-d') }}</td>
                                 <td class="px-4 py-3 flex items-center justify-end">
                                     <div class="inline-flex rounded-md shadow-sm" role="group">
-                                        <a href="student-detail/{{ $student->id }}"
+                                        <a href="student-detail/{{ $student->id }}" title="Show student details"
                                             class="px-3 py-1 bg-teal-500 text-white rounded">
                                             <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
@@ -136,7 +136,7 @@
             <div class="py-4 px-3">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
                         <select wire:model.live='perPage'
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                             <option value="5">5</option>
