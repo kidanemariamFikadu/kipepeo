@@ -52,7 +52,7 @@ class Index extends Component
 
     function removeGrade($gradeId)
     {
-        $checkStudentExist = \App\Models\Student::where('grade_id', $gradeId)->first();
+        $checkStudentExist = \App\Models\GradeStudent::where('grade_id', $gradeId)->first();
         if ($checkStudentExist) {
             session()->flash('error', 'Grade cannot be deleted as students are associated with this grade');
             return;
