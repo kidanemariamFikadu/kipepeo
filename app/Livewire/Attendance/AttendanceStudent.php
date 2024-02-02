@@ -95,12 +95,12 @@ class AttendanceStudent extends Component
 
     public function render()
     {
+        // $newQuery=
         return view('livewire.attendance.attendance-student', [
             'students' => Student::search($this->search)
                 ->when($this->currentlyIn !== '', function ($query) {
-                    $query->whereHas('attendances', function ($q) {
-                        $q //->where('current_in', $this->currentlyIn)
-                            ->whereDate('date', now())->first()?->current_in;
+                    $query->whereHas('attendances', function ($query) {
+                        $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
                     });
                 })
                 ->orderBy($this->sortBy, $this->sortDir)

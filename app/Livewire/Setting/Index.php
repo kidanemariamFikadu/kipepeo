@@ -74,6 +74,6 @@ class Index extends Component
     }
     public function render()
     {
-        return view('livewire.setting.index');
+        return view('livewire.setting.index')->title('Setting');
     }
 }
