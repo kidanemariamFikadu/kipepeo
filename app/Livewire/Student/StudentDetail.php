@@ -95,13 +95,14 @@ class StudentDetail extends Component
         $this->dispatch('student-changed', []);
     }
 
-    function update(){
+    function update()
+    {
         $this->updateStudentForm->validate();
         $student = Student::find($this->studentId);
         $student->update([
-            "name"=>$this->updateStudentForm->name,
-            "gender"=>$this->updateStudentForm->gender,
-            "dob"=>$this->updateStudentForm->dob,
+            "name" => $this->updateStudentForm->name,
+            "gender" => $this->updateStudentForm->gender,
+            "dob" => $this->updateStudentForm->dob,
         ]);
 
         session()->flash('success', 'Updated successfully.');
@@ -112,7 +113,15 @@ class StudentDetail extends Component
     {
         $student_id = (request()->route('student_id')) ? request()->route('student_id') : $this->studentId;
 
-        $student = Student::find($student_id);
+        $student = Student::with(['schools' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'guardians' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'grades' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->first();
+
+
         if ($student) {
             $this->studentId = $student_id;
             return view('livewire.student.student-detail', [
