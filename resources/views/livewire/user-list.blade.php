@@ -3,8 +3,11 @@
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <h2 class="text-2xl mb-3">User List</h2>
             <!-- Start coding here -->
-            <button wire:click="$dispatch('openModal', { component: 'user.create-user' })"
-                class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add user</button>
+            {{-- <button wire:click="$dispatch('openModal', { component: 'user.create-user' })"
+                class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add user</button> --}}
+            <div class="mb-4">
+                <a class="px-3 py-1 bg-teal-500 text-white rounded" href="/invitation">+ Invite user</a>
+            </div>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
