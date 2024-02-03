@@ -115,7 +115,7 @@
                     </li>
                 @endforeach
             </ul>
-            {{ $this->schoolList->links() }}
+            {{ $this->gradeList->links() }}
         </div>
     </div>
     @if (Auth::user()->role == 'admin')
@@ -173,7 +173,7 @@
                         </li>
                     @endforeach
                 </ul>
-                {{ $this->schoolList->links() }}
+                {{ $this->jobTitleList->links() }}
             </div>
         </div>
     @endif

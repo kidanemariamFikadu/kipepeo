@@ -23,19 +23,19 @@ class Index extends Component
     #[Computed]
     public function  getSchoolListProperty()
     {
-        return \App\Models\School::paginate();
+        return \App\Models\School::paginate(5);
     }
 
     #[Computed]
     public function getGradeListProperty()
     {
-        return \App\Models\Grade::paginate();
+        return \App\Models\Grade::paginate(5);
     }
 
     #[Computed]
     public function getJobTitleListProperty()
     {
-        return \App\Models\JobTitle::paginate();
+        return \App\Models\JobTitle::paginate(5);
     }
 
 
