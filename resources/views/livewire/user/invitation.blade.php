@@ -123,7 +123,7 @@
                         @foreach ($this->invites as $invite)
                             <tr class="border-b border-gray-100">
                                 <td class="px-3 py-1">{{ $invite->email }}</td>
-                                <td class="px-3 py-1">{{ $invite->jobTitle->name }}</td>
+                                <td class="px-3 py-1">{{ $invite->jobTitle?->name }}</td>
                                 <td class="px-3 py-1">{{ $invite->role }}</td>
                                 <td class="px-3 py-1">{{ Str::title($invite->status) }}</td>
                                 <td class="px-3 py-1">{{ $invite->createdBy->name }}</td>
