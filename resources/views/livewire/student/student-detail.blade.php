@@ -108,7 +108,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($this->studentGuardians as $guardian)
+                        @foreach ($this->studentDetails->guardians as $guardian)
                             <tr>
                                 <td class="px-6 py-4 flex">
                                     {{ $guardian->guardian_name }}
@@ -246,7 +246,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($this->studentGrades as $grade)
+                        @foreach ($this->studentDetails->grades as $grade)
                             <tr>
                                 <td class="px-6 py-4 flex">
                                     {{ $grade->gradeTable?->grade }}
