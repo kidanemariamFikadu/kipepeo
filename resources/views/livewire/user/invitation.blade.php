@@ -26,11 +26,11 @@
     @endif
 
 
-    <section class="mt-10">
-        <div class="mx-auto max-w-screen-xl lg:px-12 mb-3">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 p-4 mr-4">
+    <section>
+        <div class="mx-auto lg:px-12 mb-3">
+            <div class="bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 items-center">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <div class="justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                         Invitation
                     </h3>
@@ -87,7 +87,7 @@
         </div>
 
 
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div class="mx-auto  px-4 lg:px-12">
             {{-- <h2 class="text-2xl mb-3">Student List</h2> --}}
             <!-- Start coding here -->
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
