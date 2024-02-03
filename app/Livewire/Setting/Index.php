@@ -11,54 +11,16 @@ class Index extends Component
 {
     use WithPagination;
 
-    #[On('school-changed')]
-    public function schoolChanged()
+    #[On('MessageChanged')]
+    public function messageChanged($message)
     {
-    }
-    #[On('grade-changed')]
-    public function gradeChanged()
-    {
-    }
-
-    #[Computed]
-    public function  getSchoolListProperty()
-    {
-        return \App\Models\School::paginate(5);
-    }
-
-    #[Computed]
-    public function getGradeListProperty()
-    {
-        return \App\Models\Grade::paginate(5);
+        session()->flash($message['type'], $message['content']);
     }
 
     #[Computed]
     public function getJobTitleListProperty()
     {
-        return \App\Models\JobTitle::paginate(5);
-    }
-
-
-    public function removeSchool($schooId)
-    {
-        $checkStudentExist = \App\Models\SchoolStudent::where('school_id', $schooId)->first();
-        if ($checkStudentExist) {
-            session()->flash('error', 'School cannot be deleted as students are associated with this school');
-            return;
-        }
-        \App\Models\School::find($schooId)->delete();
-        session()->flash('message', 'School deleted successfully');
-    }
-
-    function removeGrade($gradeId)
-    {
-        $checkStudentExist = \App\Models\GradeStudent::where('grade', $gradeId)->first();
-        if ($checkStudentExist) {
-            session()->flash('error', 'Grade cannot be deleted as students are associated with this grade');
-            return;
-        }
-        \App\Models\Grade::find($gradeId)->delete();
-        session()->flash('message', 'Grade deleted successfully');
+        return \App\Models\JobTitle::paginate(10);
     }
 
     function removeJobTitle($jobTitleId)
@@ -68,9 +30,9 @@ class Index extends Component
             session()->flash('error', 'Job Title cannot be deleted as employees are associated with this job title');
             return;
         }
-        
+
         \App\Models\JobTitle::find($jobTitleId)->delete();
-        session()->flash('message', 'Job Title deleted successfully');
+        session()->flash('success', 'Job Title deleted successfully');
     }
     public function render()
     {

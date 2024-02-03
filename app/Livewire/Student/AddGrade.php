@@ -49,8 +49,7 @@ class AddGrade extends ModalComponent
         ]);
         $this->closeModal();
 
-        session()->flash('success', 'School added successfully.');
-        $this->dispatch('student-changed', []);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Grade added successfully.']);
         $this->grade = null;
     }
 

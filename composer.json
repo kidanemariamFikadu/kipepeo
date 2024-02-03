@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.0",
         "owen-it/laravel-auditing": "^13.6",
+        "propaganistas/laravel-phone": "^5.1",
         "valorin/random": "^0.4.0",
         "wire-elements/modal": "^2.0"
     },

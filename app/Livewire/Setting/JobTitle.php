@@ -31,10 +31,10 @@ class JobTitle extends ModalComponent
             $jobTitle = \App\Models\JobTitle::find($this->jobTitleId);
             $jobTitle->name = $this->jobTitle;
             $jobTitle->save();
-            session()->flash('message', 'Job Title updated successfully');
+            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Job Title updated successfully']);
         } else {
             \App\Models\JobTitle::create(['name' => $this->jobTitle]);
-            session()->flash('message', 'Job Title added successfully');
+            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Job Title created successfully']);
         }
         
         $this->dispatch('school-changed');

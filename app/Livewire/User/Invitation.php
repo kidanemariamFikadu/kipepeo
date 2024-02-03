@@ -8,6 +8,7 @@ use App\Models\JobTitle;
 use App\Services\InvitationSerivce;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,21 +17,41 @@ class Invitation extends Component
 {
     use WithPagination;
     public InvitationForm $form;
-    public $search;
+
+
+    #[Url(history: true)]
+    public $search = '';
+
+    #[Url(history: true)]
+    public $jobTitleId = '';
+
+    #[Url(history: true)]
+    public $sortBy = 'created_at';
+
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
+
+    #[Url()]
+    public $perPage = 5;
+
+    public function setSortBy($sortByField)
+    {
+
+        if ($this->sortBy === $sortByField) {
+            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
+            return;
+        }
+
+        $this->sortBy = $sortByField;
+        $this->sortDir = 'DESC';
+    }
+
 
     #[Computed]
     public function getJobTitlesProperty()
     {
         return JobTitle::all();
-    }
-
-    #[Computed]
-    public function getInvitesProperty()
-    {
-        return Invite::latest()->with('jobTitle','createdBy')
-            ->where('email', 'like', "%{$this->search}%")
-            ->paginate(5);
-    }
+    } 
 
     function create()
     {
@@ -55,5 +76,16 @@ class Invitation extends Component
         $invite = Invite::findOrFail($id);
         $invite->delete();
         session()->flash('success', 'Invitation deleted successfully.');
+    }
+
+    function render(){
+        return view('livewire.user.invitation',[
+            'invites' => Invite::search($this->search)
+            ->when($this->jobTitleId !== '', function ($query) {
+                $query->where('job_title_id', $this->jobTitleId);
+            })
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage)
+        ]);
     }
 }

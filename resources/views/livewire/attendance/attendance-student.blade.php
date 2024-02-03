@@ -1,4 +1,17 @@
 <div>
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Error</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+
+        </div>
+    @elseif (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Success</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
     <div class="mt-10">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <h2 class="text-2xl mb-3">Student List</h2>
@@ -24,7 +37,8 @@
                     </div>
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-300"> Current Status:</label>
+                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-300"> Current
+                                Status:</label>
                             <select wire:model.live="currentlyIn"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="">All</option>
@@ -65,7 +79,8 @@
                         </thead>
                         <tbody>
                             @foreach ($students as $student)
-                                <tr wire:key="{{ $student->id }}" class="border-b text-gray-700 dark:text-gray-400 dark:border-gray-700">
+                                <tr wire:key="{{ $student->id }}"
+                                    class="border-b text-gray-700 dark:text-gray-400 dark:border-gray-700">
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
@@ -147,9 +162,10 @@
                                             <button title="Check Out"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                                 wire:click="checkOut({{ $student->id }})">
-                                                <svg class="h-5 w-5 dark:text-red-300 text-red-600" width="24" height="24"
-                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <svg class="h-5 w-5 dark:text-red-300 text-red-600" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" />
                                                     <path
                                                         d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
@@ -171,9 +187,10 @@
                                         <button title="show attendance history"
                                             class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                                             wire:click="$dispatch('openModal', { component: 'attendance.attendance-history', arguments: { student: {{ $student->id }} }})">
-                                            <svg class="h-5 w-5 dark:text-green-300 text-green-600" width="24" height="24"
-                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <svg class="h-5 w-5 dark:text-green-300 text-green-600" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" />
                                                 <polyline points="12 8 12 12 14 14" />
                                                 <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />

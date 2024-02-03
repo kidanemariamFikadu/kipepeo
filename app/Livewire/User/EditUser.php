@@ -36,7 +36,7 @@ class EditUser extends ModalComponent
             'job_title_id' => $this->form->job_title_id,
             'role' => $this->form->role,
         ]);
-        session()->flash('success', 'User updated successfully.');
+        $this->dispatch('user-updated', ['type' => 'success', 'content' => 'User updated successfully.']);
         $this->closeModal();
     }
 

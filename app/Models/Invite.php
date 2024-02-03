@@ -67,4 +67,9 @@ class Invite extends Model
         $this->status = 'accepted';
         $this->save();
     }
+
+    public function scopeSearch($query, $value)
+    {
+        $query->Where('email','like',"%{$value}%");
+    }
 }

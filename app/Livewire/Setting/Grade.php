@@ -28,24 +28,24 @@ class Grade extends ModalComponent
         if ($this->gradeId) {
             $checkDuplicate = \App\Models\Grade::where('grade', $this->grade)->where('id', '!=', $this->gradeId)->first();
             if ($checkDuplicate) {
-                session()->flash('error', 'Grade already exists');
+                $this->dispatch('MessageChanged', ['type' => 'error', 'content' => 'Grade already exists']);
                 return;
             }
 
             $grade = \App\Models\Grade::find($this->gradeId);
             $grade->update(['grade' => $this->grade]);
-            session()->flash('message', 'Grade updated successfully');
+            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Grade updated successfully']);
             $this->dispatch('grade-changed');
             $this->closeModal();
         } else {
 
             $checkDuplicate = \App\Models\Grade::where('grade', $this->grade)->first();
             if ($checkDuplicate) {
-                session()->flash('error', 'Grade already exists');
+                $this->dispatch('MessageChanged', ['type' => 'error', 'content' => 'Grade already exists']);
                 return;
             } else {
                 \App\Models\Grade::create(['grade' => $this->grade]);
-                session()->flash('message', 'Grade created successfully');
+                $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Grade created successfully']);
                 $this->grade = '';
                 $this->dispatch('grade-changed');
                 $this->closeModal();

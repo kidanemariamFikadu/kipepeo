@@ -27,24 +27,24 @@ class School extends ModalComponent
         if ($this->schoolId) {
             $checkDuplicate = \App\Models\School::where('name', $this->school)->where('id', '!=', $this->schoolId)->first();
             if ($checkDuplicate) {
-                session()->flash('error', 'School already exists');
+                $this->dispatch('MessageChanged', ['type' => 'error', 'content' => 'School already exists']);
                 return;
             }
 
             $school = \App\Models\School::find($this->schoolId);
             $school->update(['name' => $this->school]);
-            session()->flash('message', 'School updated successfully');
             $this->dispatch('school-changed');
+            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'School updated successfully']);
             $this->closeModal();
         } else {
 
             $checkDuplicate = \App\Models\School::where('name', $this->school)->first();
             if ($checkDuplicate) {
-                session()->flash('error', 'School already exists');
+                $this->dispatch('MessageChanged', ['type' => 'error', 'content' => 'School already exists']);
                 return;
             } else {
                 \App\Models\School::create(['name' => $this->school]);
-                session()->flash('message', 'School created successfully');
+                $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'School created successfully']);
                 $this->school = '';
                 $this->dispatch('school-changed');
                 $this->closeModal();

@@ -25,11 +25,12 @@ class CreateStudentForm extends Form
     #[Validate('required|max:255')]
     public $guardian_name;
 
-    #[Validate('required|max:255')]
+    #[Validate('required|max:255|phone:KE')]
     public $guardian_phone;
 
     protected $messages = [
         'dob.required' => 'The date of birth field is required.',
         // 'dob.before' => 'The student should be 5 and above.',
+        'guardian_phone.phone' => 'The guardian phone number is invalid.',
     ];
 }

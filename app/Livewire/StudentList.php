@@ -17,8 +17,9 @@ class StudentList extends Component
     use WithPagination;
 
     #[On('student-changed')]
-    public function refreshStudents()
+    public function refreshStudents($message)
     {
+        session()->flash($message['type'], $message['content']);
     }
 
     #[Url(history: true)]

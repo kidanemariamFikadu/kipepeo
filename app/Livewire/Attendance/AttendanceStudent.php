@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceAttr;
 use App\Models\School;
 use App\Models\Student;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -28,6 +29,13 @@ class AttendanceStudent extends Component
 
     #[Url()]
     public $perPage = 5;
+
+    #[On('student-changed')]
+    public function refreshStudents($message)
+    {
+        if ($message)
+            session()->flash($message['type'], $message['content']);
+    }
 
     public function getSchoolListProperty()
     {
@@ -77,7 +85,7 @@ class AttendanceStudent extends Component
                 'date' => now(),
                 'current_in' => true,
             ]);
-        }else{
+        } else {
             $attendance->update([
                 'current_in' => true,
             ]);

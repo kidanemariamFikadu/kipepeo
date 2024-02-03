@@ -15,7 +15,7 @@ class CreateUser extends ModalComponent
     {
         $this->validate();
         $user = User::create($this->form->toArray());
-        $this->session->flash('success', 'User created successfully.');
+        $this->dispatch('user-updated', ['type' => 'success', 'content' => 'User created successfully.']);
         $this->form->reset();
     }
 

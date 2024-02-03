@@ -1,9 +1,23 @@
 <div>
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Error</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+
+        </div>
+    @elseif (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Success</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
     <section class="mt-10">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <h2 class="text-2xl mb-3">Student List</h2>
             <!-- Start coding here -->
-            <button wire:click="$dispatch('openModal', { component: 'student.create-student' })" class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add student</button>
+            <button wire:click="$dispatch('openModal', { component: 'student.create-student' })"
+                class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ Add student</button>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -71,7 +85,7 @@
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
-                                    <td class="px-4 py-3">{{ $student->currentGrade?->grade}}</td>
+                                    <td class="px-4 py-3">{{ $student->currentGrade?->grade }}</td>
                                     <td class="px-4 py-3">
                                         {{ $student->currentSchool?->name }}</td>
                                     <td>

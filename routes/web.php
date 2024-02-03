@@ -34,6 +34,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/', AttendanceStudent::class)->name('dashboard');
+    Route::get('/dashboard', AttendanceStudent::class)->name('dashboard');
     Route::get('/users', UserList::class)->name('users');
     Route::get('/user-create', CreateUser::class)->name('Create User');
     Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');

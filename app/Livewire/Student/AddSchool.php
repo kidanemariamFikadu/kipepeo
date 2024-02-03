@@ -48,9 +48,7 @@ class AddSchool extends ModalComponent
             'is_current' => true,
         ]);
         $this->closeModal();
-
-        session()->flash('success', 'School added successfully.');
-        $this->dispatch('student-changed', []);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'School added successfully.']);
         $this->school_id = null;
     }
 

@@ -39,14 +39,17 @@ class AddGuardian extends ModalComponent
         $this->addStudentGuardianForm->validate();
 
         if (!$this->guardian_id) {
+            if($this->addStudentGuardianForm->is_primary){
+                StudentGuardian::where('student_id', $this->addStudentGuardianForm->student_id)->update(['is_primary' => false]);
+            }
+            
             StudentGuardian::create([
                 'guardian_name' => $this->addStudentGuardianForm->guardian_name,
                 'guardian_phone' => $this->addStudentGuardianForm->guardian_phone,
                 'is_primary' => $this->addStudentGuardianForm->is_primary ? true : false,
                 'student_id' => $this->addStudentGuardianForm->student_id,
             ]);
-            session()->flash('success', 'Guardian added successfully.');
-            $this->dispatch('student-changed', []);
+            $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Guardian added successfully.']);
             $this->closeModal();
             $this->addStudentGuardianForm->reset();
         } else {
@@ -56,8 +59,7 @@ class AddGuardian extends ModalComponent
                 'guardian_phone' => $this->addStudentGuardianForm->guardian_phone,
                 'is_primary' => $this->addStudentGuardianForm->is_primary,
             ]);
-            session()->flash('success', 'Guardian updated successfully.');
-            $this->dispatch('student-changed', []);
+            $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Guardian updated successfully.']);
             $this->closeModal();
             $this->guardian_id = null;
             $this->addStudentGuardianForm->reset();

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -25,6 +26,14 @@ class UserList extends Component
 
     #[Url()]
     public $perPage = 5;
+
+    #[On('user-updated')]
+    public function refreshUsers($message)
+    {
+        if ($message) {
+            session()->flash($message['type'], $message['content']);
+        }
+    }
 
     public function setSortBy($sortByField)
     {

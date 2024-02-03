@@ -10,6 +10,7 @@ use App\Models\GradeStudent;
 use App\Models\SchoolStudent;
 use App\Models\Student;
 use App\Models\StudentGuardian;
+use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -26,13 +27,15 @@ class StudentDetail extends Component
     public $studentGrades;
 
     #[On("student-changed")]
-    function updateList()
+    function updateList($message)
     {
+        if ($message)
+            session()->flash($message['type'], $message['content']);
     }
 
     function mount()
     {
-        $student = Student::find(request()->route('student_id'));//->load('guardians', 'schools', 'grades');
+        $student = Student::find(request()->route('student_id')); //->load('guardians', 'schools', 'grades');
         // $student =  Student::find(request()->route('student_id'))->with(['schools' => function ($query) {
         //     $query->orderBy('created_at', 'desc');
         // }, 'guardians' => function ($query) {
@@ -62,7 +65,8 @@ class StudentDetail extends Component
 
         $guardian->is_primary = true;
         $guardian->save();
-        session()->flash('success', 'Guardian made primary successfully.');
+        // session()->flash('success', 'Guardian made primary successfully.');
+        dispatch('student-changed', ['type' => 'success', 'content' => 'Guardian made primary successfully.']);
     }
 
     function deleteGuardian($guardian_id)
@@ -112,6 +116,13 @@ class StudentDetail extends Component
     function update()
     {
         $this->updateStudentForm->validate();
+
+        $date18YearsAgo = Carbon::now()->subYears(5);
+
+        $this->updateStudentForm->validate([
+            'dob' => ['required', 'date', 'before:' .$date18YearsAgo],
+        ]);
+
         $student = Student::find($this->studentId);
         $student->update([
             "name" => $this->updateStudentForm->name,
@@ -119,21 +130,13 @@ class StudentDetail extends Component
             "dob" => $this->updateStudentForm->dob,
         ]);
 
-        session()->flash('success', 'Updated successfully.');
+        session()->flash('success', 'Student updated successfully.');
         $this->dispatch('student-changed', []);
     }
 
     public function render()
     {
         $student_id = (request()->route('student_id')) ? request()->route('student_id') : $this->studentId;
-
-        // $student = Student::find($student_id)->with(['schools' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }, 'guardians' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }, 'grades' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }])->first();
 
         $student = Student::find($student_id)->first();
 
