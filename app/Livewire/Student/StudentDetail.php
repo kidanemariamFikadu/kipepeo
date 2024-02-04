@@ -66,7 +66,7 @@ class StudentDetail extends Component
         $guardian->is_primary = true;
         $guardian->save();
         // session()->flash('success', 'Guardian made primary successfully.');
-        dispatch('student-changed', ['type' => 'success', 'content' => 'Guardian made primary successfully.']);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Guardian made primary successfully.']);
     }
 
     function deleteGuardian($guardian_id)
@@ -75,7 +75,7 @@ class StudentDetail extends Component
         $guardian = StudentGuardian::find($guardian_id);
         $guardian->delete();
         session()->flash('success', 'Guardian deleted successfully.');
-        $this->dispatch('student-changed', []);
+        $this->dispatch('student-changed', ['type'=>'success','content'=>'Guardian deleted successfully.']);
     }
 
 
