@@ -26,5 +26,9 @@ class Attendance extends Model
         return $this->hasMany(AttendanceAttr::class);
     }
 
+    public function schools()
+    {
+        return $this->hasManyThrough(School::class, Student::class);
+    }
     
 }

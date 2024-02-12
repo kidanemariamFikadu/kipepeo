@@ -42,8 +42,8 @@
                                 <select id="gender" wire:model='updateStudentForm.gender'
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                     <option selected>Choose a gender</option>
-                                    <option value="female">Female</option>
-                                    <option value="male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
                                     <option value="other">Other</option>
                                 </select>
                                 @error('updateStudentForm.gender')

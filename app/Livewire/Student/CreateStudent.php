@@ -14,6 +14,12 @@ class CreateStudent extends ModalComponent
 {
     public CreateStudentForm $form;
     public $show_details;
+    public $isDataEntry;
+
+    function mount($isDataEntry = false)
+    {
+        $this->isDataEntry = $isDataEntry;
+    }
 
     #[Computed]
     public function getSchoolsProperty()

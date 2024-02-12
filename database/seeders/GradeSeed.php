@@ -12,7 +12,11 @@ class GradeSeed extends Seeder
      */
     public function run(): void
     {
-        $grades = ["NOT YET IN SCHOOL", "PLAYGROUP", "PP1", "PP2", "PP3", "GRADE 1", "GRADE 2", "GRADE 3", "GRADE 4", "GRADE 5", "GRADE 6", "GRADE 7", "GRADE 8", "GRADE 9", "GRADE 10", "GRADE 11", "GRADE 12", "FORM 1", "FORM 2", "FORM 3", "FORM 4"];
+        $grades = [
+            "NOT YET IN SCHOOL", "PLAYGROUP", "PP1", "PP2", "PP3",
+            "GRADE 1", "GRADE 2", "GRADE 3", "GRADE 4", "GRADE 5", "GRADE 6", "GRADE 7", "GRADE 8", "GRADE 9", "GRADE 10", "GRADE 11", "GRADE 12", "FORM 1", "FORM 2", "FORM 3", "FORM 4",
+            "CLASS 1", "CLASS 2", "CLASS 3", "CLASS 4", "CLASS 5", "CLASS 6", "CLASS 7", "CLASS 8"
+        ];
         foreach ($grades as $grade) {
             \App\Models\Grade::create(['grade' => $grade]);
         }

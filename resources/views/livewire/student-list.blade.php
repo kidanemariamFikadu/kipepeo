@@ -56,18 +56,13 @@
                                     'name' => 'name',
                                     'displayName' => 'Name',
                                 ])
+                                <th scope="col" class="px-4 py-3">Grade</th>
                                 @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'grade',
-                                    'displayName' => 'Grade',
+                                    'name' => 'gender',
+                                    'displayName' => 'Gender',
                                 ])
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'school',
-                                    'displayName' => 'School',
-                                ])
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'age',
-                                    'displayName' => 'Age',
-                                ])
+                                <th scope="col" class="px-4 py-3">School</th>
+                                <th scope="col" class="px-4 py-3">Age</th>
                                 <th scope="col" class="px-4 py-3">Guardian</th>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'created_at',
@@ -86,6 +81,7 @@
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
                                     <td class="px-4 py-3">{{ $student->currentGrade?->grade }}</td>
+                                    <td class="px-4 py-3">{{ $student->gender }}</td>
                                     <td class="px-4 py-3">
                                         {{ $student->currentSchool?->name }}</td>
                                     <td>

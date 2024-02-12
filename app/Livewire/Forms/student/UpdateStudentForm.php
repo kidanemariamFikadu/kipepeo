@@ -9,7 +9,7 @@ class UpdateStudentForm extends Form
 {
     #[Validate('required|max:255')]
     public $name;
-    #[Validate('required|in:male,female,other')]
+    #[Validate('required|in:Male,Female,other')]
     public $gender;
     #[Validate('required|date')]
     public $dob;

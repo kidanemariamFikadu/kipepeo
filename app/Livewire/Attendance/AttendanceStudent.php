@@ -7,10 +7,12 @@ use App\Models\AttendanceAttr;
 use App\Models\School;
 use App\Models\Student;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Title('Attendance')]
 class AttendanceStudent extends Component
 {
     use WithPagination;
@@ -22,13 +24,13 @@ class AttendanceStudent extends Component
     public $currentlyIn = '';
 
     #[Url(history: true)]
-    public $sortBy = 'created_at';
+    public $sortBy = 'name';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     #[Url()]
-    public $perPage = 5;
+    public $perPage = 10;
 
     #[On('student-changed')]
     public function refreshStudents($message)
@@ -66,10 +68,9 @@ class AttendanceStudent extends Component
             'time_out' => now(),
         ]);
 
-        $attendance->update([
-            'current_in' => false,
-            'total_time' => $attendance->total_time + now()->diffInSeconds($attr->time_in),
-        ]);
+        $attendance->current_in = false;
+        $attendance->total_time = $attendance->total_time + now()->diffInSeconds($attr->time_in);
+        $attendance->save();
 
         session()->flash('success', 'Student checked out successfully');
     }
@@ -105,14 +106,34 @@ class AttendanceStudent extends Component
     {
         // $newQuery=
         return view('livewire.attendance.attendance-student', [
-            'students' => Student::search($this->search)
-                ->when($this->currentlyIn !== '', function ($query) {
+            // 'students' => Student::search($this->search)
+            //     ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
+            //         $query->whereHas('attendances', function ($query) {
+            //             $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+            //         });
+            //     })
+            //     ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
+            //         $query->whereHas('attendances', function ($query) {
+            //             $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+            //         })->orWhereDoesntHave('attendances');
+            //     })
+            //     ->orderBy($this->sortBy, $this->sortDir)
+            //     ->paginate($this->perPage)
+            'students'=>Student::search($this->search)
+            ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
+                $query->whereHas('attendances', function ($query) {
+                    $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+                });
+            })
+            ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
+                $query->where(function ($query) {
                     $query->whereHas('attendances', function ($query) {
                         $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
-                    });
-                })
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->paginate($this->perPage)
-        ])->title('Attendance');
+                    })->orWhereDoesntHave('attendances');
+                });
+            })
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage)
+        ]);
     }
 }

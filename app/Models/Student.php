@@ -64,7 +64,7 @@ class Student extends Model
 
     public function getCurrentGradeAttribute()
     {
-        return $this->grades()->where('is_current', true)->first()->gradeTable;
+        return $this->grades()->where('is_current', true)->first()?->gradeTable;
     }
 
     public function getCurrentAttendanceAttribute()
@@ -76,7 +76,7 @@ class Student extends Model
     public function getTodayTotalTimeAttribute()
     {
         $total= $this->attendances()->whereDate('date', now())->first()?->total_time;
-        return Carbon::createFromTimestamp($total)->format('H:i:s');
+        return Carbon::createFromTimestamp($total)?->format('H:i:s');
     }
 
     public function scopeSearch($query, $value)

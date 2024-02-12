@@ -29,17 +29,17 @@ class StudentList extends Component
     public $school = '';
 
     #[Url(history: true)]
-    public $sortBy = 'created_at';
+    public $sortBy = 'name';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     #[Url()]
-    public $perPage = 5;
+    public $perPage = 10;
 
     public function getSchoolListProperty()
     {
-        return School::all();
+        return School::orderBy('name')->get();
     }
 
     public function setSortBy($sortByField)
@@ -67,6 +67,6 @@ class StudentList extends Component
                 })
                 ->orderBy($this->sortBy, $this->sortDir)
                 ->paginate($this->perPage)
-        ])->title('Students');
+        ]);
     }
 }
