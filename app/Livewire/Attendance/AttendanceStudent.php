@@ -87,9 +87,14 @@ class AttendanceStudent extends Component
                 'current_in' => true,
             ]);
         } else {
-            $attendance->update([
-                'current_in' => true,
-            ]);
+            if ($attendance->current_in == false) {
+                $attendance->update([
+                    'current_in' => true,
+                ]);
+            }else{
+                session()->flash('error', 'Student already checked in');
+                return;
+            }
         }
 
         AttendanceAttr::create([
@@ -119,21 +124,21 @@ class AttendanceStudent extends Component
             //     })
             //     ->orderBy($this->sortBy, $this->sortDir)
             //     ->paginate($this->perPage)
-            'students'=>Student::search($this->search)
-            ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
-                $query->whereHas('attendances', function ($query) {
-                    $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
-                });
-            })
-            ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
-                $query->where(function ($query) {
+            'students' => Student::search($this->search)
+                ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
                     $query->whereHas('attendances', function ($query) {
                         $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
-                    })->orWhereDoesntHave('attendances');
-                });
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage)
+                    });
+                })
+                ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
+                    $query->where(function ($query) {
+                        $query->whereHas('attendances', function ($query) {
+                            $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+                        })->orWhereDoesntHave('attendances');
+                    });
+                })
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage)
         ]);
     }
 }
