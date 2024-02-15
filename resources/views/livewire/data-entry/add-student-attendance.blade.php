@@ -7,7 +7,7 @@
             </h3>
         </div>
         <!-- Modal body -->
-        <form class="p-4 md:p-5" wire:submit="create">
+        <form class="p-4 md:p-5" wire:submit="addAttendance">
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
                     <label for="name"
@@ -16,7 +16,8 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option selected>Choose a student</option>
                         @foreach ($this->students as $student)
-                            <option value="{{ $student->id }}">{{ $student->name }}</option>
+                            <option value="{{ $student->id }}" {{ $studentSelected == $student->id ? 'selected' : '' }}>
+                                {{ $student->name }}</option>
                         @endforeach
                     </select>
                     @error('form.student_id')
@@ -33,20 +34,20 @@
                     @enderror
                 </div>
                 <div class="col-span-2 sm:col-span-1">
-                    <label for="fromTime"
+                    <label for="startTime"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">From</label>
-                    <input type="time" name="fromTime" id="fromTime" wire:model="form.FromTime"
+                    <input type="time" name="startTime" id="startTime" wire:model="form.startTime"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                    @error('form.fromTime')
+                    @error('form.startTime')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="col-span-2 sm:col-span-1">
-                    <label for="toTime"
+                    <label for="endTime"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">To</label>
-                    <input type="time" name="toTime" id="toTime" wire:model="form.toTime"
+                    <input type="time" name="endTime" id="endTime" wire:model="form.endTime"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                    @error('form.toTime')
+                    @error('form.endTime')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
                 </div>

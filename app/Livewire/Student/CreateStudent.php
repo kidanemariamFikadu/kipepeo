@@ -35,14 +35,35 @@ class CreateStudent extends ModalComponent
 
     function create()
     {
-        $this->form->validate();
-        $date18YearsAgo = Carbon::now()->subYears(5);
+        if ($this->isDataEntry) {
+            $this->form->validate([
+                'name' => 'required|max:255',
+                'gender' => 'required|in:male,female,other',
+                'grade' => 'required|exists:grades,id',
+                'school' => 'required|exists:schools,id',
+                'guardian_name' => 'required|max:255',
+                'guardian_phone' => 'required|phone:KE',
+            ]);
+        } else {
+            $this->form->validate([
+                'name' => 'required|max:255',
+                'gender' => 'required|in:male,female,other',
+                'dob' => 'required|date',
+                'grade' => 'required|exists:grades,id',
+                'school' => 'required|exists:schools,id',
+                'guardian_name' => 'required|max:255',
+                'guardian_phone' => 'required|phone:KE',
+            ]);
 
-        $this->form->validate([
-            'dob' => ['required', 'date', 'before:' .$date18YearsAgo],
-        ]);
+            $date18YearsAgo = Carbon::now()->subYears(5);
+
+            $this->form->validate([
+                'dob' => ['required', 'date', 'before:' . $date18YearsAgo],
+            ]);
+        }
+
         $student = StudentService::create($this->form);
-        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student created successfully']);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student created successfully', 'student' => $student]);
         if ($this->show_details) {
             return redirect()->route('student-detail', $student->id);
         } else {

@@ -17,12 +17,10 @@ class AttendanceHistory extends ModalComponent
     public $attendance;
 
     // #[On("dateChanged")]
-    function dateSelected($date)
-    {dd('here');
-
-
+    function search()
+    {
         $student = Student::findOrFail($this->studentId);
-        $attendance = $student->attendances()->whereDate('date', $date)->first();
+        $attendance = $student->attendances()->whereDate('date', $this->date)->first();
 
         if ($attendance) {
             $this->attendance = $attendance;
