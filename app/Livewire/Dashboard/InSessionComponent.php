@@ -21,9 +21,7 @@ class InSessionComponent extends Component
 
     function checkOut($studentId)
     {
-        $student = Student::findOrFail($studentId);
-        $attendance = Attendance::where('student_id', $student->id)
-            ->whereDate('date', now())->first();
+        $attendance = Attendance::findOrFail($studentId);
 
         $attr = AttendanceAttr::where(['attendance_id' => $attendance->id, 'time_out' => null])->first();
 
