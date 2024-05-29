@@ -117,11 +117,11 @@ class StudentDetail extends Component
     {
         $this->updateStudentForm->validate();
 
-        $date18YearsAgo = Carbon::now()->subYears(5);
+        // $date18YearsAgo = Carbon::now()->subYears(5);
 
-        $this->updateStudentForm->validate([
-            'dob' => ['required', 'date', 'before:' .$date18YearsAgo],
-        ]);
+        // $this->updateStudentForm->validate([
+        //     'dob' => ['required', 'date', 'before:' .$date18YearsAgo],
+        // ]);
 
         $student = Student::find($this->studentId);
         $student->update([
