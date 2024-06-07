@@ -17,6 +17,30 @@
 
     <!-- Styles -->
     @livewireStyles
+
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable,
+            .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+
 </head>
 
 <body class="font-sans antialiased">
