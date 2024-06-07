@@ -20,6 +20,11 @@ class GradeStudent extends Model
         return $this->belongsTo(Student::class);
     }
 
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
     public function gradeTable()
     {
         return $this->belongsTo(Grade::class, 'grade');

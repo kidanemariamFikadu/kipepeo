@@ -45,5 +45,6 @@ Route::middleware([
     Route::get('/attendance', AttendanceStudent::class)->name('attendance');
     Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
     Route::get('/data-entry', \App\Livewire\DataEntry\Index::class)->name('data-entry');
+    Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
 
 });

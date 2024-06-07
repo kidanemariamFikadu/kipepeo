@@ -23,4 +23,9 @@ class School extends Model
     {
         return $this->hasManyThrough(Student::class, SchoolStudent::class, 'school_id', 'id','id','student_id');
     }
+
+    public function scopeSearch($query, $value)
+    {
+        $query->where('name', 'like', "%{$value}%"); //->orWhere('email','like',"%{$value}%");
+    }
 }

@@ -79,6 +79,10 @@ class Student extends Model
         return Carbon::createFromTimestamp($total)?->format('H:i:s');
     }
 
+    public function getStudentAgeAttribute(){
+        return  Carbon::parse($this->dob)->age;
+    }
+
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%"); //->orWhere('email','like',"%{$value}%");
