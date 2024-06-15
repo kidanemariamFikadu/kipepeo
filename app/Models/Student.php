@@ -76,8 +76,18 @@ class Student extends Model
     public function getTodayTotalTimeAttribute()
     {
         $total= $this->attendances()->whereDate('date', now())->first()?->total_time;
-        return Carbon::createFromTimestamp($total)?->format('H:i:s');
+        return $this->secondsToHms($total);
     }
+
+    function secondsToHms($seconds)
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $seconds = $seconds % 60;
+
+        return sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
+    }
+
 
     public function getStudentAgeAttribute(){
         return  Carbon::parse($this->dob)->age;

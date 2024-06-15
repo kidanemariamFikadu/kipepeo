@@ -61,20 +61,38 @@
                                     <td class="px-6 py-4 break-words">
                                         @if ($attr->time_out)
                                             @php
-                                                $startDateTime = \Carbon\Carbon::createFromFormat('H:i:s', $attr->time_in);
-                                                $endDateTime = \Carbon\Carbon::createFromFormat('H:i:s', $attr->time_out);
+                                                $startDateTime = \Carbon\Carbon::createFromFormat(
+                                                    'H:i:s',
+                                                    $attr->time_in,
+                                                );
+                                                $endDateTime = \Carbon\Carbon::createFromFormat(
+                                                    'H:i:s',
+                                                    $attr->time_out,
+                                                );
 
                                                 $timeDifferenceInSeconds = $endDateTime->diffInSeconds($startDateTime);
+
+                                                function secondsToHms($seconds)
+                                                {
+                                                    $hours = floor($seconds / 3600);
+                                                    $minutes = floor(($seconds % 3600) / 60);
+                                                    $seconds = $seconds % 60;
+
+                                                    return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+                                                }
                                             @endphp
-                                            {{ \Carbon\Carbon::createFromTimestamp($timeDifferenceInSeconds)->format('H:i:s') }}
+                                            {{ secondsToHms($timeDifferenceInSeconds) }}
                                         @else
                                             @php
-                                                $startDateTime = \Carbon\Carbon::createFromFormat('H:i:s', $attr->time_in);
+                                                $startDateTime = \Carbon\Carbon::createFromFormat(
+                                                    'H:i:s',
+                                                    $attr->time_in,
+                                                );
                                                 $endDateTime = \Carbon\Carbon::now();
 
                                                 $timeDifferenceInSeconds = $endDateTime->diffInSeconds($startDateTime);
                                             @endphp
-                                            {{ \Carbon\Carbon::createFromTimestamp($timeDifferenceInSeconds)->format('H:i:s') }}<span
+                                            {{ secondsToHms($timeDifferenceInSeconds)  }}<span
                                                 class="text-red-500">*</span>
                                         @endif
                                     </td>

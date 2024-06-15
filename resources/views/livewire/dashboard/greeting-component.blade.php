@@ -42,7 +42,8 @@
         </div>
     </div>
 
-    <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div
+        class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mr-2">
 
         @if ($studentsInAttendanceToday > 0)
             <div class="flex">
@@ -63,5 +64,19 @@
         @else
             <p class="text-gray-700 dark:text-white">No students currently in session</p>
         @endif
+    </div>
+
+    <div
+        class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mr-2">
+        <div class="flex">
+            <p class="text-gray-700 dark:text-white mr-2"> {{ $totalStudents }} Total students</p>
+        </div>
+    </div>
+
+    <div
+        class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mr-2">
+        <div class="flex">
+            <p class="text-gray-700 dark:text-white mr-2"> {{ $averageAttendanceDuration }} AVG stay</p>
+        </div>
     </div>
 </div>
