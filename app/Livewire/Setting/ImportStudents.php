@@ -44,6 +44,7 @@ class ImportStudents extends Component
         $this->isLoading = false;
         $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Students uploaded started successfully, you will get a notification when the process is complete.']);
     }
+    
     public function render()
     {
         return view('livewire.setting.import-students');

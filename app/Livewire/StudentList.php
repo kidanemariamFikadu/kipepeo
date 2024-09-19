@@ -54,6 +54,13 @@ class StudentList extends Component
         $this->sortDir = 'DESC';
     }
 
+    public function deleteRecord($studentId)
+    {
+        $student = Student::find($studentId);
+        $student?->delete();
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student removed successfully']);
+    }
+
     public function render()
     {
         return view('livewire.student-list', [

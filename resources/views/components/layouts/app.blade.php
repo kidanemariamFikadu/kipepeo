@@ -126,6 +126,10 @@
                                 <a href="/data-entry"
                                     class="block py-2 pr-4 pl-3 text-gray-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">Data Entry</a>
                             </li>
+                            <li>
+                                <a href="/books"
+                                    class="block py-2 pr-4 pl-3 text-gray-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">Books</a>
+                            </li>
                             @if (Auth::user()->role == 'admin')
                                 <li>
                                     <a href="/users"
