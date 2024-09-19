@@ -135,17 +135,6 @@
                                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                                                 </svg>
                                             </a>
-                                            {{-- <a href="student-detail/{{ $student->id }}" title="Show student details"
-                                                class="px-3 py-1 bg-white-500 text-white">
-                                                <svg class="h-5 w-5 dark:text-green-300 text-green-600" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                                    <polyline points="12 8 12 12 14 14" />
-                                                    <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
-                                                </svg>
-                                            </a> --}}
                                             <button title="show attendance history"
                                                 @click="if (confirm('Are you sure you want to delete this record?')) $wire.deleteRecord({{ $student->id }})"
                                                 class="px-4 py-2 text-sm font-medium text-gray-900 bg-red-500 border border-gray-200 rounded-e-lg hover:bg-red-300 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
