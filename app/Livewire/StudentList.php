@@ -37,9 +37,41 @@ class StudentList extends Component
     #[Url()]
     public $perPage = 10;
 
+    public $selectedStudents = [];
+    public $selectAll = false;
+
     public function getSchoolListProperty()
     {
         return School::orderBy('name')->get();
+    }
+
+    public function toggleSelectAll()
+    {
+        if ($this->selectAll) {
+            // Unselect all students if already selected
+            $this->selectedStudents = [];
+            $this->selectAll = false;
+        } else {
+            // Select all students on the current page
+            $this->selectedStudents = Student::search($this->search)
+                ->when($this->school !== '', function ($query) {
+                    // $query->where('current_school', $this->admin);
+                    $query->whereHas('schools', function ($q) {
+                        $q->where('school_id', $this->school)
+                            ->where('is_current', true);
+                    });
+                })
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage)->pluck('id')->toArray();
+            $this->selectAll = true;
+        }
+    }
+
+    function deleteSelected()
+    {
+        Student::destroy($this->selectedStudents);
+        $this->reset(['selectedStudents', 'selectAll']);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Students removed successfully']);
     }
 
     public function setSortBy($sortByField)

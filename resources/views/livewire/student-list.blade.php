@@ -49,9 +49,15 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
+                    <button wire:click="deleteSelected"
+                        @click="if (confirm('Are you sure you want to delete selected records?')) $wire.deleteSelected()"
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-300 hover:text-white-700 ">
+                        Delete Selected </button>
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
+                                <th><input type="checkbox" wire:click="toggleSelectAll" 
+                                        {{ count($selectedStudents) === $students->count() ? 'checked' : '' }}></th>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'name',
                                     'displayName' => 'Name',
@@ -77,6 +83,10 @@
                         <tbody>
                             @foreach ($students as $student)
                                 <tr wire:key="{{ $student->id }}" class="border-b dark:border-gray-700">
+                                    <td>
+                                        <input type="checkbox" wire:model="selectedStudents"
+                                            value="{{ $student->id }}">
+                                    </td>
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $student->name }}</th>
