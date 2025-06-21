@@ -79,17 +79,17 @@ class Rent extends ModalComponent
         }
 
         // Check for three consecutive days
-        $studentsWithThreeConsecutiveDays = [];
-        foreach ($attendanceDict as $studentId => $dates) {
-            if ($this->hasThreeConsecutiveDays($dates)) {
-                $studentsWithThreeConsecutiveDays[] = $studentId;
-            }
-        }
+        // $studentsWithThreeConsecutiveDays = [];
+        // foreach ($attendanceDict as $studentId => $dates) {
+        //     if ($this->hasThreeConsecutiveDays($dates)) {
+        //         $studentsWithThreeConsecutiveDays[] = $studentId;
+        //     }
+        // }
 
         // Fetch student objects
-        $students = Student::whereIn('id', $studentsWithThreeConsecutiveDays)->get();
+        // $students = Student::whereIn('id', $studentsWithThreeConsecutiveDays)->get();
 
-        return $students;
+        return $students=Student::all();
     }
 
     private function hasThreeConsecutiveDays($dates)

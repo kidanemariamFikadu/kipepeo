@@ -69,6 +69,7 @@
                         <option value="Story book">Story book</option>
                         <option value="Supplementary book">Supplementary book</option>
                         <option value="Grade book">Grade book</option>
+                        <option value="Grade book">Adult novels</option>
                     </select>
                     @error('category')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>

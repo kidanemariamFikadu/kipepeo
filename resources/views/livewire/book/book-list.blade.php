@@ -14,7 +14,7 @@
 
     <section class="mt-10">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-            <h2 class="text-2xl mb-3">Books</h2>
+            <h2 class="text-2xl mb-3 dark:text-white">Books</h2>
             <!-- Start coding here -->
             <button wire:click="$dispatch('openModal', { component: 'book.create-book' })"
                 class="px-3 py-1 bg-teal-500 text-white rounded mb-4">+ New Book</button>

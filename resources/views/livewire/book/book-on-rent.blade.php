@@ -14,7 +14,7 @@
 
     <section class="mt-10">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-            <h2 class="text-2xl mb-3">Books borrowed</h2>
+            <h2 class="text-2xl mb-3 dark:text-white">Books borrowed</h2>
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
