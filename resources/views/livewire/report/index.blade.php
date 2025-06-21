@@ -34,6 +34,22 @@
                     Attendance Report
                 </button>
             </li>
+            <li class="me-2" role="presentation">
+                <button
+                    class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="attendance-styled-tab" data-tabs-target="#styled-attendance" type="button" role="tab"
+                    aria-controls="attendance" aria-selected="false">
+                    <svg class="h-5 w-5 text-cyan-500 mr-2" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" />
+                        <path d="M9 5H7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2V7a2 2 0 0 0 -2 -2h-2" />
+                        <rect x="9" y="3" width="6" height="4" rx="2" />
+                        <path d="M9 14l2 2l4 -4" />
+                    </svg>
+                    Stundet List 
+                </button>
+            </li>
             {{-- <li class="me-2" role="presentation">
                 <button
                     class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
@@ -56,6 +72,10 @@
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-dashboard" role="tabpanel"
             aria-labelledby="dashboard-tab">
             <livewire:report.attendance-report />
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-attendance" role="tabpanel"
+            aria-labelledby="dashboard-tab">
+            <livewire:report.student-attendance />
         </div>
         {{-- <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-settings" role="tabpanel"
             aria-labelledby="settings-tab">
