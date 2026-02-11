@@ -33,8 +33,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/', \App\Livewire\dashboard\Index::class)->name('dashboard');
-    Route::get('/dashboard', \App\Livewire\dashboard\Index::class)->name('dashboard');
+    Route::get('/', \App\Livewire\Dashboard\Index::class)->name('dashboard');
+    Route::get('/dashboard', \App\Livewire\Dashboard\Index::class)->name('dashboard');
     Route::get('/users', UserList::class)->name('users');
     Route::get('/user-create', CreateUser::class)->name('Create User');
     Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');

@@ -19,6 +19,14 @@
         </div>
         <div class="w-1/2 p-4">
             @livewire('setting.grade-list')
+
+            <div class="mt-4">
+                <button wire:click="promoteStudentsToNextGrade"
+                    wire:confirm="You are about to promote all students to the next grade. Are you sure?"
+                    class="px-3 py-2 bg-blue-600 text-white rounded">
+                    Promote Students To Next Grade
+                </button>
+            </div>
         </div>
     </div>
     @if (Auth::user()->role == 'admin')
