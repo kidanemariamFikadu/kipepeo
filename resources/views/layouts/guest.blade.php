@@ -19,7 +19,7 @@
                         <a href="/" class="flex items-center">
                             <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}"
                                 class="mr-3 h-6 sm:h-9 block dark:hidden" alt="Kipepeo Logo" />
-                            <img src="{{ asset('images/kipepeo-logo-white.jpg') }}"
+                            <img src="{{ asset('images/kipepeo-logo-white.png') }}"
                                 class="mr-3 h-6 sm:h-9 hidden dark:block" alt="Kipepeo Logo" />
                         </a>
                     </div>
@@ -36,7 +36,7 @@
                         <a href="/" class="flex items-center shrink-0">
                             <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}"
                                 class="h-6 block dark:hidden" alt="Kipepeo Logo" />
-                            <img src="{{ asset('images/kipepeo-logo-white.jpg') }}"
+                            <img src="{{ asset('images/kipepeo-logo-white.png') }}"
                                 class="h-6 hidden dark:block" alt="Kipepeo Logo" />
                         </a>
                         <ul class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
