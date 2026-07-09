@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /tmp/dashboard.html /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/dashboard.html)",
+      "Bash(cat)",
+      "Bash(node /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/bookInventory2.check.js)",
+      "Bash(rm -f \"/c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/full_check.js\")",
+      "Bash(node /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/full_check.js)",
+      "Bash(rm -f /tmp/cookies.txt /tmp/login*.html /tmp/after_login*.html /tmp/dashboard.html /tmp/headers.txt /tmp/redirheaders.txt /tmp/redirbody.html /tmp/kipepeo-charts.js)",
+      "Bash(rm -f /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/*.xdata.js /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/dashboard.html /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/app.blade.php /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/full_check.js /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/extract_xdata.js /c/Users/Kidane/AppData/Local/Temp/claude/c--Users-Kidane-Downloads-Kepepeo/d3646548-054b-4873-97bd-649a56c08625/scratchpad/bookInventory2.check.js)",
+      "Bash(rm -f cookies.txt)",
+      "Bash(curl -s -c cookies.txt -b cookies.txt -X POST http://127.0.0.1/login -d _token=__TRACKED_VAR__ -d email=admin@example.com -d password=password -o /dev/null -w 'LOGIN:%{http_code}\\\\n')",
+      "Bash(curl -s -c cookies.txt -b cookies.txt http://127.0.0.1/dashboard -o dashboard.html -w \"DASH:%{http_code}\\\\n\")",
+      "Bash(node -e ' *)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec -u root kepepeo-laravel.test-1 chown -R sail:sail /var/www/html/storage /var/www/html/bootstrap/cache)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec kepepeo-laravel.test-1 php artisan db:seed --class=ActivityTypeSeeder)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec kepepeo-laravel.test-1 php artisan tinker '--execute= *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Kidane\\AppData\\Local\\Temp\\claude\\c--Users-Kidane-Downloads-Kepepeo\\d3646548-054b-4873-97bd-649a56c08625\\scratchpad"
+    ]
+  }
+}
