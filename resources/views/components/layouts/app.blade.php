@@ -77,21 +77,26 @@
                     <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
                         id="mobile-menu-2">
                         @php
+                            // Ordered by how often a typical staff member actually uses each
+                            // page: daily operations first (mark attendance, manage the
+                            // roster), then periodic tasks (lending, backfilling records
+                            // entered outside the normal flow, review), then admin-only setup.
                             $navLinks = [
                                 ['href' => '/', 'label' => 'Home', 'active' => request()->is('/')],
-                                ['href' => '/students', 'label' => 'Students', 'active' => request()->is('students*', 'student-detail*')],
                                 ['href' => '/attendance', 'label' => 'Attendance', 'active' => request()->is('attendance*')],
-                                ['href' => '/report', 'label' => 'Report', 'active' => request()->is('report*')],
-                                ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')],
+                                ['href' => '/students', 'label' => 'Students', 'active' => request()->is('students*', 'student-detail*')],
                                 ['href' => '/books', 'label' => 'Books', 'active' => request()->is('books*', 'book-detail*')],
+                                ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')],
+                                ['href' => '/report', 'label' => 'Report', 'active' => request()->is('report*')],
                             ];
+                            $adminLinks = [];
                             if (Auth::user()->isAdmin()) {
-                                $navLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
-                                $navLinks[] = ['href' => '/invitation', 'label' => 'Invitations', 'active' => request()->is('invitation*')];
-                                $navLinks[] = ['href' => '/settings', 'label' => 'Settings', 'active' => request()->is('settings*', 'promote-students*')];
+                                $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
+                                $adminLinks[] = ['href' => '/invitation', 'label' => 'Invitations', 'active' => request()->is('invitation*')];
+                                $adminLinks[] = ['href' => '/settings', 'label' => 'Settings', 'active' => request()->is('settings*', 'promote-students*')];
                             }
                         @endphp
-                        <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-2 lg:mt-0">
+                        <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:items-center lg:space-x-2 lg:mt-0">
                             @foreach ($navLinks as $link)
                                 <li>
                                     <a href="{{ $link['href'] }}"
@@ -104,6 +109,21 @@
                                     </a>
                                 </li>
                             @endforeach
+                            @if ($adminLinks !== [])
+                                <li class="my-2 border-t border-gray-100 dark:border-gray-700 lg:my-0 lg:ml-1 lg:h-6 lg:w-px lg:border-t-0 lg:border-l lg:border-gray-200 lg:dark:border-gray-600" aria-hidden="true"></li>
+                                @foreach ($adminLinks as $link)
+                                    <li>
+                                        <a href="{{ $link['href'] }}"
+                                            @if ($link['active']) aria-current="page" @endif
+                                            class="block py-2 px-3 rounded-lg lg:px-3
+                                                {{ $link['active']
+                                                    ? 'bg-primary-700 text-white dark:bg-primary-600'
+                                                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700' }}">
+                                            {{ $link['label'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @endif
                         </ul>
                     </div>
                 </div>
