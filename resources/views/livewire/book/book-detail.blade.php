@@ -11,7 +11,7 @@
 
         <div class="flex flex-wrap items-center gap-4 mt-3 mb-4">
             <div>
-                <h2 class="text-2xl font-semibold dark:text-white">{{ $this->book->title }}</h2>
+                <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $this->book->title }}</h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">by {{ $this->book->author }}</p>
             </div>
             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
@@ -29,7 +29,7 @@
     <div class="flex flex-col">
         <div class="overflow-x-auto">
             <div class="py-2 align middle inline-block min-w-full sm:px-6 lg:px-8">
-                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                <div class="bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                     <form class="p-4 md:p-5" wire:submit="update">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">

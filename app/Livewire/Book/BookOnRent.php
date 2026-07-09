@@ -6,10 +6,14 @@ use App\Models\Rental;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class BookOnRent extends Component
 {
-    var $search;
+    use WithPagination;
+
+    #[Url(history: true)]
+    public $search;
     public $sortBy = 'due_at';
 
     #[Url(history: true)]

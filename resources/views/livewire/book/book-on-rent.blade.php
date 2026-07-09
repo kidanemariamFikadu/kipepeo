@@ -13,9 +13,8 @@
     @endif
 
     <div>
-        <div>
-            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-4">Books on Loan</h2>
-            <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+        <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-4">Books on Loan</h2>
+        <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-wrap items-center justify-between gap-3 p-4">
                     <div class="relative w-full max-w-xs">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -121,11 +120,11 @@
                                         <div class="flex items-center justify-end">
                                             @if (! $returnedAt)
                                                 <button title="Return this book"
-                                                    class="p-2 text-teal-600 hover:bg-teal-50 rounded-lg dark:text-teal-300 dark:hover:bg-gray-700"
+                                                    class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg dark:text-primary-300 dark:hover:bg-gray-700"
                                                     wire:click="$dispatch('openModal', { component: 'book.return-book', arguments: { rentalId: {{ $bookOnRent->id }} }})">
                                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                                            d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                                                     </svg>
                                                 </button>
                                             @endif
@@ -134,7 +133,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="9" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                         No rentals found.
                                     </td>
                                 </tr>
@@ -148,7 +147,7 @@
                         <div class="flex space-x-4 items-center mb-3">
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
                             <select wire:model.live='perPage'
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                 <option value="5">5</option>
                                 <option value="7">7</option>
                                 <option value="10">10</option>
@@ -163,4 +162,4 @@
             </div>
         </div>
     </div>
-</div>
+

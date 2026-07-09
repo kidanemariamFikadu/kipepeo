@@ -4,9 +4,12 @@ namespace App\Livewire\Book;
 
 use App\Models\BookCopy;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Copies extends Component
 {
+    use WithPagination;
+
     public $bookId;
 
     public function mount($bookId)

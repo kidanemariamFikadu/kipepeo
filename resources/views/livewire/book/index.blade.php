@@ -7,8 +7,8 @@
             role="tablist">
             <li class="me-2" role="presentation">
                 <button class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg"
-                    id="profile-styled-tab" data-tabs-target="#styled-profile" type="button" role="tab"
-                    aria-controls="profile" aria-selected="false">
+                    id="books-tab" data-tabs-target="#books-panel" type="button" role="tab"
+                    aria-controls="books-panel" aria-selected="false">
                     <svg class="w-5 h-5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                         height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -20,8 +20,8 @@
             <li class="me-2" role="presentation">
                 <button
                     class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                    id="dashboard-styled-tab" data-tabs-target="#styled-dashboard" type="button" role="tab"
-                    aria-controls="dashboard" aria-selected="false">
+                    id="books-on-loan-tab" data-tabs-target="#books-on-loan-panel" type="button" role="tab"
+                    aria-controls="books-on-loan-panel" aria-selected="false">
                     <svg class="h-5 w-5 mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" />
@@ -35,12 +35,12 @@
         </ul>
     </div>
     <div id="default-styled-tab-content">
-        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-profile" role="tabpanel"
-            aria-labelledby="profile-tab">
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="books-panel" role="tabpanel"
+            aria-labelledby="books-tab">
             <livewire:book.book-list />
         </div>
-        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-dashboard" role="tabpanel"
-            aria-labelledby="dashboard-tab">
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="books-on-loan-panel" role="tabpanel"
+            aria-labelledby="books-on-loan-tab">
             <livewire:book.book-on-rent />
         </div>
     </div>

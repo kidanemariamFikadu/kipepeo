@@ -13,14 +13,13 @@
     @endif
 
     <div>
-        <div>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Books</h2>
-                <button wire:click="$dispatch('openModal', { component: 'book.create-book' })"
-                    class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ New Book</button>
-            </div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Books</h2>
+            <button wire:click="$dispatch('openModal', { component: 'book.create-book' })"
+                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ New Book</button>
+        </div>
 
-            <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex items-center justify-between p-4">
                     <div class="relative w-full max-w-xs">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -91,10 +90,12 @@
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-end gap-1">
                                             <a href="book-detail/{{ $book->id }}" title="Show book details"
-                                                class="p-2 text-teal-600 hover:bg-teal-50 rounded-lg dark:text-teal-300 dark:hover:bg-gray-700">
+                                                class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg dark:text-primary-300 dark:hover:bg-gray-700">
                                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
                                             </a>
                                             <button title="Edit book"
@@ -159,7 +160,7 @@
                         <div class="flex space-x-4 items-center mb-3">
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
                             <select wire:model.live='perPage'
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                 <option value="5">5</option>
                                 <option value="7">7</option>
                                 <option value="10">10</option>
@@ -174,4 +175,4 @@
             </div>
         </div>
     </div>
-</div>
+

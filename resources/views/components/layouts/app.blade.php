@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialised">
+<body class="antialiased bg-white dark:bg-gray-900">
     <div class="flex flex-col h-screen justify-between">
         <header class="no-print">
             <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">

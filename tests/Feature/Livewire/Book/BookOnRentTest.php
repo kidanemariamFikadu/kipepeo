@@ -38,3 +38,16 @@ test('status filter narrows the rentals shown', function () {
     $component->set('status', 'borrowed');
     expect($component->viewData('booksOnRent'))->toHaveCount(2);
 });
+
+test('pagination moves to the next page without a full-page reload', function () {
+    $user = User::factory()->create();
+    for ($i = 0; $i < 15; $i++) {
+        makeRentalWithStatus('borrowed');
+    }
+
+    $component = Livewire::actingAs($user)->test(BookOnRent::class, ['perPage' => 10]);
+    expect($component->viewData('booksOnRent')->currentPage())->toBe(1);
+
+    $component->call('nextPage');
+    expect($component->viewData('booksOnRent')->currentPage())->toBe(2);
+});

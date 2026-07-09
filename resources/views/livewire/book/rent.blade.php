@@ -31,6 +31,7 @@
                             </option>
                         @endforeach
                     </select>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Only students marked present today are listed.</p>
                     @error('student')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
