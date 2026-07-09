@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityType;
 use App\Models\Grade;
 use App\Models\GradeStudent;
 use App\Models\School;
@@ -7,6 +8,9 @@ use App\Models\SchoolStudent;
 use App\Models\Student;
 use App\Models\StudentGuardian;
 use App\Models\User;
+use App\Models\Volunteer;
+use App\Models\VolunteerActivity;
+use App\Models\VolunteerAttendance;
 use Illuminate\Support\Facades\DB;
 
 function makeStudentWithRelations(string $name): Student
@@ -74,4 +78,25 @@ test('no graduated badge is shown for an active student', function () {
     $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
 
     $response->assertDontSee('Graduated ');
+});
+
+test('student detail page shows volunteer activity history for the student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Tutored Student');
+    $volunteer = Volunteer::create(['name' => 'Helpful Volunteer', 'status' => 'active']);
+    $activityType = ActivityType::create(['name' => 'Tutoring']);
+    $attendance = VolunteerAttendance::create(['volunteer_id' => $volunteer->id, 'date' => now(), 'current_in' => false]);
+    $activity = VolunteerActivity::create([
+        'volunteer_attendance_id' => $attendance->id,
+        'volunteer_id' => $volunteer->id,
+        'activity_type_id' => $activityType->id,
+        'date' => now(),
+        'notes' => 'Great progress',
+    ]);
+    $activity->students()->attach($student->id);
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertSee('Tutoring');
+    $response->assertSee('Helpful Volunteer');
 });

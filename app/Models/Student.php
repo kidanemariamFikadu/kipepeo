@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -74,6 +75,16 @@ class Student extends Model
     public function graduatedGrade(): BelongsTo
     {
         return $this->belongsTo(Grade::class, 'graduated_grade_id');
+    }
+
+    /**
+     * Get all of the volunteer activities (tutoring, mentorship, etc.) this student has received.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function volunteerActivities(): BelongsToMany
+    {
+        return $this->belongsToMany(VolunteerActivity::class, 'volunteer_activity_student')->withTimestamps();
     }
 
     public function getCurrentSchoolAttribute()

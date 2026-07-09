@@ -32,7 +32,12 @@ class StudentDetail extends Component
 
     private function loadStudent($id)
     {
-        return Student::with(['guardians', 'schools.school', 'grades.gradeTable'])->find($id);
+        return Student::with([
+            'guardians', 'schools.school', 'grades.gradeTable',
+            'volunteerActivities' => fn ($query) => $query->orderByDesc('date'),
+            'volunteerActivities.activityType',
+            'volunteerActivities.volunteer',
+        ])->find($id);
     }
 
     function mount()

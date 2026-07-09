@@ -25,6 +25,15 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div>
+            @livewire('setting.volunteer-list')
+        </div>
+        <div>
+            @livewire('setting.activity-type-list')
+        </div>
+    </div>
+
     @if (Auth::user()->isAdmin())
         <div class="mb-4">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">

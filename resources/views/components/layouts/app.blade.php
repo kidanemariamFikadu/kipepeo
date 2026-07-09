@@ -84,6 +84,7 @@
                             $navLinks = [
                                 ['href' => '/', 'label' => 'Home', 'active' => request()->is('/')],
                                 ['href' => '/attendance', 'label' => 'Attendance', 'active' => request()->is('attendance*')],
+                                ['href' => '/volunteers', 'label' => 'Volunteers', 'active' => request()->is('volunteers*')],
                                 ['href' => '/students', 'label' => 'Students', 'active' => request()->is('students*', 'student-detail*')],
                                 ['href' => '/books', 'label' => 'Books', 'active' => request()->is('books*', 'book-detail*')],
                                 ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')],

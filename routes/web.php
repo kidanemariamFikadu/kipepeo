@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Attendance\AttendanceStudent;
+use App\Livewire\Attendance\AttendanceVolunteer;
 use App\Livewire\Student\StudentDetail;
 use App\Livewire\StudentList;
 use App\Livewire\Attendance\StudentList as Attendance;
@@ -35,6 +36,7 @@ Route::middleware([
     Route::get('/students', StudentList::class)->name('students');
     Route::get('/student-detail/{student_id}', StudentDetail::class)->name('student-detail');
     Route::get('/attendance', AttendanceStudent::class)->name('attendance');
+    Route::get('/volunteers', AttendanceVolunteer::class)->name('volunteers');
     Route::get('/data-entry', \App\Livewire\DataEntry\Index::class)->name('data-entry');
     Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
