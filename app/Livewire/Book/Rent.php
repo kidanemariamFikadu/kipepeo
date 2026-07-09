@@ -56,53 +56,14 @@ class Rent extends ModalComponent
     {
         return view('livewire.book.rent', [
             'book' => Book::find($this->bookId),
-            'students' => $this->getStudentsWithThreeConsecutiveDays()
+            'students' => $this->getStudentsPresentToday()
         ]);
     }
 
-    public function getStudentsWithThreeConsecutiveDays()
+    public function getStudentsPresentToday()
     {
-        // Calculate the start and end dates of the previous week
-        $endOfLastWeek = Carbon::now();
-        $startOfLastWeek = Carbon::now()->subDays(6);
-
-        // Fetch attendance records for the previous week
-        $attendanceRecords = Attendance::whereBetween('date', [$startOfLastWeek, $endOfLastWeek])
-            ->orderBy('student_id')
-            ->orderBy('date')
-            ->get();
-
-        // Group records by student and sort by date
-        $attendanceDict = [];
-        foreach ($attendanceRecords as $record) {
-            $attendanceDict[$record->student_id][] = Carbon::parse($record->date);
-        }
-
-        // Check for three consecutive days
-        // $studentsWithThreeConsecutiveDays = [];
-        // foreach ($attendanceDict as $studentId => $dates) {
-        //     if ($this->hasThreeConsecutiveDays($dates)) {
-        //         $studentsWithThreeConsecutiveDays[] = $studentId;
-        //     }
-        // }
-
-        // Fetch student objects
-        // $students = Student::whereIn('id', $studentsWithThreeConsecutiveDays)->get();
-
-        return $students=Student::all();
-    }
-
-    private function hasThreeConsecutiveDays($dates)
-    {
-        $dates = collect($dates)->sort()->values();
-        for ($i = 0; $i <= count($dates) - 3; $i++) {
-            if (
-                $dates[$i + 1]->diffInDays($dates[$i]) == 1 &&
-                $dates[$i + 2]->diffInDays($dates[$i + 1]) == 1
-            ) {
-                return true;
-            }
-        }
-        return false;
+        return Student::whereHas('attendances', function ($query) {
+            $query->whereDate('date', now());
+        })->orderBy('name')->get();
     }
 }

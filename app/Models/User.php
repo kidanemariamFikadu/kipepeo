@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\UserRole;
 use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,6 +55,7 @@ class User extends Authenticatable implements Auditable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'role' => UserRole::class,
     ];
 
     /**
@@ -64,6 +66,11 @@ class User extends Authenticatable implements Auditable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
 
     public function scopeSearch($query, $value){
         $query->where('name','like',"%{$value}%")->orWhere('email','like',"%{$value}%");

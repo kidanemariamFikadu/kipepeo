@@ -19,7 +19,7 @@ class EditUser extends ModalComponent
         if ($user->exists) {
             $this->form->name = $user->name;
             $this->form->job_title_id = $user->job_title_id;
-            $this->form->role = $user->role;
+            $this->form->role = $user->role?->value;
         }
     }
 

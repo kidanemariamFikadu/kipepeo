@@ -2,15 +2,22 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Attributes\Validate;
+use App\Enums\UserRole;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 class InvitationForm extends Form
 {
-    #[Validate('required|email|unique:users,email|unique:invites,email')]
     public $email;
-    #[Validate('required|exists:job_titles,id')]
     public $job_title_id;
-    #[Validate('required|in:admin,user')]
     public $role;
+
+    public function rules(): array
+    {
+        return [
+            'email' => 'required|email|unique:users,email|unique:invites,email',
+            'job_title_id' => 'required|exists:job_titles,id',
+            'role' => ['required', Rule::in(array_column(UserRole::cases(), 'value'))],
+        ];
+    }
 }

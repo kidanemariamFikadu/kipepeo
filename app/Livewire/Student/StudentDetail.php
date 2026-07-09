@@ -22,9 +22,6 @@ class StudentDetail extends Component
 
     public $studentDetails;
     public $studentId;
-    public $studentGuardians;
-    public $studentSchools;
-    public $studentGrades;
 
     #[On("student-changed")]
     function updateList($message)
@@ -33,25 +30,20 @@ class StudentDetail extends Component
             session()->flash($message['type'], $message['content']);
     }
 
+    private function loadStudent($id)
+    {
+        return Student::with(['guardians', 'schools.school', 'grades.gradeTable'])->find($id);
+    }
+
     function mount()
     {
-        $student = Student::find(request()->route('student_id')); //->load('guardians', 'schools', 'grades');
-        // $student =  Student::find(request()->route('student_id'))->with(['schools' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }, 'guardians' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }, 'grades' => function ($query) {
-        //     $query->orderBy('created_at', 'desc');
-        // }])->first();
+        $student = $this->loadStudent(request()->route('student_id'));
 
         if ($student) {
             $this->updateStudentForm->name = $student->name;
             $this->updateStudentForm->dob = $student->dob;
             $this->updateStudentForm->gender = $student->gender;
             $this->studentDetails = $student;
-            $this->studentGuardians = StudentGuardian::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
-            // $this->studentSchools = SchoolStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
-            $this->studentGrades = GradeStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
         } else {
             abort(404);
         }
@@ -71,6 +63,8 @@ class StudentDetail extends Component
 
     function deleteGuardian($guardian_id)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         // dd($guardian_id);
         $guardian = StudentGuardian::find($guardian_id);
         $guardian->delete();
@@ -101,6 +95,8 @@ class StudentDetail extends Component
 
     function deleteSchool($student_id, $school_id)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $school = SchoolStudent::where(['school_id' => $school_id, 'student_id' => $student_id])->delete();
         session()->flash('success', 'School deleted successfully.');
         $this->dispatch('student-changed', []);
@@ -108,6 +104,8 @@ class StudentDetail extends Component
 
     function deleteGrade($student_id, $grade)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $school = GradeStudent::where(['grade' => $grade, 'student_id' => $student_id])->delete();
         session()->flash('success', 'Grade deleted successfully.');
         $this->dispatch('student-changed', []);
@@ -116,12 +114,6 @@ class StudentDetail extends Component
     function update()
     {
         $this->updateStudentForm->validate();
-
-        // $date18YearsAgo = Carbon::now()->subYears(5);
-
-        // $this->updateStudentForm->validate([
-        //     'dob' => ['required', 'date', 'before:' .$date18YearsAgo],
-        // ]);
 
         $student = Student::find($this->studentId);
         $student->update([
@@ -138,14 +130,11 @@ class StudentDetail extends Component
     {
         $student_id = (request()->route('student_id')) ? request()->route('student_id') : $this->studentId;
 
-        $student = Student::find($student_id)->first();
-
+        $student = $this->loadStudent($student_id);
 
         if ($student) {
             $this->studentId = $student_id;
-            $this->studentGuardians = StudentGuardian::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
-            // $this->studentSchools = SchoolStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
-            $this->studentGrades = GradeStudent::where('student_id', $student->id)->orderBy('created_at', 'desc')->get();
+            $this->studentDetails = $student;
             return view('livewire.student.student-detail')->title($student->name . ' Detail');
         } else {
             abort(404);

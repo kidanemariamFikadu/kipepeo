@@ -20,11 +20,15 @@
         <div class="p-4 md:p">
             <div class="relative overflow-x-auto">
                 <div class="flex items-center">
-                    <input type="date" type="date" id="date" wire:model="date" placeholder="select date"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-primary-500 focus:border-primary-500 
+                    <input type="date" id="date" wire:model="date" placeholder="select date"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-primary-500 focus:border-primary-500
                         block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Enter text">
-                    <button class="bg-teal-500 text-white p-2" wire:click="search">Search</button>
+                    <button class="inline-flex items-center bg-teal-500 text-white p-2" wire:click="search"
+                        wire:loading.attr="disabled" wire:target="search">
+                        <x-spinner class="h-4 w-4 mr-1.5 text-white" wire:loading wire:target="search" />
+                        Search
+                    </button>
                     @error('date')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
@@ -105,11 +109,3 @@
         </div>
     </div>
 </div>
-
-
-<script>
-    document.getElementById('date').addEventListener('change', function() {
-        alert();
-        @this.call('dateSelected', this.value);
-    });
-</script>

@@ -4,12 +4,14 @@ namespace App\Livewire\Setting;
 
 use App\Imports\BooksImport;
 use App\Jobs\ImportBooksJob;
+use App\Livewire\Concerns\ValidatesSpreadsheetUpload;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportBook extends Component
 {
+    use ValidatesSpreadsheetUpload;
     use WithFileUploads;
     public $books;
 
@@ -28,7 +30,7 @@ class ImportBook extends Component
         $this->isLoading = true;
 
         $this->validate([
-            'books' => 'file|extensions:xlsx,xls,csv',
+            'books' => $this->spreadsheetUploadRules(),
         ]);
         $this->booksList = "staring Uploading";
 

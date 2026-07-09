@@ -4,7 +4,6 @@ namespace App\Livewire\Book;
 
 use App\Models\Book;
 use Livewire\Component;
-use LivewireUI\Modal\ModalComponent;
 
 class BookDetail extends Component
 {
@@ -28,6 +27,25 @@ class BookDetail extends Component
         $this->class = $this->book->class;
         $this->category = $this->book->category;
         $this->copies = $this->book->copies;
+    }
+
+    public function update()
+    {
+        $this->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'category' => 'required',
+        ]);
+
+        $this->book->update([
+            'title' => $this->title,
+            'author' => $this->author,
+            'publisher' => $this->publisher,
+            'class' => $this->class,
+            'category' => $this->category,
+        ]);
+
+        session()->flash('success', 'Book updated successfully');
     }
 
     public function render()

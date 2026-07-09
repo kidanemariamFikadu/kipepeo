@@ -109,31 +109,23 @@ class AttendanceStudent extends Component
 
     public function render()
     {
-        // $newQuery=
         return view('livewire.attendance.attendance-student', [
-            // 'students' => Student::search($this->search)
-            //     ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
-            //         $query->whereHas('attendances', function ($query) {
-            //             $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
-            //         });
-            //     })
-            //     ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
-            //         $query->whereHas('attendances', function ($query) {
-            //             $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
-            //         })->orWhereDoesntHave('attendances');
-            //     })
-            //     ->orderBy($this->sortBy, $this->sortDir)
-            //     ->paginate($this->perPage)
             'students' => Student::search($this->search)
+                ->with([
+                    'guardians',
+                    'schools' => fn ($query) => $query->where('is_current', true)->with('school'),
+                    'grades' => fn ($query) => $query->where('is_current', true)->with('gradeTable'),
+                    'attendances' => fn ($query) => $query->whereDate('date', now()),
+                ])
                 ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
                     $query->whereHas('attendances', function ($query) {
-                        $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+                        $query->whereDate('date', now()->toDateString())->where('current_in', $this->currentlyIn);
                     });
                 })
                 ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
                     $query->where(function ($query) {
                         $query->whereHas('attendances', function ($query) {
-                            $query->whereDate('created_at', now()->toDateString())->where('current_in', $this->currentlyIn);
+                            $query->whereDate('date', now()->toDateString())->where('current_in', $this->currentlyIn);
                         })->orWhereDoesntHave('attendances');
                     });
                 })

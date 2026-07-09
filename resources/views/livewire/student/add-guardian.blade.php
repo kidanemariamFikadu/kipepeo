@@ -3,7 +3,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Add Student
+                {{ $guardian_id ? 'Edit Guardian' : 'Add Guardian' }}
             </h3>
             <button type="button" wire:click="closeModal"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
                     <input id="bordered-checkbox-1" type="checkbox" name="bordered-checkbox" wire:model='addStudentGuardianForm.is_primary'
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-checkbox-1"
                         class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Primary contact</label>
                 </div>
@@ -52,14 +52,16 @@
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
             </div>
-            <button type="submit" wire:loading.attr="disabled"
-                class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <button type="submit" wire:loading.attr="disabled" wire:target="createGuardian"
+                class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
                 <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    wire:loading.remove wire:target="createGuardian">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                     <polyline points="17 21 17 13 7 13 7 21" />
                     <polyline points="7 3 7 8 15 8" />
                 </svg>
+                <x-spinner class="h-5 w-5 text-white" wire:loading wire:target="createGuardian" />
                 Save
             </button>
         </form>

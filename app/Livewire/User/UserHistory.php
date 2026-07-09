@@ -14,7 +14,7 @@ class UserHistory extends ModalComponent
     function mount(User $user)
     {
         if ($user->exists) {
-            $this->userAudit = $user->audits()->latest()->take(5)->get();
+            $this->userAudit = $user->audits()->with('user')->latest()->take(5)->get();
         }
     }
     

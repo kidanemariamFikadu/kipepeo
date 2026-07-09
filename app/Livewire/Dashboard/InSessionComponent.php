@@ -44,8 +44,7 @@ class InSessionComponent extends Component
         $studentsInAttendanceToday = Attendance::whereDate('date', $today)
             ->where('current_in', true)
             ->with('student') // eager load the student relationship
-            ->paginate();
-            // ->pluck('student');
+            ->paginate(6, ['*'], 'in-session-page');
 
         return view('livewire.dashboard.in-session-component', [
             'inSessionStudents' => $studentsInAttendanceToday,

@@ -21,11 +21,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => "George Oteinio",
-            'email' => "emanatty@gmail.com",
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'role' => 'admin',
-            'password' =>  bcrypt("password"), // password
+            'role' => 'user',
+            'password' => bcrypt('password'), // password
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),

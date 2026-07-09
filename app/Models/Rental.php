@@ -9,7 +9,7 @@ class Rental extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['book_id', 'student_id', 'user_id', 'rented_at', 'returned_at', 'due_at'];
+    protected $fillable = ['book_id', 'student_id', 'user_id', 'rented_at', 'returned_at', 'due_at', 'comment'];
 
     public function book()
     {

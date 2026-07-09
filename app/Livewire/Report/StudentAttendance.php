@@ -10,8 +10,15 @@ class StudentAttendance extends Component
     public $date;
     public $students = [];
 
+    public function mount()
+    {
+        $this->date = now()->format('Y-m-d');
+        $this->getStudentByDate();
+    }
+
     function secondsToHms($seconds)
     {
+        $seconds = (int) round($seconds ?? 0);
         $hours = floor($seconds / 3600);
         $minutes = floor(($seconds % 3600) / 60);
         $seconds = $seconds % 60;
@@ -27,8 +34,15 @@ class StudentAttendance extends Component
         ]);
 
         $this->students = Attendance::whereDate('date', $this->date)
-            ->with(['student', 'student.schools', 'student.guardians', 'attrs'])
+            ->with([
+                'student',
+                'student.schools' => fn ($query) => $query->where('is_current', true)->with('school'),
+                'student.guardians',
+                'attrs',
+            ])
             ->get()
+            ->sortBy('student.name')
+            ->values()
             ->map(function ($attendance) {
                 return [
                     'id' => $attendance->student->id,
@@ -41,7 +55,7 @@ class StudentAttendance extends Component
                     }),
                     'current_in' => $attendance->current_in,
                     'total_time' => $this->secondsToHms($attendance->total_time),
-                    'school' => $attendance->student->schools->first()->name ?? 'N/A',
+                    'school' => $attendance->student->schools->first()?->school?->name ?? 'N/A',
                     'guardians' => $attendance->student->guardians->map(function ($guardian) {
                         return [
                             'guardian_name' => $guardian->guardian_name,

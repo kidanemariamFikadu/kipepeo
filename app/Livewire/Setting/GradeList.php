@@ -19,8 +19,8 @@ class GradeList extends Component
     #[Computed]
     public function getGradeListProperty()
     {
-        return \App\Models\Grade::all();
-    }    
+        return \App\Models\Grade::with('nextGrade')->orderBy('grade')->get();
+    }
 
     function removeGrade($gradeId)
     {

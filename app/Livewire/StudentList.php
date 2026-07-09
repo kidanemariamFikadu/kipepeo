@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\School;
 use App\Models\Student;
 use Livewire\Attributes\Computed;
@@ -14,6 +15,7 @@ use Livewire\WithPagination;
 #[Title('Students')]
 class StudentList extends Component
 {
+    use HasSortableColumns;
     use WithPagination;
 
     #[On('student-changed')]
@@ -69,25 +71,17 @@ class StudentList extends Component
 
     function deleteSelected()
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         Student::destroy($this->selectedStudents);
         $this->reset(['selectedStudents', 'selectAll']);
         $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Students removed successfully']);
     }
 
-    public function setSortBy($sortByField)
-    {
-
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
-        }
-
-        $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
-    }
-
     public function deleteRecord($studentId)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $student = Student::find($studentId);
         $student?->delete();
         $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student removed successfully']);
@@ -97,6 +91,11 @@ class StudentList extends Component
     {
         return view('livewire.student-list', [
             'students' => Student::search($this->search)
+                ->with([
+                    'guardians',
+                    'schools' => fn ($query) => $query->where('is_current', true)->with('school'),
+                    'grades' => fn ($query) => $query->where('is_current', true)->with('gradeTable'),
+                ])
                 ->when($this->school !== '', function ($query) {
                     // $query->where('current_school', $this->admin);
                     $query->whereHas('schools', function ($q) {

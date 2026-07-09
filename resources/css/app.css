@@ -5,3 +5,65 @@
 [x-cloak] {
     display: none;
 }
+
+.dark-mode .light-image {
+    display: none;
+}
+
+.dark-mode .dark-image {
+    display: block;
+}
+
+.light-mode .light-image {
+    display: block;
+}
+
+.light-mode .dark-image {
+    display: none;
+}
+
+.print-header {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .printable,
+    .printable * {
+        visibility: visible;
+    }
+
+    .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #fff !important;
+    }
+
+    .printable * {
+        background-color: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        border-color: #999 !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .print-header {
+        display: block !important;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    canvas {
+        max-width: 100% !important;
+    }
+}

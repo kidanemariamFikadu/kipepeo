@@ -22,39 +22,39 @@ class AttendanceReport extends Component
 
     public function mount()
     {
-        $this->fromDate = Carbon::now()->format('Y-m-d');
+        $this->fromDate = Carbon::now()->startOfWeek()->format('Y-m-d');
         $this->toDate = Carbon::now()->format('Y-m-d');
+        $this->filter();
     }
 
     public function filter()
     {
-        $query = Attendance::query();
+        $this->validate([
+            'fromDate' => 'required|date',
+            'toDate' => 'required|date|after_or_equal:fromDate',
+        ]);
 
-        if ($this->fromDate && $this->toDate) {
-            $query->whereBetween('date', [
-                Carbon::parse($this->fromDate)->startOfDay(),
-                Carbon::parse($this->toDate)->endOfDay()
-            ]);
-        }
-
-        $attendances = $query->with(['student'])->get();
+        $attendances = Attendance::whereBetween('date', [
+            Carbon::parse($this->fromDate)->startOfDay(),
+            Carbon::parse($this->toDate)->endOfDay(),
+        ])->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable')])->get();
 
         $this->totalStudents = $attendances->count();
         $this->averageAttendanceDuration = $attendances->avg('total_time');
-        $this->studentsByGender = $attendances->groupBy('student.gender')->map->count();
-        // $this->studentsByAge = $attendances->groupBy('student.studentAge')->map->avg();
-        $this->studentsBySchool = $attendances->groupBy('student.currentSchool.name')->map->count();
-        $this->studentsByGrade = $attendances->groupBy('student.currentGrade.grade')->map->count();
+        $this->studentsByGender = $attendances->groupBy(fn ($a) => $a->student?->gender ?: 'Unspecified')->map->count()->sortDesc();
+        $this->studentsBySchool = $attendances->groupBy(fn ($a) => $a->student?->schools->first()?->school?->name ?: 'Unassigned')->map->count()->sortDesc();
+        $this->studentsByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')->map->count()->sortDesc();
 
         $attendancesGroupedByDate = $attendances->groupBy(function ($attendance) {
             return Carbon::parse($attendance->date)->toDateString();
-        });
+        })->sortKeys();
 
+        $dailyStatistics = [];
         foreach ($attendancesGroupedByDate as $date => $attendancesForDate) {
             $dailyStatistics[$date] = [
                 'totalStudents' => $attendancesForDate->count(),
                 'averageAttendanceDuration' => $this->secondsToHms($attendancesForDate->avg('total_time')),
-                'studentsByGender' => $attendancesForDate->groupBy('student.gender')->map->count()
+                'studentsByGender' => $attendancesForDate->groupBy(fn ($a) => $a->student?->gender ?: 'Unspecified')->map->count(),
             ];
         }
 
@@ -63,6 +63,7 @@ class AttendanceReport extends Component
 
     function secondsToHms($seconds)
     {
+        $seconds = (int) round($seconds ?? 0);
         $hours = floor($seconds / 3600);
         $minutes = floor(($seconds % 3600) / 60);
         $seconds = $seconds % 60;

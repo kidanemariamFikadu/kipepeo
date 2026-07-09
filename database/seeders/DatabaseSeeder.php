@@ -12,8 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory()->create();
-        SchoolSeed::class;
-        GradeSeed::class;
+        \App\Models\User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+        $this->call(SchoolSeed::class);
+        $this->call(GradeSeed::class);
+        $this->call(StudentSeed::class);
+        $this->call(BookSeed::class);
+        $this->call(AttendanceSeed::class);
     }
 }

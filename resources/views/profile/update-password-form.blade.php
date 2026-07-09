@@ -32,7 +32,8 @@
             {{ __('Saved.') }}
         </x-action-message>
 
-        <x-button>
+        <x-button wire:loading.attr="disabled" wire:target="updatePassword">
+            <x-spinner class="h-4 w-4 mr-1.5 text-white" wire:loading wire:target="updatePassword" />
             {{ __('Save') }}
         </x-button>
     </x-slot>

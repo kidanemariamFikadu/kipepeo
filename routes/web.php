@@ -22,10 +22,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
-
 Route::get('/accept-invite/{token}', \App\Livewire\User\AcceptInvite::class)->name('accept-invite');
 
 Route::middleware([
@@ -35,18 +31,21 @@ Route::middleware([
 ])->group(function () {
     Route::get('/', \App\Livewire\dashboard\Index::class)->name('dashboard');
     Route::get('/dashboard', \App\Livewire\dashboard\Index::class)->name('dashboard');
-    Route::get('/users', UserList::class)->name('users');
-    Route::get('/user-create', CreateUser::class)->name('Create User');
-    Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');
-    Route::get('/invitation', Invitation::class)->name('invitation');
     Route::get('/my-profile', MyProfile::class)->name('my-profile');
     Route::get('/students', StudentList::class)->name('students');
     Route::get('/student-detail/{student_id}', StudentDetail::class)->name('student-detail');
     Route::get('/attendance', AttendanceStudent::class)->name('attendance');
-    Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
     Route::get('/data-entry', \App\Livewire\DataEntry\Index::class)->name('data-entry');
     Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
     Route::get('/book-detail/{id}', \App\Livewire\Book\BookDetail::class)->name('book-detail');
 
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/users', UserList::class)->name('users');
+        Route::get('/user-create', CreateUser::class)->name('Create User');
+        Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');
+        Route::get('/invitation', Invitation::class)->name('invitation');
+        Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
+        Route::get('/promote-students', \App\Livewire\Setting\PromoteStudents::class)->name('promote-students');
+    });
 });

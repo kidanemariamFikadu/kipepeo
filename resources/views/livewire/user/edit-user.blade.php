@@ -34,7 +34,7 @@
                         title</label>
                     <select id="job_title_id" wire:model='form.job_title_id'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option selected>Choose a job title</option>
+                        <option value="" selected>Choose a job title</option>
                         @foreach ($this->jobTitles as $job)
                             <option value="{{ $job->id }}">{{ $job->name }}</option>
                         @endforeach
@@ -48,7 +48,7 @@
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                     <select id="role" wire:model='form.role'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option selected>Choose a role</option>
+                        <option value="" selected>Choose a role</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
                     </select>
@@ -57,14 +57,16 @@
                     @enderror
                 </div>
             </div>
-            <button type="submit" wire:loading.attr="disabled"
-                class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                <svg class="h-5 w-5 pr-2 text-white" <svg width="24" height="24" viewBox="0 0 24 24"
+            <button type="submit" wire:loading.attr="disabled" wire:target="update"
+                class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
+                <svg class="h-5 w-5 mr-2 text-white" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
+                    stroke-linecap="round" stroke-linejoin="round"
+                    wire:loading.remove wire:target="update">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
+                <x-spinner class="h-5 w-5 mr-2 text-white" wire:loading wire:target="update" />
                 Update User
             </button>
         </form>

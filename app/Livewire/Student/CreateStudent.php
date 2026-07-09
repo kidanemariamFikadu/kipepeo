@@ -5,7 +5,6 @@ namespace App\Livewire\Student;
 use App\Livewire\Forms\CreateStudentForm;
 use App\Models\School;
 use App\Services\StudentService;
-use Carbon\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
@@ -48,17 +47,11 @@ class CreateStudent extends ModalComponent
             $this->form->validate([
                 'name' => 'required|max:255',
                 'gender' => 'required|in:male,female,other',
-                'dob' => 'required|date',
+                'dob' => 'required|date|before_or_equal:today',
                 'grade' => 'required|exists:grades,id',
                 'school' => 'required|exists:schools,id',
                 'guardian_name' => 'required|max:255',
                 'guardian_phone' => 'required|phone:KE',
-            ]);
-
-            $date18YearsAgo = Carbon::now()->subYears(5);
-
-            $this->form->validate([
-                'dob' => ['required', 'date', 'before:' . $date18YearsAgo],
             ]);
         }
 

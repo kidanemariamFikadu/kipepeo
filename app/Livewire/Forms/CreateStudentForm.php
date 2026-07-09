@@ -30,7 +30,6 @@ class CreateStudentForm extends Form
 
     protected $messages = [
         'dob.required' => 'The date of birth field is required.',
-        // 'dob.before' => 'The student should be 5 and above.',
         'guardian_phone.phone' => 'The guardian phone number is invalid.',
     ];
 }

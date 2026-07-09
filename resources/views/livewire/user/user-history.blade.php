@@ -17,53 +17,44 @@
             </button>
         </div>
         <!-- Modal body -->
-        <div class="p-4 md:p">
+        <div class="p-4 md:p-5">
             <div class="relative overflow-x-auto">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Changed by
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Original value
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                New value
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Changed type
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Changed at
-                            </th>
+                            <th scope="col" class="px-4 py-3">Changed by</th>
+                            <th scope="col" class="px-4 py-3">Original value</th>
+                            <th scope="col" class="px-4 py-3">New value</th>
+                            <th scope="col" class="px-4 py-3">Change type</th>
+                            <th scope="col" class="px-4 py-3">Changed at</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($userAudit as $audit)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row"
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{App\Models\User::find($audit->user_id)->name}}
-                            </th>
-                            <td class="px-6 py-4 break-words">
-                                {{json_encode($audit->old_values)}}
-                            </td>
-                            <td class="px-6 py-4 break-words">
-                                {{json_encode($audit->new_values)}}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{$audit->event}}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{$audit->created_at}}
-                            </td>
-                        </tr>
-                        @endforeach
+                        @forelse ($userAudit as $audit)
+                            <tr class="border-b dark:border-gray-700">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ $audit->user?->name ?? 'Unknown user' }}
+                                </th>
+                                <td class="px-4 py-3 break-words">{{ json_encode($audit->old_values) }}</td>
+                                <td class="px-4 py-3 break-words">{{ json_encode($audit->new_values) }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                        {{ Str::title($audit->event) }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">{{ $audit->created_at->format('Y-m-d H:i') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    No history recorded yet.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-

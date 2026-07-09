@@ -12,30 +12,32 @@
         </div>
     @endif
 
-    @livewire('dashboard.greeting-component', ['name' => auth()->user()->name])
+    <div class="p-2 md:p-6 space-y-4">
+        @livewire('dashboard.greeting-component', ['name' => auth()->user()->name])
 
-    <div class="grid grid-cols-2 gap-4 p-8">
-        <div>
-            <div class="bg-white dark:bg-gray-800 p-6 mb-4 rounded-md shadow-md">
-                <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Birthday's This week</h2>
-
-                @livewire('dashboard.birthday-component')
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6  mb-4  rounded-md shadow-md">
-                
-            
-                <livewire:dashboard.attending-students-by-school />
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <livewire:dashboard.attendance-trend-chart />
+            <livewire:dashboard.student-breakdown-chart />
         </div>
-        <div>
-            <div class="bg-white dark:bg-gray-800 p-6  mb-4  rounded-md shadow-md">
-                <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Currently In</h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
+                <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Currently in</h2>
                 @livewire('dashboard.in-session-component')
             </div>
-            {{-- <div class="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
-                <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Card 4</h2>
-                <p>Content for Card 4 goes here.</p>
-            </div> --}}
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
+                <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Birthdays this week</h2>
+                @livewire('dashboard.birthday-component')
+            </div>
+
+            <livewire:dashboard.book-inventory-chart />
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+            <div>
+                <livewire:dashboard.attending-students-by-school />
+            </div>
         </div>
     </div>
 </div>

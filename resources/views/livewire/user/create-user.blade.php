@@ -28,8 +28,8 @@
             @endif
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
-                    <label for="grade"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">name</label>
+                    <label for="name"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                     <input type="text" wire:model='form.name' id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="name">
@@ -54,7 +54,7 @@
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Job title</label>
                     <select name="job_title_id" id="job_title_id" wire:model='form.job_title_id'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="">Select School</option>
+                        <option value="">Select job title</option>
                         @foreach ($jobTitles as $job)
                             <option value="{{ $job->id }}">{{ $job->name }}</option>
                         @endforeach
@@ -68,7 +68,7 @@
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                     <select name="role" id="role" wire:model='form.role'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option selected>Choose a role</option>
+                        <option value="" selected>Choose a role</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
                     </select>
@@ -77,14 +77,16 @@
                     @enderror
                 </div>
             </div>
-            <button type="submit" wire:loading.attr="disabled"
-                class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <button type="submit" wire:loading.attr="disabled" wire:target="create"
+                class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
                 <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    wire:loading.remove wire:target="create">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                     <polyline points="17 21 17 13 7 13 7 21" />
                     <polyline points="7 3 7 8 15 8" />
                 </svg>
+                <x-spinner class="h-5 w-5 text-white" wire:loading wire:target="create" />
                 Save
             </button>
         </form>

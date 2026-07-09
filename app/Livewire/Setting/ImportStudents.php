@@ -4,6 +4,7 @@ namespace App\Livewire\Setting;
 
 use App\Imports\StudentsImport;
 use App\Jobs\ImportStudentsJob;
+use App\Livewire\Concerns\ValidatesSpreadsheetUpload;
 use App\Models\Grade;
 use App\Models\School;
 use App\Models\Student;
@@ -13,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportStudents extends Component
 {
+    use ValidatesSpreadsheetUpload;
     use WithFileUploads;
     public $students;
 
@@ -31,7 +33,7 @@ class ImportStudents extends Component
         $this->isLoading = true;
 
         $this->validate([
-            'students' => 'file|extensions:xlsx,xls,csv',
+            'students' => $this->spreadsheetUploadRules(),
         ]);
         $this->studentsList = "staring Uploading";
 
