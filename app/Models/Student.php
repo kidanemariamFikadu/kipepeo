@@ -125,4 +125,26 @@ class Student extends Model
     {
         $query->whereNull('graduated_at');
     }
+
+    /**
+     * Mark this student as having graduated from the given grade: drops
+     * their current grade and school membership and stamps the graduation
+     * date, same outcome whether triggered individually or via a bulk
+     * promotion run.
+     */
+    public function graduate(int $gradeId): void
+    {
+        GradeStudent::where('student_id', $this->id)
+            ->where('is_current', true)
+            ->update(['is_current' => false]);
+
+        SchoolStudent::where('student_id', $this->id)
+            ->where('is_current', true)
+            ->update(['is_current' => false]);
+
+        $this->update([
+            'graduated_at' => now(),
+            'graduated_grade_id' => $gradeId,
+        ]);
+    }
 }

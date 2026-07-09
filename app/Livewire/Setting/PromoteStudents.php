@@ -4,7 +4,6 @@ namespace App\Livewire\Setting;
 
 use App\Models\Grade;
 use App\Models\GradeStudent;
-use App\Models\SchoolStudent;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -62,9 +61,9 @@ class PromoteStudents extends Component
                     ->get();
 
                 foreach ($currentRecords as $record) {
-                    $record->update(['is_current' => false]);
-
                     if ($grade->next_grade_id) {
+                        $record->update(['is_current' => false]);
+
                         GradeStudent::create([
                             'student_id' => $record->student_id,
                             'grade' => $grade->next_grade_id,
@@ -73,14 +72,7 @@ class PromoteStudents extends Component
 
                         $promotedCount++;
                     } else {
-                        SchoolStudent::where('student_id', $record->student_id)
-                            ->where('is_current', true)
-                            ->update(['is_current' => false]);
-
-                        Student::where('id', $record->student_id)->update([
-                            'graduated_at' => now(),
-                            'graduated_grade_id' => $grade->id,
-                        ]);
+                        Student::find($record->student_id)->graduate($grade->id);
 
                         $graduatedCount++;
                     }

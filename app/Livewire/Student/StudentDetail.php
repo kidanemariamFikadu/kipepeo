@@ -126,6 +126,24 @@ class StudentDetail extends Component
         $this->dispatch('student-changed', []);
     }
 
+    function graduate()
+    {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
+        $student = Student::findOrFail($this->studentId);
+        $currentGrade = $student->current_grade;
+
+        if ($student->graduated_at || ! $currentGrade || $currentGrade->next_grade_id) {
+            session()->flash('error', 'Only an active student in a final grade (no next grade configured) can be graduated.');
+
+            return;
+        }
+
+        $student->graduate($currentGrade->id);
+
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => "{$student->name} has been graduated."]);
+    }
+
     public function render()
     {
         $student_id = (request()->route('student_id')) ? request()->route('student_id') : $this->studentId;

@@ -95,3 +95,33 @@ test('the student picker only lists students present today', function () {
     expect($students->pluck('name'))->not->toContain('Absent Today');
     expect($students->pluck('name'))->not->toContain('Present Yesterday');
 });
+
+test('the student picker also lists alumni regardless of attendance', function () {
+    $user = User::factory()->create();
+    $book = makeRentableBook(1);
+    $absentToday = makeStudentWithCurrentSchoolAndGrade('Absent Today');
+    $alumnus = Student::create(['name' => 'Graduated Alum', 'dob' => '2005-01-01', 'gender' => 'male', 'graduated_at' => now()]);
+
+    $students = Livewire::actingAs($user)
+        ->test(Rent::class, ['bookId' => $book->id])
+        ->viewData('students');
+
+    expect($students->pluck('name'))->toContain('Graduated Alum');
+    expect($students->pluck('name'))->not->toContain('Absent Today');
+});
+
+test('an alumnus can be picked to rent a book', function () {
+    $user = User::factory()->create();
+    $book = makeRentableBook(1);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+    $alumnus = Student::create(['name' => 'Graduated Alum', 'dob' => '2005-01-01', 'gender' => 'male', 'graduated_at' => now(), 'graduated_grade_id' => $terminalGrade->id]);
+
+    Livewire::actingAs($user)
+        ->test(Rent::class, ['bookId' => $book->id])
+        ->set('student', $alumnus->id)
+        ->set('dueDate', now()->addDays(3)->format('Y-m-d'))
+        ->call('rent')
+        ->assertDispatched('rental-changed');
+
+    expect(Rental::where('book_id', $book->id)->where('student_id', $alumnus->id)->exists())->toBeTrue();
+});

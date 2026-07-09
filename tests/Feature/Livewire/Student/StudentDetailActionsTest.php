@@ -116,3 +116,61 @@ test('non-admin cannot delete a grade association', function () {
 
     expect(GradeStudent::where(['student_id' => $student->id, 'grade' => $grade->id])->exists())->toBeTrue();
 });
+
+test('admin can graduate a student who is currently in a final grade', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $student = Student::create(['name' => 'Detail Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+    GradeStudent::create(['student_id' => $student->id, 'grade' => $terminalGrade->id, 'is_current' => true]);
+    $school = School::create(['name' => 'Test School']);
+    SchoolStudent::create(['student_id' => $student->id, 'school_id' => $school->id, 'is_current' => true]);
+
+    callStudentDetailMethod($admin, $student, 'graduate');
+
+    $student->refresh();
+    expect($student->graduated_at)->not->toBeNull();
+    expect($student->graduated_grade_id)->toBe($terminalGrade->id);
+    expect(GradeStudent::where(['student_id' => $student->id, 'grade' => $terminalGrade->id])->first()->is_current)->toBeFalsy();
+    expect(SchoolStudent::where(['student_id' => $student->id, 'school_id' => $school->id])->first()->is_current)->toBeFalsy();
+});
+
+test('non-admin cannot graduate a student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = Student::create(['name' => 'Detail Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+    GradeStudent::create(['student_id' => $student->id, 'grade' => $terminalGrade->id, 'is_current' => true]);
+
+    callStudentDetailMethod($user, $student, 'graduate');
+
+    expect($student->fresh()->graduated_at)->toBeNull();
+});
+
+test('graduate is a no-op for a student whose current grade still promotes onward', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $student = Student::create(['name' => 'Detail Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $grade1 = Grade::create(['grade' => 'GRADE 1']);
+    $grade2 = Grade::create(['grade' => 'GRADE 2']);
+    $grade1->update(['next_grade_id' => $grade2->id]);
+    GradeStudent::create(['student_id' => $student->id, 'grade' => $grade1->id, 'is_current' => true]);
+
+    callStudentDetailMethod($admin, $student, 'graduate');
+
+    expect($student->fresh()->graduated_at)->toBeNull();
+});
+
+test('graduate is a no-op for a student who has already graduated', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+    $student = Student::create([
+        'name' => 'Detail Student',
+        'dob' => '2010-01-01',
+        'gender' => 'male',
+        'graduated_at' => now()->subDay(),
+        'graduated_grade_id' => $terminalGrade->id,
+    ]);
+    $originalGraduatedAt = $student->graduated_at;
+
+    callStudentDetailMethod($admin, $student, 'graduate');
+
+    expect($student->fresh()->graduated_at->eq($originalGraduatedAt))->toBeTrue();
+});

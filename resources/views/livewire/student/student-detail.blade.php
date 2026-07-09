@@ -27,6 +27,14 @@
             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
                 Graduated {{ $studentDetails->graduated_at->format('Y-m-d') }}
             </span>
+        @elseif (auth()->user()->isAdmin() && $studentDetails->current_grade && ! $studentDetails->current_grade->next_grade_id)
+            <button wire:click="graduate"
+                wire:confirm="Graduate {{ $studentDetails->name }}? This marks them as an alumnus and removes them from the active roster."
+                wire:loading.attr="disabled" wire:target="graduate"
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
+                <x-spinner class="h-3 w-3 mr-1 text-white" wire:loading wire:target="graduate" />
+                Graduate student
+            </button>
         @endif
     </div>
 

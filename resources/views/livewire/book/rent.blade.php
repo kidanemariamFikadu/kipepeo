@@ -27,11 +27,11 @@
                         <option value="" selected>Choose a student</option>
                         @foreach ($students as $student)
                             <option value="{{ $student->id }}">
-                                {{ $student->name }}{{ $student->current_school ? ' - ' . $student->current_school->name : '' }}{{ $student->current_grade ? ' - ' . $student->current_grade->grade : '' }}
+                                {{ $student->name }}{{ $student->graduated_at ? ' - Alumni' . ($student->graduatedGrade ? ' (' . $student->graduatedGrade->grade . ')' : '') : ($student->current_school ? ' - ' . $student->current_school->name : '') . ($student->current_grade ? ' - ' . $student->current_grade->grade : '') }}
                             </option>
                         @endforeach
                     </select>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Only students marked present today are listed.</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Students marked present today, plus alumni, are listed.</p>
                     @error('student')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror

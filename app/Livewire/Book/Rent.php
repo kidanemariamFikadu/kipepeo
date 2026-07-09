@@ -56,14 +56,21 @@ class Rent extends ModalComponent
     {
         return view('livewire.book.rent', [
             'book' => Book::find($this->bookId),
-            'students' => $this->getStudentsPresentToday()
+            'students' => $this->getRentableStudents()
         ]);
     }
 
-    public function getStudentsPresentToday()
+    /**
+     * Students eligible to borrow: anyone marked present today, plus
+     * alumni -- graduated students no longer show up in attendance but
+     * should still be able to rent.
+     */
+    public function getRentableStudents()
     {
-        return Student::whereHas('attendances', function ($query) {
-            $query->whereDate('date', now());
+        return Student::where(function ($query) {
+            $query->whereHas('attendances', function ($query) {
+                $query->whereDate('date', now());
+            })->orWhereNotNull('graduated_at');
         })->orderBy('name')->get();
     }
 }
