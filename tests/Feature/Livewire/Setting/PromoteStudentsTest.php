@@ -3,6 +3,8 @@
 use App\Livewire\Setting\PromoteStudents;
 use App\Models\Grade;
 use App\Models\GradeStudent;
+use App\Models\School;
+use App\Models\SchoolStudent;
 use App\Models\Student;
 use App\Models\User;
 use Livewire\Livewire;
@@ -53,7 +55,7 @@ test('promote preserves grade history instead of deleting the old record', funct
     expect(GradeStudent::where('student_id', $student->id)->count())->toBe(2);
 });
 
-test('promote skips a grade with no next grade configured and reports it', function () {
+test('promoting a grade with no next grade configured graduates its students instead', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
     $student = makeStudentInGrade($terminalGrade);
@@ -63,9 +65,50 @@ test('promote skips a grade with no next grade configured and reports it', funct
         ->set('selectedGrades', [$terminalGrade->id])
         ->call('promote');
 
-    $current = GradeStudent::where('student_id', $student->id)->where('is_current', true)->first();
-    expect((int) $current->grade)->toBe($terminalGrade->id);
+    $student->refresh();
+    expect($student->graduated_at)->not->toBeNull();
+    expect($student->graduated_grade_id)->toBe($terminalGrade->id);
+
+    // No new grade row is created -- there's nowhere to go -- but the old one is no longer current.
     expect(GradeStudent::where('student_id', $student->id)->count())->toBe(1);
+    $old = GradeStudent::where('student_id', $student->id)->where('grade', $terminalGrade->id)->first();
+    expect($old->is_current)->toBeFalsy();
+});
+
+test('graduating a student also drops their current school membership', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+    $student = makeStudentInGrade($terminalGrade);
+    $school = School::create(['name' => 'Test School']);
+    SchoolStudent::create(['student_id' => $student->id, 'school_id' => $school->id, 'is_current' => true]);
+
+    Livewire::actingAs($admin)
+        ->test(PromoteStudents::class)
+        ->set('selectedGrades', [$terminalGrade->id])
+        ->call('promote');
+
+    $current = SchoolStudent::where('student_id', $student->id)->where('school_id', $school->id)->first();
+    expect($current->is_current)->toBeFalsy();
+});
+
+test('a single submit can promote some grades and graduate others at once', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $grade1 = Grade::create(['grade' => 'GRADE 1']);
+    $grade2 = Grade::create(['grade' => 'GRADE 2']);
+    $grade1->update(['next_grade_id' => $grade2->id]);
+    $terminalGrade = Grade::create(['grade' => 'GRADE 12']);
+
+    $promoted = makeStudentInGrade($grade1);
+    $graduated = makeStudentInGrade($terminalGrade);
+
+    Livewire::actingAs($admin)
+        ->test(PromoteStudents::class)
+        ->set('selectedGrades', [$grade1->id, $terminalGrade->id])
+        ->call('promote');
+
+    expect((int) GradeStudent::where('student_id', $promoted->id)->where('is_current', true)->first()->grade)->toBe($grade2->id);
+    expect($graduated->fresh()->graduated_at)->not->toBeNull();
+    expect((int) $graduated->fresh()->graduated_grade_id)->toBe($terminalGrade->id);
 });
 
 test('promote requires at least one grade to be selected', function () {
@@ -106,7 +149,7 @@ test('gradeSummary only lists grades that currently have students', function () 
     expect($summary->first()->current_students_count)->toBe(1);
 });
 
-test('toggleSelectAll only selects grades that have a next grade configured', function () {
+test('toggleSelectAll selects every grade with students, including terminal ones', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $grade1 = Grade::create(['grade' => 'GRADE 1']);
     $grade2 = Grade::create(['grade' => 'GRADE 2']);
@@ -115,10 +158,11 @@ test('toggleSelectAll only selects grades that have a next grade configured', fu
     makeStudentInGrade($grade1);
     makeStudentInGrade($terminal);
 
-    Livewire::actingAs($admin)
+    $component = Livewire::actingAs($admin)
         ->test(PromoteStudents::class)
-        ->call('toggleSelectAll', true)
-        ->assertSet('selectedGrades', [$grade1->id]);
+        ->call('toggleSelectAll', true);
+
+    expect($component->get('selectedGrades'))->toEqualCanonicalizing([$grade1->id, $terminal->id]);
 });
 
 test('a soft-deleted student is not promoted', function () {

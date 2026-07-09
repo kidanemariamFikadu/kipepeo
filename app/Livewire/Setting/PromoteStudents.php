@@ -4,6 +4,7 @@ namespace App\Livewire\Setting;
 
 use App\Models\Grade;
 use App\Models\GradeStudent;
+use App\Models\SchoolStudent;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -13,7 +14,7 @@ use Livewire\Component;
 #[Title('Promote Students')]
 class PromoteStudents extends Component
 {
-    /** @var array<int> Grade ids selected for promotion */
+    /** @var array<int> Grade ids selected for promotion/graduation */
     public array $selectedGrades = [];
 
     #[Computed]
@@ -33,7 +34,7 @@ class PromoteStudents extends Component
     public function toggleSelectAll(bool $selectAll): void
     {
         $this->selectedGrades = $selectAll
-            ? $this->gradeSummary->whereNotNull('next_grade_id')->pluck('id')->all()
+            ? $this->gradeSummary->pluck('id')->all()
             : [];
     }
 
@@ -44,21 +45,16 @@ class PromoteStudents extends Component
         $this->validate([
             'selectedGrades' => ['required', 'array', 'min:1'],
         ], [
-            'selectedGrades.required' => 'Select at least one grade to promote.',
+            'selectedGrades.required' => 'Select at least one grade to promote or graduate.',
         ]);
 
         $grades = Grade::whereIn('id', $this->selectedGrades)->get();
 
         $promotedCount = 0;
-        $skipped = [];
+        $graduatedCount = 0;
 
-        DB::transaction(function () use ($grades, &$promotedCount, &$skipped) {
+        DB::transaction(function () use ($grades, &$promotedCount, &$graduatedCount) {
             foreach ($grades as $grade) {
-                if (! $grade->next_grade_id) {
-                    $skipped[] = $grade->grade;
-                    continue;
-                }
-
                 $currentRecords = GradeStudent::query()
                     ->where('grade', $grade->id)
                     ->where('is_current', true)
@@ -68,13 +64,26 @@ class PromoteStudents extends Component
                 foreach ($currentRecords as $record) {
                     $record->update(['is_current' => false]);
 
-                    GradeStudent::create([
-                        'student_id' => $record->student_id,
-                        'grade' => $grade->next_grade_id,
-                        'is_current' => true,
-                    ]);
+                    if ($grade->next_grade_id) {
+                        GradeStudent::create([
+                            'student_id' => $record->student_id,
+                            'grade' => $grade->next_grade_id,
+                            'is_current' => true,
+                        ]);
 
-                    $promotedCount++;
+                        $promotedCount++;
+                    } else {
+                        SchoolStudent::where('student_id', $record->student_id)
+                            ->where('is_current', true)
+                            ->update(['is_current' => false]);
+
+                        Student::where('id', $record->student_id)->update([
+                            'graduated_at' => now(),
+                            'graduated_grade_id' => $grade->id,
+                        ]);
+
+                        $graduatedCount++;
+                    }
                 }
             }
         });
@@ -82,15 +91,19 @@ class PromoteStudents extends Component
         $this->selectedGrades = [];
         unset($this->gradeSummary);
 
-        $message = $promotedCount > 0
-            ? "{$promotedCount} student(s) promoted successfully."
-            : 'No students were promoted.';
-
-        if (! empty($skipped)) {
-            $message .= ' Skipped (no next grade configured): '.implode(', ', $skipped).'.';
+        $parts = [];
+        if ($promotedCount > 0) {
+            $parts[] = "{$promotedCount} student(s) promoted";
+        }
+        if ($graduatedCount > 0) {
+            $parts[] = "{$graduatedCount} student(s) graduated";
         }
 
-        session()->flash($promotedCount > 0 ? 'success' : 'error', $message);
+        $message = $parts !== []
+            ? implode(' and ', $parts).'.'
+            : 'No students were promoted or graduated.';
+
+        session()->flash($parts !== [] ? 'success' : 'error', $message);
     }
 
     public function render()

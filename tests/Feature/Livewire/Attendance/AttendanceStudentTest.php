@@ -53,3 +53,14 @@ test('setSortBy toggles sort direction like other lists', function () {
         ->call('setSortBy', 'name')
         ->assertSet('sortDir', 'ASC');
 });
+
+test('graduated students do not show up in the attendance search', function () {
+    $user = User::factory()->create();
+    Student::create(['name' => 'Active Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    Student::create(['name' => 'Graduated Student', 'dob' => '2005-01-01', 'gender' => 'male', 'graduated_at' => now()]);
+
+    $html = Livewire::actingAs($user)->test(AttendanceStudent::class)->html();
+
+    expect($html)->toContain('Active Student');
+    expect($html)->not->toContain('Graduated Student');
+});

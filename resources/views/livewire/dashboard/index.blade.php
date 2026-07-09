@@ -20,7 +20,7 @@
             <livewire:dashboard.student-breakdown-chart />
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
                 <h2 class="text-gray-700 dark:text-white text-xl font-semibold mb-4">Currently in</h2>
                 @livewire('dashboard.in-session-component')
@@ -32,6 +32,7 @@
             </div>
 
             <livewire:dashboard.book-inventory-chart />
+            <livewire:dashboard.alumni-stats-component />
         </div>
 
         <div class="grid grid-cols-1 gap-4">

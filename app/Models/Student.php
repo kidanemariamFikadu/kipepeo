@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -16,7 +17,13 @@ class Student extends Model
     protected $fillable = [
         'name',
         'dob',
-        'gender'
+        'gender',
+        'graduated_at',
+        'graduated_grade_id',
+    ];
+
+    protected $casts = [
+        'graduated_at' => 'datetime',
     ];
 
     /**
@@ -59,6 +66,16 @@ class Student extends Model
         return $this->hasMany(GradeStudent::class, 'student_id');
     }
 
+    /**
+     * Get the grade the student graduated from, if any.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function graduatedGrade(): BelongsTo
+    {
+        return $this->belongsTo(Grade::class, 'graduated_grade_id');
+    }
+
     public function getCurrentSchoolAttribute()
     {
         return $this->schools()->where('is_current', true)->first()?->school;
@@ -98,5 +115,14 @@ class Student extends Model
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%"); //->orWhere('email','like',"%{$value}%");
+    }
+
+    /**
+     * Students who haven't graduated -- the ones who should show up in the
+     * active roster, attendance search, etc.
+     */
+    public function scopeActive($query)
+    {
+        $query->whereNull('graduated_at');
     }
 }

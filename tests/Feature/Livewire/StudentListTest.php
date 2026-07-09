@@ -45,3 +45,24 @@ test('non-admin does not see selection checkboxes or the delete button', functio
     expect($html)->not->toContain('wire:model="selectedStudents"');
     expect($html)->not->toContain('deleteRecord(');
 });
+
+test('graduated students are excluded from the student list', function () {
+    $user = User::factory()->create();
+    Student::create(['name' => 'Active Student', 'dob' => '2015-01-01', 'gender' => 'male']);
+    Student::create(['name' => 'Graduated Student', 'dob' => '2010-01-01', 'gender' => 'male', 'graduated_at' => now()]);
+
+    $html = Livewire::actingAs($user)->test(StudentList::class)->html();
+
+    expect($html)->toContain('Active Student');
+    expect($html)->not->toContain('Graduated Student');
+});
+
+test('toggleSelectAll does not select graduated students', function () {
+    $user = User::factory()->create();
+    $active = Student::create(['name' => 'Active Student', 'dob' => '2015-01-01', 'gender' => 'male']);
+    Student::create(['name' => 'Graduated Student', 'dob' => '2010-01-01', 'gender' => 'male', 'graduated_at' => now()]);
+
+    $component = Livewire::actingAs($user)->test(StudentList::class)->call('toggleSelectAll');
+
+    expect($component->get('selectedStudents'))->toBe([$active->id]);
+});

@@ -21,6 +21,15 @@
         Back to Students
     </a>
 
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $studentDetails->name }}</h2>
+        @if ($studentDetails->graduated_at)
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                Graduated {{ $studentDetails->graduated_at->format('Y-m-d') }}
+            </span>
+        @endif
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">
             <div class="flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-700">

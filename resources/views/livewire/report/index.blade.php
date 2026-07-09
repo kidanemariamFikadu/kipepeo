@@ -67,6 +67,18 @@
                     Book &amp; Rental Circulation
                 </button>
             </li>
+            <li class="me-2" role="presentation">
+                <button
+                    class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="alumni-styled-tab" data-tabs-target="#styled-alumni" type="button" role="tab"
+                    aria-controls="alumni" aria-selected="false">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    </svg>
+                    Alumni Report
+                </button>
+            </li>
         </ul>
     </div>
     <div id="default-styled-tab-content">
@@ -89,6 +101,10 @@
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-book-rental" role="tabpanel"
             aria-labelledby="book-rental-tab">
             <livewire:report.book-rental-report />
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-alumni" role="tabpanel"
+            aria-labelledby="alumni-tab">
+            <livewire:report.alumni-report />
         </div>
     </div>
 

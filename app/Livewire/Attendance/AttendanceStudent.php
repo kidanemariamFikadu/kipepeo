@@ -111,6 +111,7 @@ class AttendanceStudent extends Component
     {
         return view('livewire.attendance.attendance-student', [
             'students' => Student::search($this->search)
+                ->active()
                 ->with([
                     'guardians',
                     'schools' => fn ($query) => $query->where('is_current', true)->with('school'),

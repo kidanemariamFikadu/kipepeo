@@ -56,6 +56,7 @@ class StudentList extends Component
         } else {
             // Select all students on the current page
             $this->selectedStudents = Student::search($this->search)
+                ->active()
                 ->when($this->school !== '', function ($query) {
                     // $query->where('current_school', $this->admin);
                     $query->whereHas('schools', function ($q) {
@@ -91,6 +92,7 @@ class StudentList extends Component
     {
         return view('livewire.student-list', [
             'students' => Student::search($this->search)
+                ->active()
                 ->with([
                     'guardians',
                     'schools' => fn ($query) => $query->where('is_current', true)->with('school'),

@@ -56,3 +56,22 @@ test('student detail page does not N+1 query per related row', function () {
     // should stay well under a per-row query count; N+1 would scale with row count instead.
     expect($queryCount)->toBeLessThan(15);
 });
+
+test('a graduated badge is shown for a graduated student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Graduated Student');
+    $student->update(['graduated_at' => '2026-06-01']);
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertSee('Graduated 2026-06-01');
+});
+
+test('no graduated badge is shown for an active student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Active Student');
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertDontSee('Graduated ');
+});
