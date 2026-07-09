@@ -20,7 +20,7 @@
                     </li>
                 @endforeach
             </ul>
-            <div class="mt-2">{{ $currentWeekBirthdays->links() }}</div>
+            <div class="mt-2">{{ $currentWeekBirthdays->links(data: ['scrollTo' => false]) }}</div>
         @endif
     </div>
 </div>

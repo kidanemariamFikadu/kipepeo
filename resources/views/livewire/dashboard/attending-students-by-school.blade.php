@@ -68,7 +68,7 @@
                     </select>
                 </div>
             </div>
-            {{ $this->studentsBySchool->links() }}
+            {{ $this->studentsBySchool->links(data: ['scrollTo' => false]) }}
         </div>
     </div>
 </div>

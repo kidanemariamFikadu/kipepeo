@@ -35,7 +35,7 @@
                     </li>
                 @endforeach
             </ul>
-            <div class="mt-2">{{ $inSessionStudents->links() }}</div>
+            <div class="mt-2">{{ $inSessionStudents->links(data: ['scrollTo' => false]) }}</div>
         @else
             <p class="text-sm text-gray-500 dark:text-gray-400">No students currently in session</p>
         @endif
