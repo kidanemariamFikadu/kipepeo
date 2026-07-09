@@ -81,7 +81,7 @@ test('update persists changes to the student record', function () {
                 'snapshot' => json_encode($snapshot),
                 'updates' => [
                     'updateStudentForm.name' => 'Renamed Student',
-                    'updateStudentForm.gender' => 'Male',
+                    'updateStudentForm.gender' => 'male',
                     'updateStudentForm.dob' => '2011-05-05',
                 ],
                 'calls' => [[

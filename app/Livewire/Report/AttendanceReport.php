@@ -41,7 +41,7 @@ class AttendanceReport extends Component
 
         $this->totalStudents = $attendances->count();
         $this->averageAttendanceDuration = $attendances->avg('total_time');
-        $this->studentsByGender = $attendances->groupBy(fn ($a) => $a->student?->gender ?: 'Unspecified')->map->count()->sortDesc();
+        $this->studentsByGender = $attendances->groupBy(fn ($a) => $a->student?->gender ? ucfirst(strtolower($a->student->gender)) : 'Unspecified')->map->count()->sortDesc();
         $this->studentsBySchool = $attendances->groupBy(fn ($a) => $a->student?->schools->first()?->school?->name ?: 'Unassigned')->map->count()->sortDesc();
         $this->studentsByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')->map->count()->sortDesc();
 
@@ -54,7 +54,7 @@ class AttendanceReport extends Component
             $dailyStatistics[$date] = [
                 'totalStudents' => $attendancesForDate->count(),
                 'averageAttendanceDuration' => $this->secondsToHms($attendancesForDate->avg('total_time')),
-                'studentsByGender' => $attendancesForDate->groupBy(fn ($a) => $a->student?->gender ?: 'Unspecified')->map->count(),
+                'studentsByGender' => $attendancesForDate->groupBy(fn ($a) => $a->student?->gender ? ucfirst(strtolower($a->student->gender)) : 'Unspecified')->map->count(),
             ];
         }
 

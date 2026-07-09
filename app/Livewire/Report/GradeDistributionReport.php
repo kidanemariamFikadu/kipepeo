@@ -14,9 +14,9 @@ class GradeDistributionReport extends Component
         $grades = Grade::withCount([
             'gradeStudents as total_students' => fn ($q) => $q->where('is_current', true),
             'gradeStudents as male_students_count' => fn ($q) => $q->where('is_current', true)
-                ->whereHas('student', fn ($sq) => $sq->where('gender', 'Male')),
+                ->whereHas('student', fn ($sq) => $sq->whereRaw('LOWER(gender) = ?', ['male'])),
             'gradeStudents as female_students_count' => fn ($q) => $q->where('is_current', true)
-                ->whereHas('student', fn ($sq) => $sq->where('gender', 'Female')),
+                ->whereHas('student', fn ($sq) => $sq->whereRaw('LOWER(gender) = ?', ['female'])),
         ])->orderBy('id')->get();
 
         $totalEnrolled = Student::whereHas('schools', fn ($q) => $q->where('is_current', true))->count();

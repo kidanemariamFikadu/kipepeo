@@ -38,7 +38,7 @@ class ImportStudentsJob implements ShouldQueue
 
                 $newStudent =  Student::create([
                     'name' =>ltrim($student[1]),
-                    'gender' => $student[2],
+                    'gender' => strtolower(trim((string) $student[2])),
                 ]);
                 if ($school) {
                     $newStudent->schools()->create([

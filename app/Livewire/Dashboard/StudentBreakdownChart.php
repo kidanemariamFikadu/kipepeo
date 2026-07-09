@@ -61,7 +61,7 @@ class StudentBreakdownChart extends Component
     protected function genderBreakdown(): array
     {
         $counts = Student::query()
-            ->selectRaw('gender, count(*) as total')
+            ->selectRaw('LOWER(gender) as gender, count(*) as total')
             ->groupBy('gender')
             ->orderByDesc('total')
             ->pluck('total', 'gender');
