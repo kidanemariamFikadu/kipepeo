@@ -29,7 +29,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/', \App\Livewire\dashboard\Index::class)->name('dashboard');
+    Route::get('/', \App\Livewire\dashboard\Index::class);
     Route::get('/dashboard', \App\Livewire\dashboard\Index::class)->name('dashboard');
     Route::get('/my-profile', MyProfile::class)->name('my-profile');
     Route::get('/students', StudentList::class)->name('students');
