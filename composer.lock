@@ -4,114 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea450a357228c1b6594d33897a20f4fd",
+    "content-hash": "daaaac68d8ecce2944695833212645c2",
     "packages": [
-        {
-            "name": "arokettu/random-polyfill",
-            "version": "1.99.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/arokettu/php-random-polyfill.git",
-                "reference": "c17671cc6ee4a466c2a5a2bc051672d4927dd230"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/arokettu/php-random-polyfill/zipball/c17671cc6ee4a466c2a5a2bc051672d4927dd230",
-                "reference": "c17671cc6ee4a466c2a5a2bc051672d4927dd230",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 8.2"
-            },
-            "type": "metapackage",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Anton Smirnov",
-                    "email": "sandfox@sandfox.me",
-                    "homepage": "https://sandfox.me/",
-                    "role": "developer"
-                }
-            ],
-            "description": "Random Extension Polyfill for PHP",
-            "homepage": "https://sandfox.dev/php/random-polyfill.html",
-            "keywords": [
-                "polyfill",
-                "random"
-            ],
-            "support": {
-                "chat": "https://gitter.im/arokettu/community",
-                "docs": "https://php-random-polyfill.readthedocs.io/",
-                "issues": "https://gitlab.com/sandfox/php-random-polyfill/-/issues",
-                "source": "https://gitlab.com/sandfox/php-random-polyfill"
-            },
-            "time": "2022-09-01T22:23:28+00:00"
-        },
-        {
-            "name": "asantibanez/livewire-charts",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/asantibanez/livewire-charts.git",
-                "reference": "d58465084e24dd3b3d587039a27e934ff1c02304"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/asantibanez/livewire-charts/zipball/d58465084e24dd3b3d587039a27e934ff1c02304",
-                "reference": "d58465084e24dd3b3d587039a27e934ff1c02304",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
-                "livewire/livewire": "^3.0",
-                "php": "^7.2|^7.3|^7.4|^8.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
-                "phpunit/phpunit": "^8.0|^9.5.10"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Asantibanez\\LivewireCharts\\LivewireChartsServiceProvider"
-                    ],
-                    "aliases": {
-                        "LivewireCharts": "Asantibanez\\LivewireCharts\\LivewireChartsFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Asantibanez\\LivewireCharts\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andrés Santibáñez",
-                    "email": "santibanez.andres@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Livewire Charts",
-            "homepage": "https://github.com/asantibanez/livewire-charts",
-            "keywords": [
-                "asantibanez",
-                "livewire-charts"
-            ],
-            "support": {
-                "issues": "https://github.com/asantibanez/livewire-charts/issues",
-                "source": "https://github.com/asantibanez/livewire-charts/tree/v3.0.1"
-            },
-            "time": "2023-11-07T19:50:23+00:00"
-        },
         {
             "name": "bacon/bacon-qr-code",
             "version": "2.0.8",
@@ -6958,62 +6852,6 @@
             "time": "2023-12-08T13:03:43+00:00"
         },
         {
-            "name": "valorin/random",
-            "version": "v0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/valorin/random.git",
-                "reference": "71aae8e2412e4c5e13efd9baac5fb1d8a6f9c4cf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/valorin/random/zipball/71aae8e2412e4c5e13efd9baac5fb1d8a6f9c4cf",
-                "reference": "71aae8e2412e4c5e13efd9baac5fb1d8a6f9c4cf",
-                "shasum": ""
-            },
-            "require": {
-                "arokettu/random-polyfill": "^1.0",
-                "php": "^7.1 || ^8.0"
-            },
-            "require-dev": {
-                "illuminate/support": "^5.0 || ^10.0",
-                "phpunit/phpunit": "^7.0 || ^9.6 || ^10.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Valorin\\Random\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Stephen Rees-Carter",
-                    "email": "stephen@rees-carter.net",
-                    "homepage": "https://stephenreescarter.net/"
-                }
-            ],
-            "description": "Random is a simple helper package designed to make it easy to generate a range of different cryptographically secure random values.",
-            "homepage": "https://github.com/valorin/random",
-            "keywords": [
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/valorin/random/issues",
-                "source": "https://github.com/valorin/random"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/valorin",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-01-14T23:02:30+00:00"
-        },
-        {
             "name": "vlucas/phpdotenv",
             "version": "v5.6.0",
             "source": {
@@ -10577,12 +10415,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
