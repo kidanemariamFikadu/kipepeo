@@ -26,7 +26,6 @@ test('non-admin routes to admin-only pages are forbidden', function () {
         '/settings/job-titles',
         '/settings/import-students',
         '/settings/import-books',
-        '/invitation',
         '/promote-students',
     ] as $path) {
         $this->actingAs($user)->get($path)->assertForbidden();

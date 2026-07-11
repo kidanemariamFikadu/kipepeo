@@ -16,7 +16,8 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Users</h2>
-                <a class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2" href="/invitation">+ Invite user</a>
+                <button wire:click="$dispatch('openModal', { component: 'user.create-user' })"
+                    class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add user</button>
             </div>
 
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -121,6 +122,19 @@
                                                     <path stroke="none" d="M0 0h24v24H0z" />
                                                     <polyline points="12 8 12 12 14 14" />
                                                     <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+                                                </svg>
+                                            </button>
+                                            <button title="Reset password"
+                                                class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg dark:text-amber-300 dark:hover:bg-gray-700"
+                                                wire:click="$dispatch('openModal', { component: 'user.reset-user-password', arguments: { user: {{ $user->id }} }})">
+                                                <svg class="h-5 w-5" width="24" height="24"
+                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" />
+                                                    <circle cx="8" cy="15" r="4" />
+                                                    <line x1="10.85" y1="12.15" x2="19" y2="4" />
+                                                    <line x1="18" y1="5" x2="20" y2="7" />
+                                                    <line x1="15" y1="8" x2="17" y2="10" />
                                                 </svg>
                                             </button>
                                         </div>

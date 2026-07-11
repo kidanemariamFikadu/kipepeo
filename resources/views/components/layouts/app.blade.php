@@ -27,7 +27,6 @@
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
             $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
-            $adminLinks[] = ['href' => '/invitation', 'label' => 'Invitations', 'active' => request()->is('invitation*')];
             $adminLinks[] = ['href' => '/settings', 'label' => 'Settings', 'active' => request()->is('settings*', 'promote-students*')];
         }
         $adminActive = collect($adminLinks)->contains('active', true);

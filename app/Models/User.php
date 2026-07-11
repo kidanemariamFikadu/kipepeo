@@ -34,6 +34,7 @@ class User extends Authenticatable implements Auditable
         'password',
         'role',
         'job_title_id',
+        'must_reset_password',
     ];
 
     /**
@@ -56,6 +57,7 @@ class User extends Authenticatable implements Auditable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'role' => UserRole::class,
+        'must_reset_password' => 'boolean',
     ];
 
     /**

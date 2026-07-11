@@ -5,8 +5,7 @@ namespace App\Livewire\User;
 use App\Livewire\Forms\user\UserForm;
 use App\Models\JobTitle;
 use App\Models\User;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Computed;
 use LivewireUI\Modal\ModalComponent;
 
@@ -17,14 +16,16 @@ class CreateUser extends ModalComponent
     {
         $this->validate();
 
-        $user = User::create([
-            ...$this->form->toArray(),
-            'password' => bcrypt(Str::random(32)),
+        User::create([
+            'name' => $this->form->name,
+            'email' => $this->form->email,
+            'job_title_id' => $this->form->job_title_id,
+            'role' => $this->form->role,
+            'password' => Hash::make($this->form->password),
+            'must_reset_password' => true,
         ]);
 
-        Password::sendResetLink(['email' => $user->email]);
-
-        $this->dispatch('user-updated', ['type' => 'success', 'content' => 'User created successfully. A password setup link has been emailed to them.']);
+        $this->dispatch('user-updated', ['type' => 'success', 'content' => "User created. Share this password with them directly — they'll be asked to set their own on first login."]);
         $this->form->reset();
     }
 

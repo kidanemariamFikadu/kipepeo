@@ -21,7 +21,7 @@ test('main nav shows daily-use links plus a grouped Books dropdown, without an A
     $response->assertDontSee('Users');
 });
 
-test('main nav shows an Admin dropdown with Users, Invitations and Settings for admins', function () {
+test('main nav shows an Admin dropdown with Users and Settings for admins', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
     $response = $this->actingAs($admin)->get('/');
@@ -29,6 +29,6 @@ test('main nav shows an Admin dropdown with Users, Invitations and Settings for 
     $response->assertOk();
     $response->assertSee('Admin');
     $response->assertSee('Users');
-    $response->assertSee('Invitations');
     $response->assertSee('Settings');
+    $response->assertDontSee('Invitations');
 });

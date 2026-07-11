@@ -77,6 +77,28 @@
                     @enderror
                 </div>
             </div>
+            <div class="grid gap-4 mb-4 grid-cols-2">
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="password"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                    <input type="password" wire:model='form.password' id="password"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="At least 8 characters">
+                    @error('form.password')
+                        <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="password_confirmation"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
+                    <input type="password" wire:model='form.password_confirmation' id="password_confirmation"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Confirm password">
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                The user will be asked to change this password the first time they log in. Share it with them directly — no email is sent.
+            </p>
             <button type="submit" wire:loading.attr="disabled" wire:target="create"
                 class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
                 <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
