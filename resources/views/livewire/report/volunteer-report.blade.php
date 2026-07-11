@@ -83,8 +83,9 @@
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
                             <th class="px-4 py-3">Volunteer</th>
-                            <th class="px-4 py-3">Visits</th>
+                            <th class="px-4 py-3">Days Volunteered</th>
                             <th class="px-4 py-3">Total Hours</th>
+                            <th class="px-4 py-3">Est. Stipend</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,10 +95,11 @@
                                     {{ $row['volunteer']?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                                <td class="px-4 py-3">{{ $row['estStipend'] !== null ? number_format($row['estStipend'], 2) : '—' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                     No volunteer visits found for the selected filters.
                                 </td>
                             </tr>
@@ -113,8 +115,7 @@
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-3">Activity Type</th>
-                            <th class="px-4 py-3">Category</th>
+                            <th class="px-4 py-3">Duty</th>
                             <th class="px-4 py-3">Count</th>
                         </tr>
                     </thead>
@@ -123,12 +124,11 @@
                             <tr class="border-b dark:border-gray-700">
                                 <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $row['activityType']?->name ?? '—' }}</td>
-                                <td class="px-4 py-3">{{ $row['activityType']?->category ? ucfirst($row['activityType']->category->value) : '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['count'] }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="2" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                     No activities found for the selected filters.
                                 </td>
                             </tr>

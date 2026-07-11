@@ -33,7 +33,7 @@ test('creating a student outside data entry mode allows a child under 5 (e.g. bo
         $school,
         $grade,
         now()->subYears(2)->format('Y-m-d')
-    )->call('create')->assertDispatched('student-changed');
+    )->call('create')->assertDispatched('student-changed')->assertDispatched('dashboard-changed');
 
     expect(Student::where('name', 'New Student')->exists())->toBeTrue();
 });
@@ -63,7 +63,7 @@ test('creating a student outside data entry mode succeeds for an eligible studen
         $school,
         $grade,
         now()->subYears(10)->format('Y-m-d')
-    )->call('create')->assertDispatched('student-changed');
+    )->call('create')->assertDispatched('student-changed')->assertDispatched('dashboard-changed');
 
     expect(Student::where('name', 'New Student')->exists())->toBeTrue();
 });

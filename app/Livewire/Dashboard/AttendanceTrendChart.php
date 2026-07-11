@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard;
 
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AttendanceTrendChart extends Component
@@ -14,6 +15,12 @@ class AttendanceTrendChart extends Component
     {
         $this->days = in_array($days, [7, 14, 30], true) ? $days : 14;
 
+        $this->dispatch('attendance-trend-updated', chart: $this->chartData());
+    }
+
+    #[On('dashboard-changed')]
+    public function refreshDashboard(): void
+    {
         $this->dispatch('attendance-trend-updated', chart: $this->chartData());
     }
 

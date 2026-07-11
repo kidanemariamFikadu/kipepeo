@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\ActivityCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,11 +14,6 @@ class ActivityType extends Model
 
     protected $fillable = [
         'name',
-        'category',
-    ];
-
-    protected $casts = [
-        'category' => ActivityCategory::class,
     ];
 
     public function activities(): HasMany

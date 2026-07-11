@@ -73,6 +73,22 @@ test('volunteer report shows a per-activity log only when a specific volunteer i
     expect($withFilter->viewData('activityLog'))->toHaveCount(1);
 });
 
+test('volunteer report computes an estimated stipend as hours times hourly rate', function () {
+    $user = User::factory()->create();
+    $rated = Volunteer::create(['name' => 'Rated Volunteer', 'status' => 'active', 'hourly_rate' => 100]);
+    $unrated = Volunteer::create(['name' => 'Unrated Volunteer', 'status' => 'active']);
+    VolunteerAttendance::create(['volunteer_id' => $rated->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+    VolunteerAttendance::create(['volunteer_id' => $unrated->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+
+    $hoursByVolunteer = Livewire::actingAs($user)->test(VolunteerReport::class)->viewData('hoursByVolunteer');
+
+    $ratedRow = $hoursByVolunteer->firstWhere(fn ($row) => $row['volunteer']->id === $rated->id);
+    $unratedRow = $hoursByVolunteer->firstWhere(fn ($row) => $row['volunteer']->id === $unrated->id);
+
+    expect($ratedRow['estStipend'])->toBe(200.0);
+    expect($unratedRow['estStipend'])->toBeNull();
+});
+
 test('volunteer report validates toDate is not before fromDate', function () {
     $user = User::factory()->create();
 

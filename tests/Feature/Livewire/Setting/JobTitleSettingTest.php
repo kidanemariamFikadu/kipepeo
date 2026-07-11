@@ -1,7 +1,7 @@
 <?php
 
-use App\Livewire\Setting\Index as SettingIndex;
 use App\Livewire\Setting\JobTitle as JobTitleComponent;
+use App\Livewire\Setting\JobTitleList;
 use App\Models\JobTitle;
 use App\Models\User;
 use Livewire\Livewire;
@@ -13,7 +13,8 @@ test('save creates a new job title', function () {
         ->test(JobTitleComponent::class)
         ->set('jobTitle', 'Principal')
         ->call('save')
-        ->assertDispatched('MessageChanged');
+        ->assertDispatched('MessageChanged')
+        ->assertDispatched('job-title-changed');
 
     expect(JobTitle::where('name', 'Principal')->exists())->toBeTrue();
 });
@@ -36,7 +37,7 @@ test('removeJobTitle refuses to delete a job title assigned to a user', function
     User::factory()->create(['job_title_id' => $jobTitle->id]);
 
     Livewire::actingAs($admin)
-        ->test(SettingIndex::class)
+        ->test(JobTitleList::class)
         ->call('removeJobTitle', $jobTitle->id);
 
     expect(JobTitle::find($jobTitle->id))->not->toBeNull();
@@ -47,7 +48,7 @@ test('removeJobTitle deletes a job title with no assigned users', function () {
     $jobTitle = JobTitle::create(['name' => 'Unused Title']);
 
     Livewire::actingAs($admin)
-        ->test(SettingIndex::class)
+        ->test(JobTitleList::class)
         ->call('removeJobTitle', $jobTitle->id);
 
     expect(JobTitle::find($jobTitle->id))->toBeNull();

@@ -57,6 +57,7 @@ class CreateStudent extends ModalComponent
 
         $student = StudentService::create($this->form);
         $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student created successfully', 'student' => $student]);
+        $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => 'Student created successfully']);
         if ($this->show_details) {
             return redirect()->route('student-detail', $student->id);
         } else {

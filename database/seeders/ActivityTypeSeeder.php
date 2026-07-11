@@ -8,12 +8,15 @@ use Illuminate\Database\Seeder;
 class ActivityTypeSeeder extends Seeder
 {
     /**
-     * Seed the initial activity types (PRD §9 MVP list).
+     * Seed the real volunteer duties.
      */
     public function run(): void
     {
-        ActivityType::create(['name' => 'Tutoring', 'category' => 'tutoring']);
-        ActivityType::create(['name' => 'Extracurricular Training', 'category' => 'extracurricular']);
-        ActivityType::create(['name' => 'Mentorship', 'category' => 'mentorship']);
+        ActivityType::create(['name' => 'Cleaning']);
+        ActivityType::create(['name' => 'Supervising Students']);
+        ActivityType::create(['name' => 'Organizing Books']);
+        ActivityType::create(['name' => 'Kipepeo Study Nest']);
+        ActivityType::create(['name' => 'Talents']);
+        ActivityType::create(['name' => 'Game']);
     }
 }

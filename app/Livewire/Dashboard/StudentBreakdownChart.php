@@ -7,10 +7,17 @@ use App\Models\GradeStudent;
 use App\Models\School;
 use App\Models\SchoolStudent;
 use App\Models\Student;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class StudentBreakdownChart extends Component
 {
+    #[On('dashboard-changed')]
+    public function refreshDashboard(): void
+    {
+        $this->dispatch('student-breakdown-updated', grade: $this->gradeBreakdown(), school: $this->schoolBreakdown(), gender: $this->genderBreakdown());
+    }
+
     public function render()
     {
         return view('livewire.dashboard.student-breakdown-chart', [

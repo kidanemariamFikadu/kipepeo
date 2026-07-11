@@ -19,6 +19,8 @@ class Volunteer extends ModalComponent
 
     public $status = 'active';
 
+    public $hourlyRate;
+
     public $volunteerId;
 
     public function mount($volunteerId = null)
@@ -31,6 +33,7 @@ class Volunteer extends ModalComponent
             $this->email = $volunteer->email;
             $this->notes = $volunteer->notes;
             $this->status = $volunteer->status->value;
+            $this->hourlyRate = $volunteer->hourly_rate;
         }
     }
 
@@ -47,6 +50,7 @@ class Volunteer extends ModalComponent
             'email' => ['nullable', 'email', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'status' => ['required', Rule::enum(VolunteerStatus::class)],
+            'hourlyRate' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $data = [
@@ -55,6 +59,7 @@ class Volunteer extends ModalComponent
             'email' => $this->email,
             'notes' => $this->notes,
             'status' => $this->status,
+            'hourly_rate' => $this->hourlyRate,
         ];
 
         if ($this->volunteerId) {

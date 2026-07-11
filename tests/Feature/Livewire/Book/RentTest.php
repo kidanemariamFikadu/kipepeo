@@ -43,7 +43,8 @@ test('renting a book with available copies creates a rental', function () {
         ->set('student', $student->id)
         ->set('dueDate', now()->addDays(3)->format('Y-m-d'))
         ->call('rent')
-        ->assertDispatched('rental-changed');
+        ->assertDispatched('rental-changed')
+        ->assertDispatched('dashboard-changed');
 
     expect(Rental::where('book_id', $book->id)->where('student_id', $student->id)->exists())->toBeTrue();
 });
@@ -108,6 +109,52 @@ test('the student picker also lists alumni regardless of attendance', function (
 
     expect($students->pluck('name'))->toContain('Graduated Alum');
     expect($students->pluck('name'))->not->toContain('Absent Today');
+});
+
+test('mounting Rent with no bookId starts on the book search step', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(Rent::class)
+        ->assertSet('bookId', null);
+});
+
+test('the book search step finds a book by title or author and selectBook reveals the rent form', function () {
+    $user = User::factory()->create();
+    $book = makeRentableBook(1);
+
+    $component = Livewire::actingAs($user)->test(Rent::class)->set('bookSearch', 'Rentable');
+    expect($component->get('searchableBooks')->pluck('title'))->toContain('Rentable Book');
+
+    $component->call('selectBook', $book->id)->assertSet('bookId', $book->id);
+});
+
+test('changeBook resets bookId back to the search step', function () {
+    $user = User::factory()->create();
+    $book = makeRentableBook(1);
+
+    Livewire::actingAs($user)
+        ->test(Rent::class, ['bookId' => $book->id])
+        ->call('changeBook')
+        ->assertSet('bookId', null);
+});
+
+test('the full no-bookId flow can search, select a book, and complete a rental', function () {
+    $user = User::factory()->create();
+    $book = makeRentableBook(1);
+    $student = makeStudentWithCurrentSchoolAndGrade();
+
+    Livewire::actingAs($user)
+        ->test(Rent::class)
+        ->set('bookSearch', 'Rentable')
+        ->call('selectBook', $book->id)
+        ->set('student', $student->id)
+        ->set('dueDate', now()->addDays(3)->format('Y-m-d'))
+        ->call('rent')
+        ->assertDispatched('rental-changed')
+        ->assertDispatched('dashboard-changed');
+
+    expect(Rental::where('book_id', $book->id)->where('student_id', $student->id)->exists())->toBeTrue();
 });
 
 test('an alumnus can be picked to rent a book', function () {

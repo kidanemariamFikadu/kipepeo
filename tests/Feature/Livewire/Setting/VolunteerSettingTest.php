@@ -63,6 +63,29 @@ test('editing a volunteer status to inactive deactivates it without deleting it'
     expect($volunteer->isActive())->toBeFalse();
 });
 
+test('saving an hourly rate persists it, and it is optional', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    Livewire::actingAs($admin)
+        ->test(VolunteerComponent::class)
+        ->set('name', 'Rated Volunteer')
+        ->set('hourlyRate', '250.50')
+        ->call('saveVolunteer')
+        ->assertHasNoErrors();
+
+    $volunteer = Volunteer::where('name', 'Rated Volunteer')->first();
+    expect((float) $volunteer->hourly_rate)->toBe(250.50);
+
+    Livewire::actingAs($admin)
+        ->test(VolunteerComponent::class)
+        ->set('name', 'Unrated Volunteer')
+        ->call('saveVolunteer')
+        ->assertHasNoErrors();
+
+    $unrated = Volunteer::where('name', 'Unrated Volunteer')->first();
+    expect($unrated->hourly_rate)->toBeNull();
+});
+
 test('VolunteerList shows both active and inactive volunteers', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     Volunteer::create(['name' => 'Active One', 'status' => 'active']);

@@ -2,9 +2,7 @@
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Rent Book ({{ $book?->title }})
-            </h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $bookId ? 'Rent Book (' . $book?->title . ')' : 'Rent a Book' }}</h3>
             <button type="button" wire:click="closeModal"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="crud-modal">
@@ -16,8 +14,48 @@
                 <span class="sr-only">Close modal</span>
             </button>
         </div>
+
+        @unless ($bookId)
+            <!-- Book search step -->
+            <div class="p-4 md:p-5">
+                <label for="bookSearch" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Find a book</label>
+                <input wire:model.live.debounce.300ms="bookSearch" type="text" id="bookSearch"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="Search by title or author" autofocus>
+
+                <ul class="mt-3 divide-y divide-gray-200 dark:divide-gray-600">
+                    @forelse ($this->searchableBooks as $searchableBook)
+                        <li wire:key="{{ $searchableBook->id }}" class="flex items-center justify-between gap-3 py-2.5">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                                    </svg>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $searchableBook->title }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $searchableBook->author }} &middot; {{ $searchableBook->available_copies }} available</p>
+                                </div>
+                            </div>
+                            <button type="button" wire:click="selectBook({{ $searchableBook->id }})"
+                                {{ $searchableBook->available_copies < 1 ? 'disabled' : '' }}
+                                class="shrink-0 text-xs font-semibold text-white bg-primary-700 hover:bg-primary-800 rounded-lg px-3 py-1.5 disabled:opacity-50 dark:bg-primary-600 dark:hover:bg-primary-700">
+                                Select
+                            </button>
+                        </li>
+                    @empty
+                        <li class="py-4 text-sm text-gray-500 dark:text-gray-400">No books found.</li>
+                    @endforelse
+                </ul>
+            </div>
+        @else
         <!-- Modal body -->
         <form class="p-4 md:p-5" wire:submit="rent">
+            <button type="button" wire:click="changeBook"
+                class="mb-3 text-xs text-primary-700 dark:text-primary-300 hover:underline">
+                &larr; Change book
+            </button>
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2">
                     <label for="student" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Student
@@ -60,5 +98,6 @@
                 Borrow
             </button>
         </form>
+        @endunless
     </div>
 </div>

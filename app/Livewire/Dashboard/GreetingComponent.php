@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceAttr;
 use App\Models\Student;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class GreetingComponent extends Component
@@ -15,6 +16,11 @@ class GreetingComponent extends Component
     public function mount($name)
     {
         $this->name = $name;
+    }
+
+    #[On('dashboard-changed')]
+    public function refreshDashboard()
+    {
     }
 
     function checkOut()

@@ -48,6 +48,13 @@ Route::middleware([
         Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');
         Route::get('/invitation', Invitation::class)->name('invitation');
         Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
+        Route::get('/settings/schools', \App\Livewire\Setting\SchoolList::class)->name('settings-schools');
+        Route::get('/settings/grades', \App\Livewire\Setting\GradeList::class)->name('settings-grades');
+        Route::get('/settings/volunteers', \App\Livewire\Setting\VolunteerList::class)->name('settings-volunteers');
+        Route::get('/settings/activity-types', \App\Livewire\Setting\ActivityTypeList::class)->name('settings-activity-types');
+        Route::get('/settings/job-titles', \App\Livewire\Setting\JobTitleList::class)->name('settings-job-titles');
+        Route::get('/settings/import-students', \App\Livewire\Setting\ImportStudents::class)->name('settings-import-students');
+        Route::get('/settings/import-books', \App\Livewire\Setting\ImportBook::class)->name('settings-import-books');
         Route::get('/promote-students', \App\Livewire\Setting\PromoteStudents::class)->name('promote-students');
     });
 });

@@ -16,6 +16,12 @@ class GradeList extends Component
     {
     }
 
+    #[On('MessageChanged')]
+    public function messageChanged($message)
+    {
+        session()->flash($message['type'], $message['content']);
+    }
+
     #[Computed]
     public function getGradeListProperty()
     {

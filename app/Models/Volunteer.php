@@ -19,10 +19,12 @@ class Volunteer extends Model
         'email',
         'notes',
         'status',
+        'hourly_rate',
     ];
 
     protected $casts = [
         'status' => VolunteerStatus::class,
+        'hourly_rate' => 'decimal:2',
     ];
 
     protected $attributes = [

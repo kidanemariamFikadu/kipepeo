@@ -6,6 +6,7 @@ use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\School;
 use App\Models\Student;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,6 +15,11 @@ class AttendingStudentsBySchool extends Component
 {
     use HasSortableColumns;
     use WithPagination;
+
+    #[On('dashboard-changed')]
+    public function refreshDashboard()
+    {
+    }
 
     #[Url(history: true)]
     public $search = '';

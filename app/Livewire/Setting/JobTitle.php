@@ -37,7 +37,7 @@ class JobTitle extends ModalComponent
             $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Job Title created successfully']);
         }
         
-        $this->dispatch('school-changed');
+        $this->dispatch('job-title-changed');
         $this->jobTitle = '';
         $this->closeModal();
     }

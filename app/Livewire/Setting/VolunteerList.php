@@ -18,6 +18,12 @@ class VolunteerList extends Component
     {
     }
 
+    #[On('MessageChanged')]
+    public function messageChanged($message)
+    {
+        session()->flash($message['type'], $message['content']);
+    }
+
     #[Computed]
     public function getVolunteerListProperty()
     {

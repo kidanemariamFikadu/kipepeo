@@ -15,13 +15,11 @@ test('creating an activity type persists it', function () {
     Livewire::actingAs($admin)
         ->test(ActivityTypeComponent::class)
         ->set('name', 'Chess Club')
-        ->set('category', 'extracurricular')
         ->call('saveActivityType')
         ->assertDispatched('activity-type-changed');
 
     $activityType = ActivityType::where('name', 'Chess Club')->first();
     expect($activityType)->not->toBeNull();
-    expect($activityType->category)->toBe(App\Enums\ActivityCategory::Extracurricular);
 });
 
 test('creating a duplicate activity type name fails the unique validation rule', function () {
@@ -39,16 +37,15 @@ test('creating a duplicate activity type name fails the unique validation rule',
 
 test('editing an activity type without changing its name succeeds', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $activityType = ActivityType::create(['name' => 'Tutoring', 'category' => 'tutoring']);
+    $activityType = ActivityType::create(['name' => 'Tutoring']);
 
     Livewire::actingAs($admin)
         ->test(ActivityTypeComponent::class, ['activityTypeId' => $activityType->id])
         ->set('name', 'Tutoring')
-        ->set('category', 'mentorship')
         ->call('saveActivityType')
         ->assertHasNoErrors();
 
-    expect($activityType->fresh()->category)->toBe(App\Enums\ActivityCategory::Mentorship);
+    expect(ActivityType::where('name', 'Tutoring')->count())->toBe(1);
 });
 
 test('removeActivityType refuses to delete an activity type with associated activities', function () {

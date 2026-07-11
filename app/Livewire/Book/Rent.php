@@ -13,13 +13,35 @@ use LivewireUI\Modal\ModalComponent;
 class Rent extends ModalComponent
 {
     public $bookId;
+    public $bookSearch = '';
     public $student;
     public $dueDate;
     public $rental;
 
-    public function mount($bookId)
+    public static function modalMaxWidth(): string
+    {
+        return '3xl';
+    }
+
+    public function mount($bookId = null)
     {
         $this->bookId = $bookId;
+    }
+
+    public function getSearchableBooksProperty()
+    {
+        return Book::search($this->bookSearch)->orderBy('title')->limit(10)->get();
+    }
+
+    public function selectBook($bookId)
+    {
+        $this->bookId = $bookId;
+    }
+
+    public function changeBook()
+    {
+        $this->bookId = null;
+        $this->bookSearch = '';
     }
 
     public function rent()
@@ -50,6 +72,7 @@ class Rent extends ModalComponent
         $this->closeModal();
 
         $this->dispatch('rental-changed', ['type' => 'success', 'content' => 'Book rented successfully']);
+        $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => 'Book rented successfully']);
     }
 
     public function render()

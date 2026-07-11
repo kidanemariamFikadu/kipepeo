@@ -58,7 +58,7 @@
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-2">
+                <div class="col-span-2 sm:col-span-1">
                     <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                     <select id="status" wire:model='status'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
@@ -70,7 +70,19 @@
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
                     @enderror
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Deactivating a volunteer removes them from the check-in list but keeps their history.
+                        Deactivating removes them from the check-in list but keeps their history.
+                    </p>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="hourlyRate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hourly Rate</label>
+                    <input type="number" step="0.01" min="0" name="hourlyRate" id="hourlyRate" wire:model='hourlyRate'
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Optional">
+                    @error('hourlyRate')
+                        <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
+                    @enderror
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Used to estimate their stipend in reports. Leave blank if not applicable.
                     </p>
                 </div>
                 <div class="col-span-2">

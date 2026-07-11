@@ -1,4 +1,24 @@
 <div>
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Error</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @elseif (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative" role="alert">
+            <strong class="font-bold">Success</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    <div class="p-2 md:p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Activity Types</h2>
+            <a href="{{ route('settings') }}" class="text-sm text-primary-700 dark:text-primary-300 hover:underline">
+                &larr; Back to settings
+            </a>
+        </div>
+
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -24,9 +44,6 @@
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-medium text-gray-900 dark:text-white">
                                             {{ $activityType->name }}
-                                        </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $activityType->category ? ucfirst($activityType->category->value) : 'No category' }}
                                         </p>
                                     </div>
                                     <div
@@ -68,5 +85,6 @@
                 @endforeach
             </div>
         </ul>
+    </div>
     </div>
 </div>

@@ -323,8 +323,7 @@
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-4 py-3">Date</th>
-                            <th scope="col" class="px-4 py-3">Activity Type</th>
-                            <th scope="col" class="px-4 py-3">Category</th>
+                            <th scope="col" class="px-4 py-3">Duty</th>
                             <th scope="col" class="px-4 py-3">Volunteer</th>
                             <th scope="col" class="px-4 py-3">Notes</th>
                         </tr>
@@ -334,13 +333,12 @@
                             <tr class="border-b dark:border-gray-700">
                                 <td class="px-4 py-3">{{ \Carbon\Carbon::parse($activity->date)->format('Y-m-d') }}</td>
                                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $activity->activityType?->name ?? '—' }}</td>
-                                <td class="px-4 py-3">{{ $activity->activityType?->category ? ucfirst($activity->activityType->category->value) : '—' }}</td>
                                 <td class="px-4 py-3">{{ $activity->volunteer?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $activity->notes ?: '—' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                     No volunteer activities recorded yet.
                                 </td>
                             </tr>

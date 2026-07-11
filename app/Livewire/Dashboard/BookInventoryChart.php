@@ -5,10 +5,16 @@ namespace App\Livewire\Dashboard;
 use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Rental;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BookInventoryChart extends Component
 {
+    #[On('dashboard-changed')]
+    public function refreshDashboard()
+    {
+    }
+
     public function render()
     {
         $statusCounts = BookCopy::query()

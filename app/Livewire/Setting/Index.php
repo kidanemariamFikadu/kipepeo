@@ -3,39 +3,42 @@
 namespace App\Livewire\Setting;
 
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
-
-    #[On('MessageChanged')]
-    public function messageChanged($message)
+    #[Computed]
+    public function schoolCount()
     {
-        session()->flash($message['type'], $message['content']);
+        return \App\Models\School::count();
     }
 
     #[Computed]
-    public function getJobTitleListProperty()
+    public function gradeCount()
     {
-        return \App\Models\JobTitle::paginate(10);
+        return \App\Models\Grade::count();
     }
 
-    function removeJobTitle($jobTitleId)
+    #[Computed]
+    public function volunteerCount()
     {
-        $checkEmployeeExist = \App\Models\User::where('job_title_id', $jobTitleId)->first();
-        if ($checkEmployeeExist) {
-            session()->flash('error', 'Job Title cannot be deleted as employees are associated with this job title');
-            return;
-        }
-
-        \App\Models\JobTitle::find($jobTitleId)->delete();
-        session()->flash('success', 'Job Title deleted successfully');
+        return \App\Models\Volunteer::count();
     }
+
+    #[Computed]
+    public function activityTypeCount()
+    {
+        return \App\Models\ActivityType::count();
+    }
+
+    #[Computed]
+    public function jobTitleCount()
+    {
+        return \App\Models\JobTitle::count();
+    }
+
     public function render()
     {
-        return view('livewire.setting.index')->title('Setting');
+        return view('livewire.setting.index')->title('Settings');
     }
 }

@@ -51,11 +51,18 @@ class VolunteerReport extends Component
             ->get();
 
         $hoursByVolunteer = $attendances->groupBy('volunteer_id')
-            ->map(fn ($rows) => [
-                'volunteer' => $rows->first()->volunteer,
-                'totalSeconds' => $rows->sum('total_time'),
-                'visits' => $rows->count(),
-            ])
+            ->map(function ($rows) {
+                $totalSeconds = $rows->sum('total_time');
+                $rate = $rows->first()->volunteer?->hourly_rate;
+
+                return [
+                    'volunteer' => $rows->first()->volunteer,
+                    'totalSeconds' => $totalSeconds,
+                    'visits' => $rows->count(),
+                    'hourlyRate' => $rate,
+                    'estStipend' => $rate ? round($totalSeconds / 3600 * $rate, 2) : null,
+                ];
+            })
             ->sortByDesc('totalSeconds')
             ->values();
 

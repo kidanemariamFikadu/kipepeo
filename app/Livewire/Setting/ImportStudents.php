@@ -8,6 +8,7 @@ use App\Livewire\Concerns\ValidatesSpreadsheetUpload;
 use App\Models\Grade;
 use App\Models\School;
 use App\Models\Student;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,6 +22,12 @@ class ImportStudents extends Component
     public $studentsList;
 
     public $isLoading;
+
+    #[On('MessageChanged')]
+    public function messageChanged($message)
+    {
+        session()->flash($message['type'], $message['content']);
+    }
 
     public function mount()
     {

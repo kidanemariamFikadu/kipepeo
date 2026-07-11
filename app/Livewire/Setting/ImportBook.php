@@ -5,6 +5,7 @@ namespace App\Livewire\Setting;
 use App\Imports\BooksImport;
 use App\Jobs\ImportBooksJob;
 use App\Livewire\Concerns\ValidatesSpreadsheetUpload;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,6 +19,12 @@ class ImportBook extends Component
     public $booksList;
 
     public $isLoading;
+
+    #[On('MessageChanged')]
+    public function messageChanged($message)
+    {
+        session()->flash($message['type'], $message['content']);
+    }
 
     public function mount()
     {

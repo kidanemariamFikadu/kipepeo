@@ -11,7 +11,8 @@
         const d = this.datasets[this.tab];
         this.chart = KipepeoCharts.bar(this.$refs.canvas, { labels: d.labels, data: d.data, horizontal: true });
     },
-}" x-init="render()">
+}" x-init="render()"
+    @student-breakdown-updated.window="datasets = { grade: $event.detail.grade, school: $event.detail.school, gender: $event.detail.gender }; render()">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-gray-700 dark:text-white text-xl font-semibold">Students by</h2>
 

@@ -15,7 +15,20 @@ test('non-admin routes to admin-only pages are forbidden', function () {
     $user = makeUser('user');
     $admin = makeUser('admin');
 
-    foreach (['/users', '/user-create', '/settings', '/invitation', '/promote-students'] as $path) {
+    foreach ([
+        '/users',
+        '/user-create',
+        '/settings',
+        '/settings/schools',
+        '/settings/grades',
+        '/settings/volunteers',
+        '/settings/activity-types',
+        '/settings/job-titles',
+        '/settings/import-students',
+        '/settings/import-books',
+        '/invitation',
+        '/promote-students',
+    ] as $path) {
         $this->actingAs($user)->get($path)->assertForbidden();
         $this->actingAs($admin)->get($path)->assertOk();
     }
