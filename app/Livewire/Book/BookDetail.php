@@ -3,6 +3,8 @@
 namespace App\Livewire\Book;
 
 use App\Models\Book;
+use App\Models\BookCopy;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BookDetail extends Component
@@ -17,9 +19,20 @@ class BookDetail extends Component
     public $category;
     public $copies;
 
+    #[On('rental-changed')]
+    public function refreshRentals($message)
+    {
+        if ($message)
+            session()->flash($message['type'], $message['content']);
+    }
+
     public function mount($id)
     {
-        $this->book = Book::with('bookCopies', 'rentals')->find($id);
+        $this->book = Book::with([
+            'bookCopies',
+            'rentals' => fn ($q) => $q->orderByDesc('rented_at')->limit(20),
+            'rentals.checkedOutTo',
+        ])->find($id);
         $this->bookId = $id;
         $this->title = $this->book->title;
         $this->author = $this->book->author;
@@ -35,7 +48,32 @@ class BookDetail extends Component
             'title' => 'required',
             'author' => 'required',
             'category' => 'required',
+            'copies' => 'required|integer|min:1',
         ]);
+
+        $circulating = $this->book->bookCopies()->whereIn('status', ['borrowed', 'lost', 'stolen'])->count();
+
+        if ($this->copies < $circulating) {
+            $this->addError('copies', "Can't reduce copies below the {$circulating} currently borrowed, lost, or stolen.");
+            return;
+        }
+
+        if ($this->copies > $this->book->copies) {
+            for ($i = $this->book->copies; $i < $this->copies; $i++) {
+                BookCopy::create([
+                    'book_id' => $this->book->id,
+                    'status' => 'available',
+                ]);
+            }
+        } elseif ($this->copies < $this->book->copies) {
+            $ids = BookCopy::where('book_id', $this->book->id)
+                ->where('status', 'available')
+                ->latest('id')
+                ->take($this->book->copies - $this->copies)
+                ->pluck('id');
+
+            BookCopy::whereIn('id', $ids)->delete();
+        }
 
         $this->book->update([
             'title' => $this->title,
@@ -43,9 +81,21 @@ class BookDetail extends Component
             'publisher' => $this->publisher,
             'class' => $this->class,
             'category' => $this->category,
+            'copies' => $this->copies,
         ]);
 
         session()->flash('success', 'Book updated successfully');
+    }
+
+    public function deleteBook()
+    {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
+        $this->book->delete();
+
+        session()->flash('success', 'Book deleted successfully.');
+
+        return $this->redirect(route('books'));
     }
 
     public function render()

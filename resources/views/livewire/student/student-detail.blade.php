@@ -311,6 +311,126 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Attendance History
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Date</th>
+                            <th scope="col" class="px-4 py-3">Time In / Out</th>
+                            <th scope="col" class="px-4 py-3">Total Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($this->studentDetails->attendances as $attendance)
+                            <tr wire:key="attendance-{{ $attendance->id }}" class="border-b dark:border-gray-700">
+                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                    {{ \Carbon\Carbon::parse($attendance->date)->format('Y-m-d') }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    @forelse ($attendance->attrs as $attr)
+                                        <div>{{ \Carbon\Carbon::parse($attr->time_in)->format('H:i') }} &ndash; {{ $attr->time_out ? \Carbon\Carbon::parse($attr->time_out)->format('H:i') : 'Still in' }}</div>
+                                    @empty
+                                        <span class="text-gray-400 dark:text-gray-500">&mdash;</span>
+                                    @endforelse
+                                </td>
+                                <td class="px-4 py-3">{{ $studentDetails->secondsToHms($attendance->total_time) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    No attendance recorded yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if ($this->studentDetails->attendances->count() >= 15)
+                <p class="px-4 pt-2 text-xs text-gray-400 dark:text-gray-500">
+                    Showing most recent 15 &mdash; see the <a href="{{ route('report') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Attendance Analytics report</a> for full history.
+                </p>
+            @endif
+        </div>
+
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Book Rentals
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Title</th>
+                            <th scope="col" class="px-4 py-3">Due Date</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3">
+                                <span class="sr-only">Actions</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($this->studentDetails->rentals as $rental)
+                            @php
+                                $returnedAt = $rental->returned_at ? \Carbon\Carbon::parse($rental->returned_at) : null;
+                                $isLate = $returnedAt ? false : \Carbon\Carbon::parse($rental->due_at)->isPast();
+                            @endphp
+                            <tr wire:key="rental-{{ $rental->id }}" class="border-b dark:border-gray-700">
+                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                    {{ $rental->book?->title ?? '(book removed)' }}
+                                </td>
+                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($rental->due_at)->format('Y-m-d') }}</td>
+                                <td class="px-4 py-3">
+                                    @if ($returnedAt)
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            Returned
+                                        </span>
+                                    @elseif ($isLate)
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">
+                                            Overdue
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                            Borrowed
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if (! $returnedAt)
+                                        <div class="flex items-center justify-end">
+                                            <button title="Return this book"
+                                                class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg dark:text-primary-300 dark:hover:bg-gray-700"
+                                                wire:click="$dispatch('openModal', { component: 'book.return-book', arguments: { rentalId: {{ $rental->id }} }})">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    No book rentals yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 gap-4 mt-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">
             <div class="flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-700">

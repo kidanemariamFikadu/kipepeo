@@ -11,20 +11,18 @@
 
 <body class="antialiased bg-white dark:bg-gray-900">
     @php
-        // Daily-use pages stay as standalone top-level links.
-        // Everything used less often is grouped into a collapsible
-        // section so the sidebar doesn't keep growing one flat item at a time.
         $navLinks = [
             ['href' => '/', 'label' => 'Home', 'active' => request()->is('/')],
             ['href' => '/attendance', 'label' => 'Attendance', 'active' => request()->is('attendance*')],
             ['href' => '/volunteers', 'label' => 'Volunteers', 'active' => request()->is('volunteers*')],
-        ];
-        $recordLinks = [
             ['href' => '/students', 'label' => 'Students', 'active' => request()->is('students*', 'student-detail*')],
-            ['href' => '/books', 'label' => 'Books', 'active' => request()->is('books*', 'book-detail*')],
-            ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')],
         ];
-        $recordsActive = collect($recordLinks)->contains('active', true);
+        $booksActive = request()->is('books*', 'book-detail*');
+        $bookLinks = [
+            ['href' => '/books', 'label' => 'Book', 'active' => $booksActive && request('tab') !== 'loan'],
+            ['href' => '/books?tab=loan', 'label' => 'Books on Loan', 'active' => $booksActive && request('tab') === 'loan'],
+        ];
+        $dataEntryLink = ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')];
         $reportLink = ['href' => '/report', 'label' => 'Report', 'active' => request()->is('report*')];
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
@@ -68,6 +66,9 @@
                                         @case('Volunteers')
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                                             @break
+                                        @case('Students')
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                            @break
                                     @endswitch
                                 </span>
                                 <span class="truncate" :class="{ 'lg:hidden': collapsed }">{{ $link['label'] }}</span>
@@ -75,22 +76,19 @@
                         </li>
                     @endforeach
 
-                    <li class="px-2.5 pb-1.5 pt-3.5 text-[10px] font-bold uppercase tracking-wider text-gray-400"
-                        :class="{ 'lg:hidden': collapsed }">Grouped</li>
-
                     <li :class="{ 'lg:hidden': collapsed }">
-                        <details class="group" @if ($recordsActive) open @endif>
+                        <details class="group" @if ($booksActive) open @endif>
                             <summary
                                 class="flex cursor-pointer list-none items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium marker:content-none hover:bg-white/10
-                                    {{ $recordsActive ? 'text-white' : 'text-gray-200' }}">
+                                    {{ $booksActive ? 'text-white' : 'text-gray-200' }}">
                                 <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"/></svg>
                                 </span>
-                                <span class="flex-1 truncate">Records</span>
+                                <span class="flex-1 truncate">Books</span>
                                 <svg class="h-3 w-3 shrink-0 text-gray-400 transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                             </summary>
                             <ul class="mt-0.5 flex flex-col gap-0.5 pl-[30px]">
-                                @foreach ($recordLinks as $link)
+                                @foreach ($bookLinks as $link)
                                     <li>
                                         <a href="{{ $link['href'] }}" @if ($link['active']) aria-current="page" @endif
                                             class="block rounded-lg px-2.5 py-1.5 text-sm
@@ -101,6 +99,17 @@
                                 @endforeach
                             </ul>
                         </details>
+                    </li>
+
+                    <li>
+                        <a href="{{ $dataEntryLink['href'] }}" @if ($dataEntryLink['active']) aria-current="page" @endif
+                            class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium
+                                {{ $dataEntryLink['active'] ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                            <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </span>
+                            <span class="truncate" :class="{ 'lg:hidden': collapsed }">{{ $dataEntryLink['label'] }}</span>
+                        </a>
                     </li>
 
                     <li>

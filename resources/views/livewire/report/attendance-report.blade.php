@@ -26,6 +26,19 @@
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
+            <div>
+                <label for="studentId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Student</label>
+                <select id="studentId" wire:model="studentId"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All students</option>
+                    @foreach ($students as $student)
+                        <option value="{{ $student->id }}">{{ $student->name }}</option>
+                    @endforeach
+                </select>
+                @error('studentId')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
             <div class="flex items-center space-x-2">
                 <button type="submit" wire:loading.attr="disabled" wire:target="filter"
                     class="inline-flex items-center p-2 px-4 bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm disabled:opacity-50">
@@ -149,6 +162,76 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Hours by Student Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Hours by Student</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3">Student</th>
+                                <th class="px-4 py-3">Days Present</th>
+                                <th class="px-4 py-3">Total Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($hoursByStudent as $row)
+                                <tr class="border-b dark:border-gray-700">
+                                    <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ $row['student']?->name ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['visits'] }}</td>
+                                    <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                        No student attendance found for the selected filters.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if ($studentId)
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Attendance Log</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                                <tr>
+                                    <th class="px-4 py-3">Date</th>
+                                    <th class="px-4 py-3">Time In / Out</th>
+                                    <th class="px-4 py-3">Total Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($attendanceLog as $attendance)
+                                    <tr wire:key="{{ $attendance->id }}" class="border-b dark:border-gray-700">
+                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($attendance->date)->format('M j, Y') }}</td>
+                                        <td class="px-4 py-3">
+                                            @forelse ($attendance->attrs as $attr)
+                                                <div>{{ \Carbon\Carbon::parse($attr->time_in)->format('H:i') }} &ndash; {{ $attr->time_out ? \Carbon\Carbon::parse($attr->time_out)->format('H:i') : 'Still in' }}</div>
+                                            @empty
+                                                <span class="text-gray-400 dark:text-gray-500">&mdash;</span>
+                                            @endforelse
+                                        </td>
+                                        <td class="px-4 py-3">{{ $this->secondsToHms($attendance->total_time) }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                            No attendance logged for this student in range.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endif
         @endif
         </div>
 

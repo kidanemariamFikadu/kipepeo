@@ -95,7 +95,7 @@
                                     {{ $row['volunteer']?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
-                                <td class="px-4 py-3">{{ $row['estStipend'] !== null ? number_format($row['estStipend'], 2) : '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['estStipend'] !== null ? 'KSH ' . number_format($row['estStipend'], 2) : '—' }}</td>
                             </tr>
                         @empty
                             <tr>

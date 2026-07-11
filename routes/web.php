@@ -10,6 +10,8 @@ use App\Livewire\User\EditUser;
 use App\Livewire\User\Invitation;
 use App\Livewire\User\MyProfile;
 use App\Livewire\UserList;
+use App\Livewire\Volunteer\VolunteerDetail;
+use App\Livewire\School\SchoolDetail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +39,7 @@ Route::middleware([
     Route::get('/student-detail/{student_id}', StudentDetail::class)->name('student-detail');
     Route::get('/attendance', AttendanceStudent::class)->name('attendance');
     Route::get('/volunteers', AttendanceVolunteer::class)->name('volunteers');
+    Route::get('/volunteer-detail/{volunteer_id}', VolunteerDetail::class)->name('volunteer-detail');
     Route::get('/data-entry', \App\Livewire\DataEntry\Index::class)->name('data-entry');
     Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
@@ -49,6 +52,7 @@ Route::middleware([
         Route::get('/invitation', Invitation::class)->name('invitation');
         Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
         Route::get('/settings/schools', \App\Livewire\Setting\SchoolList::class)->name('settings-schools');
+        Route::get('/school-detail/{school_id}', SchoolDetail::class)->name('school-detail');
         Route::get('/settings/grades', \App\Livewire\Setting\GradeList::class)->name('settings-grades');
         Route::get('/settings/volunteers', \App\Livewire\Setting\VolunteerList::class)->name('settings-volunteers');
         Route::get('/settings/activity-types', \App\Livewire\Setting\ActivityTypeList::class)->name('settings-activity-types');

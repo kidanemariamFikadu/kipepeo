@@ -62,3 +62,46 @@ test('filter requires the to-date to be on or after the from-date', function () 
         ->call('filter')
         ->assertHasErrors(['toDate']);
 });
+
+test('hoursByStudent totals days present and time for each student in range', function () {
+    $user = User::factory()->create();
+    $studentA = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'B', 'dob' => '2010-01-01', 'gender' => 'female']);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $studentA->id, 'date' => now()->subDay(), 'current_in' => false, 'total_time' => 1800]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->subDays(5)->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter');
+
+    $hoursByStudent = $component->viewData('hoursByStudent');
+
+    $rowA = $hoursByStudent->firstWhere(fn ($row) => $row['student']->id === $studentA->id);
+    $rowB = $hoursByStudent->firstWhere(fn ($row) => $row['student']->id === $studentB->id);
+
+    expect($rowA['visits'])->toBe(2);
+    expect($rowA['totalSeconds'])->toBe(5400);
+    expect($rowB['visits'])->toBe(1);
+    expect($rowB['totalSeconds'])->toBe(7200);
+});
+
+test('attendanceLog is only populated once a studentId filter is set', function () {
+    $user = User::factory()->create();
+    $student = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+
+    $withoutFilter = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->call('filter');
+    expect($withoutFilter->viewData('attendanceLog'))->toHaveCount(0);
+
+    $withFilter = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('studentId', $student->id)
+        ->call('filter');
+    expect($withFilter->viewData('attendanceLog'))->toHaveCount(1);
+});

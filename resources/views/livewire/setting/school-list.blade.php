@@ -52,6 +52,14 @@
                     <div class="flex items-center justify-between gap-3 py-2 px-4 border-t dark:border-gray-700">
                         <span class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $school->name }}</span>
                         <div class="flex items-center gap-1 shrink-0">
+                            <a href="{{ route('school-detail', $school->id) }}" title="View details"
+                                class="p-2 text-teal-600 hover:bg-teal-50 rounded-lg dark:text-teal-300 dark:hover:bg-gray-700">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </a>
                             <button title="Edit school"
                                 class="p-2 text-teal-600 hover:bg-teal-50 rounded-lg dark:text-teal-300 dark:hover:bg-gray-700"
                                 wire:click="$dispatch('openModal', { component: 'setting.school', arguments: { schoolId: {{ $school->id }} }})">

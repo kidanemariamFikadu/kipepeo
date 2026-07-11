@@ -68,6 +68,16 @@ class Student extends Model
     }
 
     /**
+     * Get all of the book rentals for the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rentals(): HasMany
+    {
+        return $this->hasMany(Rental::class);
+    }
+
+    /**
      * Get the grade the student graduated from, if any.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

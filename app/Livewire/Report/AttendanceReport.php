@@ -3,6 +3,7 @@
 namespace App\Livewire\Report;
 
 use App\Models\Attendance;
+use App\Models\Student;
 use Carbon\Carbon;
 use Livewire\Component;
 
@@ -10,6 +11,7 @@ class AttendanceReport extends Component
 {
     public $fromDate;
     public $toDate;
+    public $studentId = '';
 
     public $totalStudents;
     public $averageAttendanceDuration;
@@ -19,6 +21,8 @@ class AttendanceReport extends Component
     public $studentsByAge = [];
 
     public $dailyStatistics = [];
+    public $hoursByStudent = [];
+    public $attendanceLog = [];
 
     public function mount()
     {
@@ -32,12 +36,13 @@ class AttendanceReport extends Component
         $this->validate([
             'fromDate' => 'required|date',
             'toDate' => 'required|date|after_or_equal:fromDate',
+            'studentId' => 'nullable|exists:students,id',
         ]);
 
         $attendances = Attendance::whereBetween('date', [
             Carbon::parse($this->fromDate)->startOfDay(),
             Carbon::parse($this->toDate)->endOfDay(),
-        ])->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable')])->get();
+        ])->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'), 'attrs'])->get();
 
         $this->totalStudents = $attendances->count();
         $this->averageAttendanceDuration = $attendances->avg('total_time');
@@ -59,6 +64,21 @@ class AttendanceReport extends Component
         }
 
         $this->dailyStatistics = $dailyStatistics;
+
+        $this->hoursByStudent = $attendances->groupBy('student_id')
+            ->map(function ($rows) {
+                return [
+                    'student' => $rows->first()->student,
+                    'totalSeconds' => $rows->sum('total_time'),
+                    'visits' => $rows->count(),
+                ];
+            })
+            ->sortByDesc('totalSeconds')
+            ->values();
+
+        $this->attendanceLog = $this->studentId
+            ? $attendances->where('student_id', $this->studentId)->sortByDesc('date')->values()
+            : collect();
     }
 
     function secondsToHms($seconds)
@@ -84,6 +104,9 @@ class AttendanceReport extends Component
             'studentsByGrade' => $this->studentsByGrade,
             'studentsByAge' => $this->studentsByAge,
             'dailyStatistics' => $this->dailyStatistics,
+            'hoursByStudent' => $this->hoursByStudent,
+            'attendanceLog' => $this->attendanceLog,
+            'students' => Student::active()->orderBy('name')->get(),
         ]);
     }
 }

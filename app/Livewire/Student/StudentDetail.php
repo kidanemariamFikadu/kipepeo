@@ -30,6 +30,13 @@ class StudentDetail extends Component
             session()->flash($message['type'], $message['content']);
     }
 
+    #[On('rental-changed')]
+    function refreshRentals($message)
+    {
+        if ($message)
+            session()->flash($message['type'], $message['content']);
+    }
+
     private function loadStudent($id)
     {
         return Student::with([
@@ -37,6 +44,10 @@ class StudentDetail extends Component
             'volunteerActivities' => fn ($query) => $query->orderByDesc('date'),
             'volunteerActivities.activityType',
             'volunteerActivities.volunteer',
+            'attendances' => fn ($query) => $query->orderByDesc('date')->limit(15),
+            'attendances.attrs',
+            'rentals' => fn ($query) => $query->orderByDesc('rented_at')->limit(20),
+            'rentals.book',
         ])->find($id);
     }
 

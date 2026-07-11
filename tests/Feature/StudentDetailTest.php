@@ -1,8 +1,12 @@
 <?php
 
 use App\Models\ActivityType;
+use App\Models\Attendance;
+use App\Models\AttendanceAttr;
+use App\Models\Book;
 use App\Models\Grade;
 use App\Models\GradeStudent;
+use App\Models\Rental;
 use App\Models\School;
 use App\Models\SchoolStudent;
 use App\Models\Student;
@@ -56,9 +60,10 @@ test('student detail page does not N+1 query per related row', function () {
 
     $this->actingAs($user)->get("/student-detail/{$student->id}")->assertOk();
 
-    // 2 guardians + 2 schools (with school) + 2 grades (with gradeTable) eager-loaded
+    // 2 guardians + 2 schools (with school) + 2 grades (with gradeTable) + volunteer
+    // activities + attendances (with attrs) + rentals (with book) all eager-loaded
     // should stay well under a per-row query count; N+1 would scale with row count instead.
-    expect($queryCount)->toBeLessThan(15);
+    expect($queryCount)->toBeLessThan(25);
 });
 
 test('a graduated badge is shown for a graduated student', function () {
@@ -99,4 +104,68 @@ test('student detail page shows volunteer activity history for the student', fun
 
     $response->assertSee('Tutoring');
     $response->assertSee('Helpful Volunteer');
+});
+
+test('student detail page shows attendance history for the student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Attending Student');
+
+    $attendance = Attendance::create([
+        'student_id' => $student->id,
+        'date' => '2026-06-01',
+        'current_in' => false,
+        'total_time' => 3661,
+    ]);
+    AttendanceAttr::create([
+        'attendance_id' => $attendance->id,
+        'student_id' => $student->id,
+        'date' => '2026-06-01',
+        'time_in' => '2026-06-01 08:00:00',
+        'time_out' => '2026-06-01 09:00:00',
+    ]);
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertSee('Attendance History');
+    $response->assertSee('2026-06-01');
+    $response->assertSee('01:01:01');
+});
+
+test('student detail page shows book rental history and a return action for the student', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Borrowing Student');
+    $book = Book::create(['title' => 'The Rented Book', 'author' => 'An Author', 'copies' => 2, 'available_copies' => 1]);
+    $rental = Rental::create([
+        'book_id' => $book->id,
+        'student_id' => $student->id,
+        'user_id' => $user->id,
+        'rented_at' => now(),
+        'due_at' => now()->addDays(7),
+    ]);
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertSee('Book Rentals');
+    $response->assertSee('The Rented Book');
+    $response->assertSee('Borrowed');
+    $response->assertSee("rentalId: {$rental->id}", false);
+});
+
+test('a returned rental shows the Returned status and no return action', function () {
+    $user = User::factory()->create(['role' => 'user']);
+    $student = makeStudentWithRelations('Returned Book Student');
+    $book = Book::create(['title' => 'The Returned Book', 'author' => 'An Author', 'copies' => 2, 'available_copies' => 2]);
+    Rental::create([
+        'book_id' => $book->id,
+        'student_id' => $student->id,
+        'user_id' => $user->id,
+        'rented_at' => now()->subDays(10),
+        'due_at' => now()->subDays(3),
+        'returned_at' => now()->subDays(2),
+    ]);
+
+    $response = $this->actingAs($user)->get("/student-detail/{$student->id}");
+
+    $response->assertSee('Returned');
+    $response->assertDontSee('Return this book', false);
 });
