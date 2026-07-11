@@ -240,6 +240,8 @@
         </div>
 
         @livewire('wire-elements-modal')
+
+        <x-toast-container />
     </div>
 </body>
 

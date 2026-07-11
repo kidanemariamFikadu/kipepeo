@@ -1,4 +1,6 @@
 <div>
+    <x-flash-toast />
+
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
@@ -22,16 +24,6 @@
         </div>
         <!-- Modal body -->
         <form class="p-4 md:p-5" wire:submit="createSchool">
-
-
-            @if (session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Error</strong>
-                    <span class="block sm:inline">{{ session('error') }}</span>
-
-                </div>
-            @endif
-
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
                     <label for="school" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">School

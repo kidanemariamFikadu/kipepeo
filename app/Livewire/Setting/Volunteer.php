@@ -64,13 +64,14 @@ class Volunteer extends ModalComponent
 
         if ($this->volunteerId) {
             \App\Models\Volunteer::find($this->volunteerId)->update($data);
-            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Volunteer updated successfully']);
+            $message = 'Volunteer updated successfully';
         } else {
             \App\Models\Volunteer::create($data);
-            $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Volunteer created successfully']);
+            $message = 'Volunteer created successfully';
         }
 
-        $this->dispatch('volunteer-changed');
+        $this->dispatch('MessageChanged', ['type' => 'success', 'content' => $message]);
+        $this->dispatch('volunteer-changed', ['type' => 'success', 'content' => $message]);
         $this->closeModal();
     }
 

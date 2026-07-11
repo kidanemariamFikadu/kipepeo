@@ -58,6 +58,7 @@ class LogVolunteerActivity extends ModalComponent
 
         if (!$attendance) {
             $this->dispatch('MessageChanged', ['type' => 'error', 'content' => 'This volunteer is not currently checked in']);
+            $this->dispatch('volunteer-changed', ['type' => 'error', 'content' => 'This volunteer is not currently checked in']);
             $this->closeModal();
             return;
         }
@@ -75,7 +76,7 @@ class LogVolunteerActivity extends ModalComponent
         }
 
         $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Activity logged successfully']);
-        $this->dispatch('volunteer-changed');
+        $this->dispatch('volunteer-changed', ['type' => 'success', 'content' => 'Activity logged successfully']);
         $this->closeModal();
     }
 

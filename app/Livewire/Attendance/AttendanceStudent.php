@@ -33,7 +33,7 @@ class AttendanceStudent extends Component
     public $perPage = 10;
 
     #[On('student-changed')]
-    public function refreshStudents($message)
+    public function refreshStudents($message = null)
     {
         if ($message)
             session()->flash($message['type'], $message['content']);

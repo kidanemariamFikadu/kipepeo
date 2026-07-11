@@ -32,7 +32,7 @@ class AttendanceVolunteer extends Component
     public $perPage = 10;
 
     #[On('volunteer-changed')]
-    public function refreshVolunteers($message)
+    public function refreshVolunteers($message = null)
     {
         if ($message)
             session()->flash($message['type'], $message['content']);
