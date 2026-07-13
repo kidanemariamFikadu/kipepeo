@@ -40,7 +40,7 @@ class GreetingComponent extends Component
 
                 $att->update([
                     'current_in' => false,
-                    'total_time' => $att->total_time + now()->diffInSeconds($attr->time_in),
+                    'total_time' => $att->total_time + now()->diffInSeconds($attr->time_in, true),
                 ]);
             }
         }

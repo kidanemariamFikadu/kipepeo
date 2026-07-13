@@ -114,7 +114,7 @@
                         }"
                             x-init="render(@js(['labels' => $topBooks->keys(), 'data' => $topBooks->values()]))"
                             wire:key="top-books-chart-{{ $topBooks->sum() }}-{{ $fromDate }}-{{ $toDate }}"
-                            class="h-64">
+                            class="relative h-64">
                             <canvas x-ref="canvas" role="img" aria-label="Most borrowed books"></canvas>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                         }"
                             x-init="render(@js(['labels' => $rentalsByCategory->keys(), 'data' => $rentalsByCategory->values()]))"
                             wire:key="category-chart-{{ $rentalsByCategory->sum() }}-{{ $fromDate }}-{{ $toDate }}"
-                            class="h-64">
+                            class="relative h-64">
                             <canvas x-ref="canvas" role="img" aria-label="Rentals by category"></canvas>
                         </div>
                     </div>

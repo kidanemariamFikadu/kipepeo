@@ -16,11 +16,9 @@
             <header class="no-print">
                 <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
                     <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-                        <a href="/" class="flex items-center">
+                        <a href="/" class="flex items-center rounded-md bg-white p-1.5 shadow">
                             <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}"
-                                class="mr-3 h-6 sm:h-9 block dark:hidden" alt="Kipepeo Logo" />
-                            <img src="{{ asset('images/kipepeo-logo-white.png') }}"
-                                class="mr-3 h-6 sm:h-9 hidden dark:block" alt="Kipepeo Logo" />
+                                class="h-6 w-auto" alt="Kipepeo Logo" />
                         </a>
                     </div>
                 </nav>
@@ -33,11 +31,9 @@
             <footer class="p-4 bg-white md:p-6 dark:bg-gray-800 no-print border-t border-gray-200 dark:border-gray-700">
                 <div class="mx-auto max-w-screen-xl">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <a href="/" class="flex items-center shrink-0">
+                        <a href="/" class="flex items-center shrink-0 rounded-md bg-white p-1.5 shadow">
                             <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}"
-                                class="h-6 block dark:hidden" alt="Kipepeo Logo" />
-                            <img src="{{ asset('images/kipepeo-logo-white.png') }}"
-                                class="h-6 hidden dark:block" alt="Kipepeo Logo" />
+                                class="h-6 w-auto" alt="Kipepeo Logo" />
                         </a>
                         <ul class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
                             <li><a href="/" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Home</a></li>

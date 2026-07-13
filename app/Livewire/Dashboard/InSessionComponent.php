@@ -31,7 +31,7 @@ class InSessionComponent extends Component
 
         $attendance->update([
             'current_in' => false,
-            'total_time' => $attendance->total_time + now()->diffInSeconds($attr->time_in),
+            'total_time' => $attendance->total_time + now()->diffInSeconds($attr->time_in, true),
         ]);
 
         $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => 'Student checked out successfully']);

@@ -94,7 +94,7 @@
                     }"
                         x-init="render(@js(['labels' => $studentsByGender->keys(), 'data' => $studentsByGender->values()]))"
                         wire:key="gender-chart-{{ $studentsByGender->sum() }}-{{ $fromDate }}-{{ $toDate }}"
-                        class="h-40">
+                        class="relative h-40">
                         <canvas x-ref="canvas" role="img" aria-label="Attendance by gender"></canvas>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     }"
                         x-init="render(@js(['labels' => $studentsBySchool->keys(), 'data' => $studentsBySchool->values()]))"
                         wire:key="school-chart-{{ $studentsBySchool->sum() }}-{{ $fromDate }}-{{ $toDate }}"
-                        class="h-40">
+                        class="relative h-40">
                         <canvas x-ref="canvas" role="img" aria-label="Attendance by school"></canvas>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     }"
                         x-init="render(@js(['labels' => $studentsByGrade->keys(), 'data' => $studentsByGrade->values()]))"
                         wire:key="grade-chart-{{ $studentsByGrade->sum() }}-{{ $fromDate }}-{{ $toDate }}"
-                        class="h-40">
+                        class="relative h-40">
                         <canvas x-ref="canvas" role="img" aria-label="Attendance by grade"></canvas>
                     </div>
                 </div>

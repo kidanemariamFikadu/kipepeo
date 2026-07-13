@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div wire:ignore class="h-64">
+    <div wire:ignore class="relative h-64">
         <canvas x-ref="canvas" role="img" aria-label="Bar chart of student counts for the selected breakdown"></canvas>
     </div>
 

@@ -23,7 +23,7 @@
     </div>
 
     <div wire:ignore x-data="{ chart: null }"
-        x-init="chart = KipepeoCharts.stackedBar($refs.canvas, @js($chart))" class="h-24">
+        x-init="chart = KipepeoCharts.stackedBar($refs.canvas, @js($chart))" class="relative h-24">
         <canvas x-ref="canvas" role="img" aria-label="Stacked bar chart of book copy status: available, lost, stolen"></canvas>
     </div>
 </div>
