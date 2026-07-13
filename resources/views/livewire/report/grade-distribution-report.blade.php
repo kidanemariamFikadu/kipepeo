@@ -46,7 +46,7 @@
                         ['label' => 'Male', 'data' => $grades->pluck('male_students_count')],
                         ['label' => 'Female', 'data' => $grades->pluck('female_students_count')],
                     ],
-                ]))" wire:key="grade-chart-{{ $grades->sum('total_students') }}" class="h-96">
+                ]))" wire:key="grade-chart-{{ $grades->sum('total_students') }}" class="relative h-96">
                 <canvas x-ref="canvas" role="img" aria-label="Stacked bar chart of male and female students per grade"></canvas>
             </div>
         </div>

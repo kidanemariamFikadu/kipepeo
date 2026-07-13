@@ -56,7 +56,7 @@ class AddStudentAttendance extends Component
         $startDateTime = Carbon::parse("$currentDate $startTime");
         $endDateTime = Carbon::parse("$currentDate $endTime");
         
-        $timeDifferenceInSeconds = $endDateTime->diffInSeconds($startDateTime);
+        $timeDifferenceInSeconds = $endDateTime->diffInSeconds($startDateTime, true);
 
         $attendance->current_in = false;
         $attendance->total_time = $attendance->total_time + $timeDifferenceInSeconds;

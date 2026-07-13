@@ -48,7 +48,7 @@ class BookRentalReport extends Component
         $returned = $rentals->whereNotNull('returned_at');
         $this->returnedOnTime = $returned->filter(fn ($r) => Carbon::parse($r->returned_at)->lte(Carbon::parse($r->due_at)))->count();
         $this->returnedLate = $returned->count() - $this->returnedOnTime;
-        $this->avgDaysToReturn = round($returned->avg(fn ($r) => Carbon::parse($r->rented_at)->diffInDays(Carbon::parse($r->returned_at))) ?? 0, 1);
+        $this->avgDaysToReturn = round($returned->avg(fn ($r) => Carbon::parse($r->rented_at)->diffInDays(Carbon::parse($r->returned_at), true)) ?? 0, 1);
 
         $this->topBooks = $rentals->groupBy(fn ($r) => $r->book?->title ?: 'Unknown')->map->count()->sortDesc()->take(10);
         $this->rentalsByCategory = $rentals->groupBy(fn ($r) => $r->book?->category ?: 'Uncategorized')->map->count()->sortDesc();

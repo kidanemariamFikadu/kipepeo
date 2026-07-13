@@ -46,7 +46,7 @@ class AttendanceSeed extends Seeder
                     'student_id' => $student->id,
                     'date' => $day->toDateString(),
                     'current_in' => false,
-                    'total_time' => $timeOut->diffInSeconds($timeIn),
+                    'total_time' => $timeOut->diffInSeconds($timeIn, true),
                 ]);
 
                 AttendanceAttr::create([
@@ -92,7 +92,7 @@ class AttendanceSeed extends Seeder
                     'time_out' => $timeOut->format('H:i:s'),
                 ]);
 
-                $attendance->update(['total_time' => $timeOut->diffInSeconds($timeIn)]);
+                $attendance->update(['total_time' => $timeOut->diffInSeconds($timeIn, true)]);
             }
         }
     }

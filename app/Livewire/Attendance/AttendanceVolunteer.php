@@ -62,7 +62,7 @@ class AttendanceVolunteer extends Component
         ]);
 
         $attendance->current_in = false;
-        $attendance->total_time = $attendance->total_time + now()->diffInSeconds($attr->time_in);
+        $attendance->total_time = $attendance->total_time + now()->diffInSeconds($attr->time_in, true);
         $attendance->save();
 
         session()->flash('success', 'Volunteer checked out successfully');

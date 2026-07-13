@@ -15,13 +15,20 @@ class VolunteersTodayComponent extends Component
 
     public function render()
     {
+        $attendanceToday = VolunteerAttendance::whereDate('date', today())
+            ->with(['attrs' => fn ($query) => $query->whereNull('time_out')])
+            ->get();
+
+        $totalSeconds = $attendanceToday->sum(function (VolunteerAttendance $attendance) {
+            return $attendance->total_time + $attendance->attrs->sum(
+                fn ($attr) => now()->diffInSeconds($attr->time_in, true)
+            );
+        });
+
         return view('livewire.dashboard.volunteers-today-component', [
-            'volunteersToday' => VolunteerAttendance::whereDate('date', today())
-                ->distinct('volunteer_id')
-                ->count('volunteer_id'),
-            'volunteersCurrentlyIn' => VolunteerAttendance::whereDate('date', today())
-                ->where('current_in', true)
-                ->count(),
+            'volunteersToday' => $attendanceToday->count(),
+            'volunteersCurrentlyIn' => $attendanceToday->where('current_in', true)->count(),
+            'totalHoursToday' => round($totalSeconds / 3600, 1),
         ]);
     }
 }

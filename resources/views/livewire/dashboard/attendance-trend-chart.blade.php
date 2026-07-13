@@ -23,7 +23,7 @@
             this.chart = KipepeoCharts.line(this.$refs.canvas, { labels: data.labels, data: data.data, label: 'Check-ins' });
         },
     }" x-init="render(@js($chart))"
-        @attendance-trend-updated.window="render($event.detail.chart)" class="h-64">
+        @attendance-trend-updated.window="render($event.detail.chart)" class="relative h-64">
         <canvas x-ref="canvas" role="img"
             aria-label="Line chart of daily student check-ins over the selected date range"></canvas>
     </div>

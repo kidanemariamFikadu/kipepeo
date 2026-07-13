@@ -43,7 +43,7 @@ class QuickCheckInVolunteers extends ModalComponent
         ]);
 
         $attendance->current_in = false;
-        $attendance->total_time = $attendance->total_time + now()->diffInSeconds($attr->time_in);
+        $attendance->total_time = $attendance->total_time + now()->diffInSeconds($attr->time_in, true);
         $attendance->save();
 
         $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => 'Volunteer checked out successfully']);

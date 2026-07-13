@@ -7,7 +7,7 @@
         @php
             $quickLinks = [
                 ['component' => 'attendance.quick-check-in-students', 'label' => 'Mark attendance', 'icon' => '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'],
-                ['component' => 'attendance.quick-check-in-volunteers', 'label' => 'Check in a volunteer', 'icon' => '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>'],
+                ['component' => 'attendance.quick-check-in-volunteers', 'label' => 'Check in/out volunteers', 'icon' => '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>'],
                 ['component' => 'student.create-student', 'label' => 'Add a student', 'icon' => '<path d="M12 5v14M5 12h14"/>'],
                 ['component' => 'book.rent', 'label' => 'Rent a book', 'icon' => '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>'],
             ];

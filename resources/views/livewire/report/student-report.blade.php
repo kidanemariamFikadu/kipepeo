@@ -142,7 +142,7 @@
                     }"
                         x-init="render(@js(['labels' => ['Male', 'Female', 'Other'], 'data' => [$schoolReport->sum('male_students_count'), $schoolReport->sum('female_students_count'), $schoolReport->sum('other_students_count')]]))"
                         wire:key="gender-chart-{{ $schoolReport->sum('male_students_count') }}-{{ $schoolReport->sum('female_students_count') }}-{{ $schoolReport->sum('other_students_count') }}"
-                        class="h-56">
+                        class="relative h-56">
                         <canvas x-ref="canvas" role="img"
                             aria-label="Pie chart of male, female, and other student counts on this page"></canvas>
                     </div>
