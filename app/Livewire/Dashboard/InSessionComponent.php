@@ -43,6 +43,7 @@ class InSessionComponent extends Component
 
         $studentsInAttendanceToday = Attendance::whereDate('date', $today)
             ->where('current_in', true)
+            ->whereHas('student')
             ->with('student') // eager load the student relationship
             ->paginate(6, ['*'], 'in-session-page');
 
