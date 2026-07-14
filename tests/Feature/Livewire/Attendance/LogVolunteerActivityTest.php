@@ -2,6 +2,7 @@
 
 use App\Livewire\Attendance\LogVolunteerActivity;
 use App\Models\ActivityType;
+use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Volunteer;
@@ -17,6 +18,14 @@ function checkedInVolunteer(): Volunteer
     return $volunteer;
 }
 
+function presentStudent(string $name = 'Student One'): Student
+{
+    $student = Student::create(['name' => $name, 'dob' => '2012-01-01', 'gender' => 'male']);
+    Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => true]);
+
+    return $student;
+}
+
 test('logActivity creates a volunteer activity tied to the currently open attendance visit', function () {
     $user = User::factory()->create();
     $volunteer = checkedInVolunteer();
@@ -25,7 +34,7 @@ test('logActivity creates a volunteer activity tied to the currently open attend
 
     Livewire::actingAs($user)
         ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
-        ->set('activityTypeId', $activityType->id)
+        ->set('activityTypeIds', [$activityType->id])
         ->set('notes', 'Covered algebra')
         ->call('logActivity')
         ->assertDispatched('volunteer-changed');
@@ -36,20 +45,53 @@ test('logActivity creates a volunteer activity tied to the currently open attend
     expect($activity->notes)->toBe('Covered algebra');
 });
 
-test('logActivity attaches selected students to the activity', function () {
+test('logActivity creates one activity per selected activity type', function () {
     $user = User::factory()->create();
     $volunteer = checkedInVolunteer();
-    $activityType = ActivityType::create(['name' => 'Tutoring']);
-    $student = Student::create(['name' => 'Student One', 'dob' => '2012-01-01', 'gender' => 'male']);
+    $tutoring = ActivityType::create(['name' => 'Tutoring']);
+    $stemClub = ActivityType::create(['name' => 'STEM Club']);
 
     Livewire::actingAs($user)
         ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
-        ->set('activityTypeId', $activityType->id)
+        ->set('activityTypeIds', [$tutoring->id, $stemClub->id])
+        ->call('logActivity')
+        ->assertHasNoErrors();
+
+    $activities = VolunteerActivity::where('volunteer_id', $volunteer->id)->get();
+    expect($activities)->toHaveCount(2);
+    expect($activities->pluck('activity_type_id')->sort()->values()->all())
+        ->toBe(collect([$tutoring->id, $stemClub->id])->sort()->values()->all());
+});
+
+test('logActivity attaches selected students to every created activity', function () {
+    $user = User::factory()->create();
+    $volunteer = checkedInVolunteer();
+    $tutoring = ActivityType::create(['name' => 'Tutoring']);
+    $stemClub = ActivityType::create(['name' => 'STEM Club']);
+    $student = presentStudent();
+
+    Livewire::actingAs($user)
+        ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
+        ->set('activityTypeIds', [$tutoring->id, $stemClub->id])
         ->set('studentIds', [$student->id])
         ->call('logActivity');
 
-    $activity = VolunteerActivity::where('volunteer_id', $volunteer->id)->first();
-    expect($activity->students->pluck('id'))->toContain($student->id);
+    $activities = VolunteerActivity::where('volunteer_id', $volunteer->id)->get();
+    expect($activities)->toHaveCount(2);
+    $activities->each(fn ($activity) => expect($activity->students->pluck('id'))->toContain($student->id));
+});
+
+test('eligibleStudents only lists students with an attendance record today', function () {
+    $user = User::factory()->create();
+    $volunteer = checkedInVolunteer();
+    $present = presentStudent('Present Student');
+    $absent = Student::create(['name' => 'Absent Student', 'dob' => '2012-01-01', 'gender' => 'female']);
+
+    $component = Livewire::actingAs($user)->test(LogVolunteerActivity::class, ['volunteer' => $volunteer]);
+
+    $ids = $component->instance()->eligibleStudents()->pluck('id');
+    expect($ids)->toContain($present->id);
+    expect($ids)->not->toContain($absent->id);
 });
 
 test('logActivity allows zero students for a group session', function () {
@@ -59,7 +101,7 @@ test('logActivity allows zero students for a group session', function () {
 
     Livewire::actingAs($user)
         ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
-        ->set('activityTypeId', $activityType->id)
+        ->set('activityTypeIds', [$activityType->id])
         ->call('logActivity')
         ->assertHasNoErrors();
 
@@ -68,14 +110,14 @@ test('logActivity allows zero students for a group session', function () {
     expect($activity->students)->toHaveCount(0);
 });
 
-test('logActivity requires an activity type', function () {
+test('logActivity requires at least one activity type', function () {
     $user = User::factory()->create();
     $volunteer = checkedInVolunteer();
 
     Livewire::actingAs($user)
         ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
         ->call('logActivity')
-        ->assertHasErrors(['activityTypeId']);
+        ->assertHasErrors(['activityTypeIds']);
 
     expect(VolunteerActivity::where('volunteer_id', $volunteer->id)->exists())->toBeFalse();
 });
@@ -87,7 +129,7 @@ test('logActivity fails gracefully if the volunteer is not currently checked in'
 
     Livewire::actingAs($user)
         ->test(LogVolunteerActivity::class, ['volunteer' => $volunteer])
-        ->set('activityTypeId', $activityType->id)
+        ->set('activityTypeIds', [$activityType->id])
         ->call('logActivity')
         ->assertDispatched('MessageChanged');
 
