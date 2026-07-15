@@ -16,7 +16,7 @@ class LogVolunteerActivity extends ModalComponent
 
     public ?Volunteer $volunteer;
 
-    public $activityTypeId = '';
+    public $activityTypeIds = [];
 
     public $studentIds = [];
 
@@ -39,13 +39,17 @@ class LogVolunteerActivity extends ModalComponent
     #[Computed]
     public function eligibleStudents()
     {
-        return Student::active()->orderBy('name')->get();
+        return Student::active()
+            ->whereHas('attendances', fn ($query) => $query->whereDate('date', now()))
+            ->orderBy('name')
+            ->get();
     }
 
     function logActivity()
     {
         $this->validate([
-            'activityTypeId' => 'required|exists:activity_types,id',
+            'activityTypeIds' => 'required|array|min:1',
+            'activityTypeIds.*' => 'exists:activity_types,id',
             'studentIds' => 'nullable|array',
             'studentIds.*' => 'exists:students,id',
             'notes' => 'nullable|string|max:2000',
@@ -63,16 +67,18 @@ class LogVolunteerActivity extends ModalComponent
             return;
         }
 
-        $activity = VolunteerActivity::create([
-            'volunteer_attendance_id' => $attendance->id,
-            'volunteer_id' => $this->volunteerId,
-            'activity_type_id' => $this->activityTypeId,
-            'date' => now(),
-            'notes' => $this->notes,
-        ]);
+        foreach ($this->activityTypeIds as $activityTypeId) {
+            $activity = VolunteerActivity::create([
+                'volunteer_attendance_id' => $attendance->id,
+                'volunteer_id' => $this->volunteerId,
+                'activity_type_id' => $activityTypeId,
+                'date' => now(),
+                'notes' => $this->notes,
+            ]);
 
-        if (!empty($this->studentIds)) {
-            $activity->students()->attach($this->studentIds);
+            if (!empty($this->studentIds)) {
+                $activity->students()->attach($this->studentIds);
+            }
         }
 
         $this->dispatch('MessageChanged', ['type' => 'success', 'content' => 'Activity logged successfully']);
