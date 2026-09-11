@@ -158,3 +158,78 @@ test('attendanceLog is only populated once a studentId filter is set', function 
         ->call('filter');
     expect($withFilter->viewData('attendanceLog'))->toHaveCount(1);
 });
+
+test('the Hours by Student table is paginated on screen but the print table has every row', function () {
+    $user = User::factory()->create();
+
+    collect(range(1, 15))->each(function ($i) {
+        $student = Student::create(['name' => "Student {$i}", 'dob' => '2010-01-01', 'gender' => 'male']);
+        Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60]);
+    });
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter');
+
+    // Default perPage is 10.
+    expect($component->viewData('hoursByStudentPage'))->toHaveCount(10);
+    expect($component->viewData('hoursByStudent'))->toHaveCount(15);
+
+    $component->call('gotoPage', 2, 'hours-student-page');
+    expect($component->viewData('hoursByStudentPage'))->toHaveCount(5);
+    // The print copy is unaffected by which page is showing on screen.
+    expect($component->viewData('hoursByStudent'))->toHaveCount(15);
+});
+
+test('changing perPage or re-filtering resets every table back to page 1', function () {
+    $user = User::factory()->create();
+
+    collect(range(1, 15))->each(function ($i) {
+        $student = Student::create(['name' => "Student {$i}", 'dob' => '2010-01-01', 'gender' => 'male']);
+        Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60]);
+    });
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter')
+        ->call('gotoPage', 2, 'hours-student-page');
+
+    expect($component->viewData('hoursByStudentPage')->currentPage())->toBe(2);
+
+    $component->call('filter');
+    expect($component->viewData('hoursByStudentPage')->currentPage())->toBe(1);
+
+    $component->call('gotoPage', 2, 'hours-student-page');
+    expect($component->viewData('hoursByStudentPage')->currentPage())->toBe(2);
+
+    $component->set('perPage', 20);
+    expect($component->viewData('hoursByStudentPage')->currentPage())->toBe(1);
+});
+
+test("a girl's rank for the Top 5 badge survives pagination instead of resetting per page", function () {
+    $user = User::factory()->create();
+
+    // 12 girls, all with the same consistency (100%), so ordering is stable
+    // and rank 11 should land on page 2 when perPage is 10.
+    collect(range(1, 12))->each(function ($i) {
+        $student = Student::create(['name' => "Girl {$i}", 'dob' => '2010-01-01', 'gender' => 'female']);
+        Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60]);
+    });
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter')
+        ->call('gotoPage', 2, 'girls-page');
+
+    $page2 = $component->viewData('girlsAttendancePage');
+    expect($page2)->toHaveCount(2);
+    expect($page2->first()['rank'])->toBe(11);
+    // Rank 11 is past the top 5, so it must not be flagged as "Top".
+    expect($page2->first()['rank'] <= 5)->toBeFalse();
+});

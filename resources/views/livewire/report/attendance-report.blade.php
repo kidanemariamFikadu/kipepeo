@@ -39,6 +39,17 @@
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
+            <div>
+                <label for="perPage" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Rows per
+                    page</label>
+                <select id="perPage" wire:model.live="perPage"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
             <div class="flex items-center space-x-2">
                 <button type="submit" wire:loading.attr="disabled" wire:target="filter"
                     class="inline-flex items-center p-2 px-4 bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm disabled:opacity-50">
@@ -146,7 +157,7 @@
             </div>
 
             <!-- Daily Attendance Statistics Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 page-break">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 page-break mb-6 no-print">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Daily Breakdown</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
@@ -159,10 +170,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($dailyStatistics as $date => $statistics)
+                            @foreach ($dailyStatisticsPage as $statistics)
                                 <tr class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                                        {{ \Carbon\Carbon::parse($date)->format('M j, Y') }}</td>
+                                        {{ \Carbon\Carbon::parse($statistics['date'])->format('M j, Y') }}</td>
                                     <td class="px-4 py-3">{{ $statistics['totalStudents'] }}</td>
                                     <td class="px-4 py-3">{{ $statistics['averageAttendanceDuration'] }}</td>
                                     <td class="px-4 py-3">
@@ -176,10 +187,41 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-3">{{ $dailyStatisticsPage->links() }}</div>
+            </div>
+
+            <!-- Daily Breakdown: print only, every day in range -->
+            <div class="hidden print:block page-break mb-6">
+                <h3 class="text-lg font-medium mb-2">Daily Breakdown</h3>
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3">Date</th>
+                            <th class="px-4 py-3">Total Students</th>
+                            <th class="px-4 py-3">Avg. Duration</th>
+                            <th class="px-4 py-3">By Gender</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($dailyStatistics as $statistics)
+                            <tr class="border-b">
+                                <td class="px-4 py-3 font-medium">
+                                    {{ \Carbon\Carbon::parse($statistics['date'])->format('M j, Y') }}</td>
+                                <td class="px-4 py-3">{{ $statistics['totalStudents'] }}</td>
+                                <td class="px-4 py-3">{{ $statistics['averageAttendanceDuration'] }}</td>
+                                <td class="px-4 py-3">
+                                    @foreach ($statistics['studentsByGender'] as $gender => $count)
+                                        <span class="inline-block mr-2">{{ ucfirst($gender) }}: {{ $count }}</span>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
             <!-- Hours by Student Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6 no-print">
                 <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Hours by Student</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
@@ -192,7 +234,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($hoursByStudent as $row)
+                            @forelse ($hoursByStudentPage as $row)
                                 <tr class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $row['student']?->name ?? '—' }}</td>
@@ -210,10 +252,40 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="px-4 py-3">{{ $hoursByStudentPage->links() }}</div>
+            </div>
+
+            <!-- Hours by Student: print only, every student in range -->
+            <div class="hidden print:block page-break mb-6">
+                <h3 class="text-lg font-medium mb-2">Hours by Student</h3>
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3">Student</th>
+                            <th class="px-4 py-3">Gender</th>
+                            <th class="px-4 py-3">Days Present</th>
+                            <th class="px-4 py-3">Total Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($hoursByStudent as $row)
+                            <tr class="border-b">
+                                <td class="px-4 py-3 font-medium">{{ $row['student']?->name ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['student']?->gender ? ucfirst(strtolower($row['student']->gender)) : '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['visits'] }}</td>
+                                <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-4 py-6 text-center">No student attendance found for the selected filters.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             <!-- Hours by Grade Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6 no-print">
                 <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Hours by Grade</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
@@ -225,10 +297,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($hoursByGrade as $grade => $row)
+                            @forelse ($hoursByGradePage as $row)
                                 <tr class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $grade }}</td>
+                                        {{ $row['grade'] }}</td>
                                     <td class="px-4 py-3">{{ $row['students'] }}</td>
                                     <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                                 </tr>
@@ -242,10 +314,38 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="px-4 py-3">{{ $hoursByGradePage->links() }}</div>
+            </div>
+
+            <!-- Hours by Grade: print only, every grade in range -->
+            <div class="hidden print:block page-break mb-6">
+                <h3 class="text-lg font-medium mb-2">Hours by Grade</h3>
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3">Grade</th>
+                            <th class="px-4 py-3">Students</th>
+                            <th class="px-4 py-3">Total Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($hoursByGrade as $row)
+                            <tr class="border-b">
+                                <td class="px-4 py-3 font-medium">{{ $row['grade'] }}</td>
+                                <td class="px-4 py-3">{{ $row['students'] }}</td>
+                                <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-6 text-center">No graded attendance found for the selected filters.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             <!-- Girls Attendance & Consistency Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6 no-print">
                 <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Girls Attendance &amp; Consistency</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 px-4">
                     Consistency is days present divided by weekdays in the selected range. Sorted most to least consistent.
@@ -263,11 +363,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($girlsAttendance as $index => $row)
-                                <tr class="border-b dark:border-gray-700 {{ $index < 5 ? 'bg-primary-50/50 dark:bg-primary-900/10' : '' }}">
+                            @forelse ($girlsAttendancePage as $row)
+                                <tr class="border-b dark:border-gray-700 {{ $row['rank'] <= 5 ? 'bg-primary-50/50 dark:bg-primary-900/10' : '' }}">
                                     <td class="px-4 py-3">
-                                        {{ $index + 1 }}
-                                        @if ($index < 5)
+                                        {{ $row['rank'] }}
+                                        @if ($row['rank'] <= 5)
                                             <span class="ml-1 inline-block px-1.5 py-0.5 text-xs rounded bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">Top</span>
                                         @endif
                                     </td>
@@ -295,10 +395,44 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="px-4 py-3">{{ $girlsAttendancePage->links() }}</div>
+            </div>
+
+            <!-- Girls Attendance & Consistency: print only, every girl in range -->
+            <div class="hidden print:block page-break mb-6">
+                <h3 class="text-lg font-medium mb-2">Girls Attendance &amp; Consistency</h3>
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3">#</th>
+                            <th class="px-4 py-3">Student</th>
+                            <th class="px-4 py-3">Grade</th>
+                            <th class="px-4 py-3">Days Present</th>
+                            <th class="px-4 py-3">Total Hours</th>
+                            <th class="px-4 py-3">Consistency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($girlsAttendance as $row)
+                            <tr class="border-b">
+                                <td class="px-4 py-3">{{ $row['rank'] }}{{ $row['rank'] <= 5 ? ' (Top)' : '' }}</td>
+                                <td class="px-4 py-3 font-medium">{{ $row['student']?->name ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['student']?->grades->first()?->gradeTable?->grade ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
+                                <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                                <td class="px-4 py-3">{{ $row['consistency'] }}%</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-6 text-center">No girls' attendance found for the selected filters.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             @if ($studentId)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break no-print">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Attendance Log</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
@@ -310,7 +444,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($attendanceLog as $attendance)
+                                @forelse ($attendanceLogPage as $attendance)
                                     <tr wire:key="{{ $attendance->id }}" class="border-b dark:border-gray-700">
                                         <td class="px-4 py-3">{{ \Carbon\Carbon::parse($attendance->date)->format('M j, Y') }}</td>
                                         <td class="px-4 py-3">
@@ -332,6 +466,40 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="px-4 py-3">{{ $attendanceLogPage->links() }}</div>
+                </div>
+
+                <!-- Attendance Log: print only, every entry in range -->
+                <div class="hidden print:block page-break">
+                    <h3 class="text-lg font-medium mb-2">Attendance Log</h3>
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-4 py-3">Time In / Out</th>
+                                <th class="px-4 py-3">Total Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($attendanceLog as $attendance)
+                                <tr class="border-b">
+                                    <td class="px-4 py-3">{{ \Carbon\Carbon::parse($attendance->date)->format('M j, Y') }}</td>
+                                    <td class="px-4 py-3">
+                                        @forelse ($attendance->attrs as $attr)
+                                            <div>{{ \Carbon\Carbon::parse($attr->time_in)->format('H:i') }} &ndash; {{ $attr->time_out ? \Carbon\Carbon::parse($attr->time_out)->format('H:i') : 'Still in' }}</div>
+                                        @empty
+                                            <span>&mdash;</span>
+                                        @endforelse
+                                    </td>
+                                    <td class="px-4 py-3">{{ $this->secondsToHms($attendance->total_time) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-6 text-center">No attendance logged for this student in range.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             @endif
         @endif

@@ -5,13 +5,26 @@ namespace App\Livewire\Report;
 use App\Models\Attendance;
 use App\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class AttendanceReport extends Component
 {
+    use WithPagination;
+
+    /**
+     * Every table on this page paginates independently (own position in its
+     * own list) but shares one page-size control, matching the "paginate on
+     * screen, print the full table" convention used elsewhere in this app.
+     */
+    private const PAGE_NAMES = ['daily-page', 'hours-student-page', 'hours-grade-page', 'girls-page', 'log-page'];
+
     public $fromDate;
     public $toDate;
     public $studentId = '';
+    public $perPage = 10;
 
     public $totalStudents;
     public $averageAttendanceDuration;
@@ -31,6 +44,34 @@ class AttendanceReport extends Component
         $this->fromDate = Carbon::now()->startOfWeek()->format('Y-m-d');
         $this->toDate = Carbon::now()->format('Y-m-d');
         $this->filter();
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetAllPages();
+    }
+
+    private function resetAllPages()
+    {
+        foreach (self::PAGE_NAMES as $pageName) {
+            $this->resetPage($pageName);
+        }
+    }
+
+    /**
+     * Manually paginates a plain in-memory collection (these tables are
+     * derived from one big query up front, not separate Eloquent queries),
+     * while still producing a fully Livewire-reactive paginator - WithPagination
+     * overrides the page/path resolvers app-wide for this component, so a
+     * manually-built LengthAwarePaginator's ->links() works exactly like one
+     * built through ->paginate().
+     */
+    private function paginate(Collection $collection, string $pageName): LengthAwarePaginator
+    {
+        $page = $this->getPage($pageName);
+        $items = $collection->forPage($page, $this->perPage)->values();
+
+        return new LengthAwarePaginator($items, $collection->count(), $this->perPage, $page, ['pageName' => $pageName]);
     }
 
     public function filter()
@@ -62,13 +103,14 @@ class AttendanceReport extends Component
             return Carbon::parse($attendance->date)->toDateString();
         })->sortKeys();
 
-        $dailyStatistics = [];
+        $dailyStatistics = collect();
         foreach ($attendancesGroupedByDate as $date => $attendancesForDate) {
-            $dailyStatistics[$date] = [
+            $dailyStatistics->push([
+                'date' => $date,
                 'totalStudents' => $attendancesForDate->count(),
                 'averageAttendanceDuration' => $this->secondsToHms($attendancesForDate->avg('total_time')),
                 'studentsByGender' => $attendancesForDate->groupBy(fn ($a) => $a->student?->gender ? ucfirst(strtolower($a->student->gender)) : 'Unspecified')->map->count(),
-            ];
+            ]);
         }
 
         $this->dailyStatistics = $dailyStatistics;
@@ -85,13 +127,15 @@ class AttendanceReport extends Component
             ->values();
 
         $this->hoursByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')
-            ->map(function ($rows) {
+            ->map(function ($rows, $grade) {
                 return [
+                    'grade' => $grade,
                     'totalSeconds' => $rows->sum('total_time'),
                     'students' => $rows->pluck('student_id')->unique()->count(),
                 ];
             })
-            ->sortByDesc('totalSeconds');
+            ->sortByDesc('totalSeconds')
+            ->values();
 
         // Unique students, bucketed by age, so the range reflects who is
         // actually using the space rather than being skewed by how often
@@ -117,11 +161,21 @@ class AttendanceReport extends Component
                 ];
             })
             ->sortByDesc('consistency')
-            ->values();
+            ->values()
+            // Embed the rank so the "Top 5 most consistent" badge survives
+            // pagination - each page only sees its own slice, not the whole
+            // sorted list, so a local loop index can't be used for this.
+            ->map(function ($row, $index) {
+                $row['rank'] = $index + 1;
+
+                return $row;
+            });
 
         $this->attendanceLog = $this->studentId
             ? $attendances->sortByDesc('date')->values()
             : collect();
+
+        $this->resetAllPages();
     }
 
     /**
@@ -182,11 +236,20 @@ class AttendanceReport extends Component
             'studentsBySchool' => $this->studentsBySchool,
             'studentsByGrade' => $this->studentsByGrade,
             'studentsByAge' => $this->studentsByAge,
+            // Full collections - used for the print-only tables so the
+            // printed page always has every row, regardless of what page
+            // is showing on screen.
             'dailyStatistics' => $this->dailyStatistics,
             'hoursByStudent' => $this->hoursByStudent,
             'hoursByGrade' => $this->hoursByGrade,
             'girlsAttendance' => $this->girlsAttendance,
             'attendanceLog' => $this->attendanceLog,
+            // Paginated - used for the on-screen tables.
+            'dailyStatisticsPage' => $this->paginate($this->dailyStatistics, 'daily-page'),
+            'hoursByStudentPage' => $this->paginate($this->hoursByStudent, 'hours-student-page'),
+            'hoursByGradePage' => $this->paginate($this->hoursByGrade, 'hours-grade-page'),
+            'girlsAttendancePage' => $this->paginate($this->girlsAttendance, 'girls-page'),
+            'attendanceLogPage' => $this->paginate($this->attendanceLog, 'log-page'),
             'students' => Student::active()->orderBy('name')->get(),
         ]);
     }
