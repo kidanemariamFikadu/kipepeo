@@ -56,7 +56,7 @@ class BookRentalReport extends Component
 
     protected function rangeQuery()
     {
-        return Rental::with(['book', 'checkedOutTo', 'checkedOutBy'])
+        return Rental::with(['book.bookCategory', 'checkedOutTo', 'checkedOutBy'])
             ->whereBetween('rented_at', [
                 Carbon::parse($this->fromDate)->startOfDay(),
                 Carbon::parse($this->toDate)->endOfDay(),
@@ -69,7 +69,7 @@ class BookRentalReport extends Component
         return view('livewire.report.book-rental-report', [
             // Live, unfiltered by date range - "what's the state right now".
             'currentlyBorrowed' => Rental::whereNull('returned_at')->count(),
-            'currentlyOverdue' => Rental::whereNull('returned_at')->where('due_at', '<', now())->count(),
+            'currentlyOverdue' => Rental::overdue()->count(),
             'inventoryTotals' => [
                 'available' => BookCopy::where('status', 'available')->count(),
                 'lost' => BookCopy::where('status', 'lost')->count(),

@@ -17,6 +17,7 @@ class Book extends Model
         'publisher',
         'class',
         'category',
+        'category_id',
         'copies',
     ];
 
@@ -28,6 +29,28 @@ class Book extends Model
     function bookCopies()
     {
         return $this->hasMany(BookCopy::class);
+    }
+
+    public function bookCategory()
+    {
+        return $this->belongsTo(BookCategory::class, 'category_id');
+    }
+
+    /**
+     * Kept as a string accessor/mutator (backed by the book_categories table
+     * via category_id) so existing call sites and imports can keep reading
+     * and writing a plain category name instead of juggling an id.
+     */
+    public function getCategoryAttribute()
+    {
+        return $this->bookCategory?->name;
+    }
+
+    public function setCategoryAttribute($value)
+    {
+        $this->attributes['category_id'] = blank($value)
+            ? null
+            : BookCategory::firstOrCreate(['name' => $value])->id;
     }
 
     public function getAvailableCopiesAttribute()

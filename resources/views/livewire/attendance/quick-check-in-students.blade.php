@@ -34,6 +34,7 @@
                         $isIn = (bool) $todayAttendance?->current_in;
                         $grade = $student->grades->first()?->gradeTable?->grade;
                         $school = $student->schools->first()?->school?->name;
+                        $overdueTooltip = $student->rentals->map(fn ($r) => ($r->book?->title ?? 'Unknown book') . ' - overdue')->implode("\n");
                     @endphp
                     <li wire:key="{{ $student->id }}" class="flex items-center justify-between gap-3 py-2.5">
                         <div class="flex items-center gap-3 min-w-0">
@@ -44,7 +45,16 @@
                                 @endif
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $student->name }}</p>
+                                <p class="flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    {{ $student->name }}
+                                    @if ($student->rentals->isNotEmpty())
+                                        <span title="{{ $overdueTooltip }}" class="shrink-0 text-amber-500 dark:text-amber-400">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                            </svg>
+                                        </span>
+                                    @endif
+                                </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                                     {{ $grade ?? '—' }} @if ($school) &middot; {{ $school }} @endif
                                 </p>

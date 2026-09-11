@@ -280,6 +280,13 @@ class DeployProduction extends Command
         // Adds: deleted_at (soft deletes) to students/books/users, and
         // grades.next_grade_id (student promotion feature). Both are
         // additive, nullable columns -- safe against existing rows.
+        //
+        // Also adds: book_categories table + books.category_id. The second
+        // migration backfills every distinct existing books.category string
+        // into a book_categories row, repoints books.category_id at it, then
+        // drops the old category column -- data is preserved (verified by
+        // the row-count check below), but it's a real data migration, not a
+        // purely additive one, so give it a moment on a large books table.
         Artisan::call('migrate', ['--force' => true], $this->output);
 
         $this->verifyNoDataLoss($before, $this->snapshotRowCounts());

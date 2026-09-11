@@ -76,6 +76,8 @@ class CreateBook  extends ModalComponent
     }
     public function render()
     {
-        return view('livewire.book.create-book');
+        return view('livewire.book.create-book', [
+            'categories' => \App\Models\BookCategory::orderBy('name')->get(),
+        ]);
     }
 }

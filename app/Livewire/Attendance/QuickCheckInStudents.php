@@ -26,6 +26,7 @@ class QuickCheckInStudents extends ModalComponent
                 'attendances' => fn ($query) => $query->whereDate('date', now()),
                 'schools' => fn ($query) => $query->where('is_current', true)->with('school'),
                 'grades' => fn ($query) => $query->where('is_current', true)->with('gradeTable'),
+                'rentals' => fn ($query) => $query->overdue()->with('book'),
             ])
             ->orderBy('name')
             ->limit(8)
@@ -80,6 +81,15 @@ class QuickCheckInStudents extends ModalComponent
         ]);
 
         $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => 'Student checked in successfully']);
+
+        if ($student->is_birthday_today) {
+            $this->dispatch('student-birthday-checkin', name: $student->name);
+        }
+
+        $overdueRentals = $student->overdueRentals();
+        if ($overdueRentals->isNotEmpty()) {
+            $this->dispatch('student-overdue-books', name: $student->name, books: $overdueRentals->pluck('book.title')->filter()->values()->all());
+        }
     }
 
     public function render()

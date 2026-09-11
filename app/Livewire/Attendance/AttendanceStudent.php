@@ -105,6 +105,15 @@ class AttendanceStudent extends Component
         ]);
 
         session()->flash('success', 'Student checked in successfully');
+
+        if ($student->is_birthday_today) {
+            $this->dispatch('student-birthday-checkin', name: $student->name);
+        }
+
+        $overdueRentals = $student->overdueRentals();
+        if ($overdueRentals->isNotEmpty()) {
+            $this->dispatch('student-overdue-books', name: $student->name, books: $overdueRentals->pluck('book.title')->filter()->values()->all());
+        }
     }
 
     public function render()
@@ -117,6 +126,7 @@ class AttendanceStudent extends Component
                     'schools' => fn ($query) => $query->where('is_current', true)->with('school'),
                     'grades' => fn ($query) => $query->where('is_current', true)->with('gradeTable'),
                     'attendances' => fn ($query) => $query->whereDate('date', now()),
+                    'rentals' => fn ($query) => $query->overdue()->with('book'),
                 ])
                 ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
                     $query->whereHas('attendances', function ($query) {

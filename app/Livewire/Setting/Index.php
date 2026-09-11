@@ -37,6 +37,12 @@ class Index extends Component
         return \App\Models\JobTitle::count();
     }
 
+    #[Computed]
+    public function bookCategoryCount()
+    {
+        return \App\Models\BookCategory::count();
+    }
+
     public function render()
     {
         return view('livewire.setting.index')->title('Settings');

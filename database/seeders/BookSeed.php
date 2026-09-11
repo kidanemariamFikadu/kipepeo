@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Book;
+use App\Models\BookCategory;
 use App\Models\BookCopy;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +14,9 @@ class BookSeed extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Story book', 'Supplementary book', 'Grade book', 'Adult novels'];
+        $this->call(BookCategorySeed::class);
+
+        $categories = BookCategory::pluck('name')->all();
 
         $books = [
             ['title' => 'The Lion and the Jewel', 'author' => 'Wole Soyinka'],

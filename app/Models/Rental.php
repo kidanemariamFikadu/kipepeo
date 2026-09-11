@@ -26,6 +26,11 @@ class Rental extends Model
         return $this->belongsTo(Student::class, 'student_id');
     }
 
+    public function scopeOverdue($query)
+    {
+        return $query->whereNull('returned_at')->where('due_at', '<', now());
+    }
+
     public function scopeSearch($query, $value)
     {
         return $query->whereHas('book', function ($q) use ($value) {

@@ -100,6 +100,8 @@ class BookDetail extends Component
 
     public function render()
     {
-        return view('livewire.book.book-detail');
+        return view('livewire.book.book-detail', [
+            'categories' => \App\Models\BookCategory::orderBy('name')->get(),
+        ]);
     }
 }
