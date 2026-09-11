@@ -25,6 +25,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Deliberately outside auth -- there's no admin to log in as on a freshly
+// restored install. The component itself 404s as soon as any user exists.
+Route::get('/restore', \App\Livewire\Setup\Restore::class)->name('restore');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -55,6 +59,8 @@ Route::middleware([
         Route::get('/settings/grades', \App\Livewire\Setting\GradeList::class)->name('settings-grades');
         Route::get('/settings/volunteers', \App\Livewire\Setting\VolunteerList::class)->name('settings-volunteers');
         Route::get('/settings/activity-types', \App\Livewire\Setting\ActivityTypeList::class)->name('settings-activity-types');
+        Route::get('/settings/book-categories', \App\Livewire\Setting\BookCategoryList::class)->name('settings-book-categories');
+        Route::get('/settings/backup', \App\Livewire\Setting\Backup::class)->name('settings-backup');
         Route::get('/settings/job-titles', \App\Livewire\Setting\JobTitleList::class)->name('settings-job-titles');
         Route::get('/settings/import-students', \App\Livewire\Setting\ImportStudents::class)->name('settings-import-students');
         Route::get('/settings/import-books', \App\Livewire\Setting\ImportBook::class)->name('settings-import-books');

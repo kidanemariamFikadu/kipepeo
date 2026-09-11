@@ -42,6 +42,13 @@
                     'icon' => '<path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>',
                 ],
                 [
+                    'href' => route('settings-book-categories'),
+                    'title' => 'Book Categories',
+                    'description' => 'The categories books are classified under.',
+                    'count' => $this->bookCategoryCount . ' ' . Str::plural('category', $this->bookCategoryCount),
+                    'icon' => '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>',
+                ],
+                [
                     'href' => route('promote-students'),
                     'title' => 'Promote Students',
                     'description' => 'Move a grade up at year end.',
@@ -61,6 +68,13 @@
                     'description' => 'Bulk-add titles to the catalog.',
                     'count' => 'CSV / XLSX',
                     'icon' => '<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/>',
+                ],
+                [
+                    'href' => route('settings-backup'),
+                    'title' => 'Backup',
+                    'description' => 'Download the database and .env as a .zip.',
+                    'count' => 'Manual',
+                    'icon' => '<path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/>',
                 ],
             ];
         @endphp
