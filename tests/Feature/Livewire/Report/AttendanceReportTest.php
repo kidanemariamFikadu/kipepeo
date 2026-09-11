@@ -89,6 +89,36 @@ test('hoursByStudent totals days present and time for each student in range', fu
     expect($rowB['totalSeconds'])->toBe(7200);
 });
 
+test('selecting a student scopes every card and chart to that student, not the whole cohort', function () {
+    // Regression test: studentId used to only filter the attendanceLog table
+    // at the bottom of the page - every summary card and chart above it kept
+    // showing the full cohort's numbers regardless of which student was
+    // selected.
+    $user = User::factory()->create();
+    $studentA = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'B', 'dob' => '2010-01-01', 'gender' => 'female']);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->set('studentId', $studentA->id)
+        ->call('filter');
+
+    expect($component->get('totalStudents'))->toBe(1);
+    expect((int) $component->get('averageAttendanceDuration'))->toBe(3600);
+
+    $hoursByStudent = $component->viewData('hoursByStudent');
+    expect($hoursByStudent)->toHaveCount(1);
+    expect($hoursByStudent->first()['student']->id)->toBe($studentA->id);
+
+    // Student B's data must not leak into a report scoped to student A.
+    expect($component->viewData('girlsAttendance'))->toHaveCount(0);
+});
+
 test('attendanceLog is only populated once a studentId filter is set', function () {
     $user = User::factory()->create();
     $student = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);

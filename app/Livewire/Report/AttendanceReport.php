@@ -44,7 +44,13 @@ class AttendanceReport extends Component
         $attendances = Attendance::whereBetween('date', [
             Carbon::parse($this->fromDate)->startOfDay(),
             Carbon::parse($this->toDate)->endOfDay(),
-        ])->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'), 'attrs'])->get();
+        ])
+            // Scoping here (not just the log at the bottom) means every card
+            // and chart above reflects the selected student instead of the
+            // whole cohort once one is picked.
+            ->when($this->studentId, fn ($q) => $q->where('student_id', $this->studentId))
+            ->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'), 'attrs'])
+            ->get();
 
         $this->totalStudents = $attendances->count();
         $this->averageAttendanceDuration = $attendances->avg('total_time');
@@ -114,7 +120,7 @@ class AttendanceReport extends Component
             ->values();
 
         $this->attendanceLog = $this->studentId
-            ? $attendances->where('student_id', $this->studentId)->sortByDesc('date')->values()
+            ? $attendances->sortByDesc('date')->values()
             : collect();
     }
 
