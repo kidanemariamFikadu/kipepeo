@@ -48,6 +48,7 @@ Route::middleware([
     Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
     Route::get('/book-detail/{id}', \App\Livewire\Book\BookDetail::class)->name('book-detail');
+    Route::get('/manual', \App\Livewire\Manual\Index::class)->name('manual');
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/users', UserList::class)->name('users');

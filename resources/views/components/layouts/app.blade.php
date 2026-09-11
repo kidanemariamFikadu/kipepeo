@@ -184,6 +184,10 @@
                             <a href="{{ route('my-profile') }}"
                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
                         </li>
+                        <li>
+                            <a href="{{ route('manual') }}"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">User Manual</a>
+                        </li>
                     </ul>
                     <div class="py-1">
                         <form method="POST" action="{{ route('logout') }}" x-data>
@@ -229,6 +233,7 @@
                             <li><a href="/report" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Reports</a></li>
                             <li><a href="/books" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Books</a></li>
                             <li><a href="{{ route('my-profile') }}" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">My Profile</a></li>
+                            <li><a href="{{ route('manual') }}" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">User Manual</a></li>
                             <li><a href="https://kipepeosafespace.org" target="_blank" rel="noopener" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">kipepeosafespace.org</a></li>
                         </ul>
                     </div>
