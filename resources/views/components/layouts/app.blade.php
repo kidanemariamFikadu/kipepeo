@@ -24,6 +24,7 @@
         ];
         $dataEntryLink = ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')];
         $reportLink = ['href' => '/report', 'label' => 'Report', 'active' => request()->is('report*')];
+        $manualLink = ['href' => '/manual', 'label' => 'User Manual', 'active' => request()->is('manual*')];
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
             $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
@@ -122,6 +123,17 @@
                         </a>
                     </li>
 
+                    <li>
+                        <a href="{{ $manualLink['href'] }}" @if ($manualLink['active']) aria-current="page" @endif
+                            class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium
+                                {{ $manualLink['active'] ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                            <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5"/><path d="M12 17h.01"/></svg>
+                            </span>
+                            <span class="truncate" :class="{ 'lg:hidden': collapsed }">{{ $manualLink['label'] }}</span>
+                        </a>
+                    </li>
+
                     @if ($adminLinks !== [])
                         <li class="px-2.5 pb-1.5 pt-3.5 text-[10px] font-bold uppercase tracking-wider text-gray-400"
                             :class="{ 'lg:hidden': collapsed }">Admin only</li>
@@ -183,10 +195,6 @@
                         <li>
                             <a href="{{ route('my-profile') }}"
                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('manual') }}"
-                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">User Manual</a>
                         </li>
                     </ul>
                     <div class="py-1">
