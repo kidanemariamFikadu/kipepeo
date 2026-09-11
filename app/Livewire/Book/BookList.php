@@ -51,11 +51,22 @@ class BookList extends Component
 
     public function render()
     {
+        $books = Book::search($this->search)
+            ->with('bookCategory')
+            ->withCount(['bookCopies as available_copies_count' => fn ($query) => $query->where('status', 'available')]);
+
+        // "category" is no longer a column on books -- it lives on the
+        // related book_categories table, so sorting by it needs a join.
+        if ($this->sortBy === 'category') {
+            $books->leftJoin('book_categories', 'book_categories.id', '=', 'books.category_id')
+                ->select('books.*')
+                ->orderBy('book_categories.name', $this->sortDir);
+        } else {
+            $books->orderBy($this->sortBy, $this->sortDir);
+        }
+
         return view('livewire.book.book-list', [
-            'books' => Book::search($this->search)
-                ->withCount(['bookCopies as available_copies_count' => fn ($query) => $query->where('status', 'available')])
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->paginate($this->perPage)
+            'books' => $books->paginate($this->perPage),
         ]);
     }
 }

@@ -66,10 +66,9 @@
                     <select id="category" wire:model='category'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option value="" selected>Choose a category</option>
-                        <option value="Story book">Story book</option>
-                        <option value="Supplementary book">Supplementary book</option>
-                        <option value="Grade book">Grade book</option>
-                        <option value="Adult novels">Adult novels</option>
+                        @foreach ($categories as $bookCategory)
+                            <option value="{{ $bookCategory->name }}">{{ $bookCategory->name }}</option>
+                        @endforeach
                     </select>
                     @error('category')
                         <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>
