@@ -55,6 +55,23 @@ test('getStudentByDate reports the current school, not an old one', function () 
     expect($component->get('students')->first()['school'])->toBe('New School');
 });
 
+test('getStudentByDate does not crash when the attending student was soft-deleted', function () {
+    // Regression test: $attendance->student is null once the student is
+    // soft-deleted (excluded by default), which crashed this report on
+    // ->student->id. Same fix as the dashboard's in-session widget.
+    $user = User::factory()->create();
+    $student = Student::create(['name' => 'Ghost Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    Attendance::create(['student_id' => $student->id, 'date' => '2026-01-15', 'current_in' => false, 'total_time' => 0]);
+    $student->delete();
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->call('getStudentByDate');
+
+    expect($component->get('students'))->toHaveCount(0);
+});
+
 test('getStudentByDate requires a date', function () {
     $user = User::factory()->create();
 

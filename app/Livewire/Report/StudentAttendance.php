@@ -34,6 +34,7 @@ class StudentAttendance extends Component
         ]);
 
         $this->students = Attendance::whereDate('date', $this->date)
+            ->whereHas('student')
             ->with([
                 'student',
                 'student.schools' => fn ($query) => $query->where('is_current', true)->with('school'),
