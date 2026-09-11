@@ -82,7 +82,7 @@
                 No attendance records found for the selected date range.
             </div>
         @else
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-white mb-2">By Gender</h3>
                     <div wire:ignore x-data="{
@@ -126,6 +126,21 @@
                         wire:key="grade-chart-{{ $studentsByGrade->sum() }}-{{ $fromDate }}-{{ $toDate }}"
                         class="relative h-40">
                         <canvas x-ref="canvas" role="img" aria-label="Attendance by grade"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-white mb-2">By Age</h3>
+                    <div wire:ignore x-data="{
+                        chart: null,
+                        render(data) {
+                            if (this.chart) { this.chart.destroy(); }
+                            this.chart = KipepeoCharts.bar(this.$refs.canvas, { labels: data.labels, data: data.data, horizontal: true, seriesIndex: 3 });
+                        },
+                    }"
+                        x-init="render(@js(['labels' => $studentsByAge->keys(), 'data' => $studentsByAge->values()]))"
+                        wire:key="age-chart-{{ $studentsByAge->sum() }}-{{ $fromDate }}-{{ $toDate }}"
+                        class="relative h-40">
+                        <canvas x-ref="canvas" role="img" aria-label="Students by age"></canvas>
                     </div>
                 </div>
             </div>
@@ -187,6 +202,91 @@
                                 <tr>
                                     <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                         No student attendance found for the selected filters.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hours by Grade Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Hours by Grade</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3">Grade</th>
+                                <th class="px-4 py-3">Students</th>
+                                <th class="px-4 py-3">Total Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($hoursByGrade as $grade => $row)
+                                <tr class="border-b dark:border-gray-700">
+                                    <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ $grade }}</td>
+                                    <td class="px-4 py-3">{{ $row['students'] }}</td>
+                                    <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                        No graded attendance found for the selected filters.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Girls Attendance & Consistency Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Girls Attendance &amp; Consistency</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 px-4">
+                    Consistency is days present divided by weekdays in the selected range. Sorted most to least consistent.
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3">#</th>
+                                <th class="px-4 py-3">Student</th>
+                                <th class="px-4 py-3">Grade</th>
+                                <th class="px-4 py-3">Days Present</th>
+                                <th class="px-4 py-3">Total Hours</th>
+                                <th class="px-4 py-3">Consistency</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($girlsAttendance as $index => $row)
+                                <tr class="border-b dark:border-gray-700 {{ $index < 5 ? 'bg-primary-50/50 dark:bg-primary-900/10' : '' }}">
+                                    <td class="px-4 py-3">
+                                        {{ $index + 1 }}
+                                        @if ($index < 5)
+                                            <span class="ml-1 inline-block px-1.5 py-0.5 text-xs rounded bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">Top</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ $row['student']?->name ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['student']?->grades->first()?->gradeTable?->grade ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
+                                    <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-20 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                                <div class="h-full bg-primary-600" style="width: {{ min(100, $row['consistency']) }}%"></div>
+                                            </div>
+                                            <span>{{ $row['consistency'] }}%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                        No girls' attendance found for the selected filters.
                                     </td>
                                 </tr>
                             @endforelse

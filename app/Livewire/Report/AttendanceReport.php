@@ -22,6 +22,8 @@ class AttendanceReport extends Component
 
     public $dailyStatistics = [];
     public $hoursByStudent = [];
+    public $hoursByGrade = [];
+    public $girlsAttendance = [];
     public $attendanceLog = [];
 
     public function mount()
@@ -76,9 +78,80 @@ class AttendanceReport extends Component
             ->sortByDesc('totalSeconds')
             ->values();
 
+        $this->hoursByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')
+            ->map(function ($rows) {
+                return [
+                    'totalSeconds' => $rows->sum('total_time'),
+                    'students' => $rows->pluck('student_id')->unique()->count(),
+                ];
+            })
+            ->sortByDesc('totalSeconds');
+
+        // Unique students, bucketed by age, so the range reflects who is
+        // actually using the space rather than being skewed by how often
+        // any one child attended.
+        $this->studentsByAge = $attendances->pluck('student')->filter()->unique('id')
+            ->groupBy(fn ($student) => $this->ageBucket($student->student_age))
+            ->map->count()
+            ->sortKeys();
+
+        $weekdaysInRange = $this->countWeekdays(Carbon::parse($this->fromDate), Carbon::parse($this->toDate));
+
+        $this->girlsAttendance = $attendances
+            ->filter(fn ($a) => $a->student && strtolower($a->student->gender ?? '') === 'female')
+            ->groupBy('student_id')
+            ->map(function ($rows) use ($weekdaysInRange) {
+                $daysPresent = $rows->pluck('date')->unique()->count();
+
+                return [
+                    'student' => $rows->first()->student,
+                    'daysPresent' => $daysPresent,
+                    'totalSeconds' => $rows->sum('total_time'),
+                    'consistency' => $weekdaysInRange > 0 ? round(($daysPresent / $weekdaysInRange) * 100) : 0,
+                ];
+            })
+            ->sortByDesc('consistency')
+            ->values();
+
         $this->attendanceLog = $this->studentId
             ? $attendances->where('student_id', $this->studentId)->sortByDesc('date')->values()
             : collect();
+    }
+
+    /**
+     * Buckets ages into ranges meaningful for a children's learning space
+     * rather than showing every single-year age as its own bar.
+     */
+    function ageBucket($age)
+    {
+        if (is_null($age)) {
+            return 'Unknown';
+        }
+
+        return match (true) {
+            $age <= 5 => 'Under 6',
+            $age <= 8 => '6-8',
+            $age <= 11 => '9-11',
+            $age <= 14 => '12-14',
+            $age <= 17 => '15-17',
+            default => '18+',
+        };
+    }
+
+    function countWeekdays(Carbon $from, Carbon $to)
+    {
+        $count = 0;
+        $cursor = $from->copy()->startOfDay();
+        $end = $to->copy()->startOfDay();
+
+        while ($cursor->lte($end)) {
+            if (! $cursor->isWeekend()) {
+                $count++;
+            }
+            $cursor->addDay();
+        }
+
+        return $count;
     }
 
     function secondsToHms($seconds)
@@ -105,6 +178,8 @@ class AttendanceReport extends Component
             'studentsByAge' => $this->studentsByAge,
             'dailyStatistics' => $this->dailyStatistics,
             'hoursByStudent' => $this->hoursByStudent,
+            'hoursByGrade' => $this->hoursByGrade,
+            'girlsAttendance' => $this->girlsAttendance,
             'attendanceLog' => $this->attendanceLog,
             'students' => Student::active()->orderBy('name')->get(),
         ]);
