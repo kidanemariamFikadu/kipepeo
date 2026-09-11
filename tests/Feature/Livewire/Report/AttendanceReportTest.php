@@ -89,6 +89,29 @@ test('hoursByStudent totals days present and time for each student in range', fu
     expect($rowB['totalSeconds'])->toBe(7200);
 });
 
+test('the Hours by Student table shows each student\'s gender', function () {
+    $user = User::factory()->create();
+    $studentA = Student::create(['name' => 'Male Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'Female Student', 'dob' => '2010-01-01', 'gender' => 'FEMALE']);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+
+    $html = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter')
+        ->html();
+
+    expect($html)->toContain('<th class="px-4 py-3">Gender</th>');
+    expect($html)->toContain('Male');
+    // Stored gender casing is normalized for display, same as the other
+    // gender breakdowns on this page.
+    expect($html)->toContain('Female');
+    expect($html)->not->toContain('FEMALE');
+});
+
 test('selecting a student scopes every card and chart to that student, not the whole cohort', function () {
     // Regression test: studentId used to only filter the attendanceLog table
     // at the bottom of the page - every summary card and chart above it kept

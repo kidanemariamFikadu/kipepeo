@@ -186,6 +186,7 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
                                 <th class="px-4 py-3">Student</th>
+                                <th class="px-4 py-3">Gender</th>
                                 <th class="px-4 py-3">Days Present</th>
                                 <th class="px-4 py-3">Total Hours</th>
                             </tr>
@@ -195,12 +196,13 @@
                                 <tr class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $row['student']?->name ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['student']?->gender ? ucfirst(strtolower($row['student']->gender)) : '—' }}</td>
                                     <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                     <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                         No student attendance found for the selected filters.
                                     </td>
                                 </tr>
