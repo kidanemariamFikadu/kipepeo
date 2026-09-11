@@ -61,14 +61,22 @@ class AttendanceReport extends Component
     /**
      * Manually paginates a plain in-memory collection (these tables are
      * derived from one big query up front, not separate Eloquent queries),
-     * while still producing a fully Livewire-reactive paginator - WithPagination
-     * overrides the page/path resolvers app-wide for this component, so a
-     * manually-built LengthAwarePaginator's ->links() works exactly like one
-     * built through ->paginate().
+     * while still producing a fully Livewire-reactive paginator.
+     *
+     * Uses Paginator::resolveCurrentPage() rather than the trait's own
+     * getPage() helper -- that's the exact call Eloquent's ->paginate()
+     * makes internally, and it's the only thing that runs Livewire's
+     * ensurePaginatorIsInitialized() for a given pageName, which registers
+     * the property hook responsible for keeping this pageName's client-side
+     * state in sync. Skipping it (i.e. just reading $this->paginators[$pageName]
+     * directly) left pageNames other than the "official" one never
+     * properly initialized, which produced a client-side sync bug on
+     * gotoPage: https://flareapp.io/share/q5Yp3BX7 (PublicPropertyNotFoundException,
+     * "Public property [$] not found").
      */
     private function paginate(Collection $collection, string $pageName): LengthAwarePaginator
     {
-        $page = $this->getPage($pageName);
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage($pageName);
         $items = $collection->forPage($page, $this->perPage)->values();
 
         return new LengthAwarePaginator($items, $collection->count(), $this->perPage, $page, ['pageName' => $pageName]);
@@ -115,10 +123,20 @@ class AttendanceReport extends Component
 
         $this->dailyStatistics = $dailyStatistics;
 
+        // Only the primitive fields the table actually displays are kept
+        // here (not the Student model itself) - these collections can run
+        // into the hundreds of rows, and a wire payload full of nested
+        // Eloquent models is both unnecessarily large and, per Livewire's
+        // own pagination docs, outside the well-trodden path for a
+        // component with several independent paginators on one page.
         $this->hoursByStudent = $attendances->groupBy('student_id')
-            ->map(function ($rows) {
+            ->map(function ($rows, $studentId) {
+                $student = $rows->first()->student;
+
                 return [
-                    'student' => $rows->first()->student,
+                    'studentId' => (int) $studentId,
+                    'studentName' => $student?->name,
+                    'studentGender' => $student?->gender ? ucfirst(strtolower($student->gender)) : null,
                     'totalSeconds' => $rows->sum('total_time'),
                     'visits' => $rows->count(),
                 ];
@@ -150,11 +168,14 @@ class AttendanceReport extends Component
         $this->girlsAttendance = $attendances
             ->filter(fn ($a) => $a->student && strtolower($a->student->gender ?? '') === 'female')
             ->groupBy('student_id')
-            ->map(function ($rows) use ($weekdaysInRange) {
+            ->map(function ($rows, $studentId) use ($weekdaysInRange) {
+                $student = $rows->first()->student;
                 $daysPresent = $rows->pluck('date')->unique()->count();
 
                 return [
-                    'student' => $rows->first()->student,
+                    'studentId' => (int) $studentId,
+                    'studentName' => $student?->name,
+                    'studentGrade' => $student?->grades->first()?->gradeTable?->grade,
                     'daysPresent' => $daysPresent,
                     'totalSeconds' => $rows->sum('total_time'),
                     'consistency' => $weekdaysInRange > 0 ? round(($daysPresent / $weekdaysInRange) * 100) : 0,

@@ -80,8 +80,8 @@ test('hoursByStudent totals days present and time for each student in range', fu
 
     $hoursByStudent = $component->viewData('hoursByStudent');
 
-    $rowA = $hoursByStudent->firstWhere(fn ($row) => $row['student']->id === $studentA->id);
-    $rowB = $hoursByStudent->firstWhere(fn ($row) => $row['student']->id === $studentB->id);
+    $rowA = $hoursByStudent->firstWhere(fn ($row) => $row['studentId'] === $studentA->id);
+    $rowB = $hoursByStudent->firstWhere(fn ($row) => $row['studentId'] === $studentB->id);
 
     expect($rowA['visits'])->toBe(2);
     expect($rowA['totalSeconds'])->toBe(5400);
@@ -136,7 +136,7 @@ test('selecting a student scopes every card and chart to that student, not the w
 
     $hoursByStudent = $component->viewData('hoursByStudent');
     expect($hoursByStudent)->toHaveCount(1);
-    expect($hoursByStudent->first()['student']->id)->toBe($studentA->id);
+    expect($hoursByStudent->first()['studentId'])->toBe($studentA->id);
 
     // Student B's data must not leak into a report scoped to student A.
     expect($component->viewData('girlsAttendance'))->toHaveCount(0);
@@ -232,4 +232,40 @@ test("a girl's rank for the Top 5 badge survives pagination instead of resetting
     expect($page2->first()['rank'])->toBe(11);
     // Rank 11 is past the top 5, so it must not be flagged as "Top".
     expect($page2->first()['rank'] <= 5)->toBeFalse();
+});
+
+test('the wire payload does not embed full Student models in the paginated tables', function () {
+    // Regression test for a production crash: a client-side sync bug
+    // (Livewire\Exceptions\PublicPropertyNotFoundException, "Public
+    // property [$] not found") occurred when navigating pages on a report
+    // whose hoursByStudent/girlsAttendance collections carried a full
+    // Student model per row. Hundreds of rows meant a very large wire
+    // payload, which is outside Livewire's well-supported path for a
+    // component with several independent paginators. Only primitive
+    // fields (studentId, studentName, ...) are embedded now - see
+    // https://flareapp.io/share/q5Yp3BX7 and the paginate() docblock.
+    $user = User::factory()->create();
+
+    collect(range(1, 20))->each(function ($i) {
+        $student = Student::create(['name' => "Student {$i}", 'dob' => '2010-01-01', 'gender' => $i % 2 ? 'male' : 'female']);
+        Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60 * $i]);
+    });
+
+    $page = $this->actingAs($user)->get('/report');
+    $page->assertOk();
+
+    preg_match_all('/wire:snapshot="(.*?)"(?=\s|>)/s', $page->getContent(), $matches);
+
+    $snapshot = null;
+    foreach ($matches[1] as $raw) {
+        $decoded = html_entity_decode($raw);
+        $data = json_decode($decoded, true);
+        if (($data['memo']['name'] ?? null) === 'report.attendance-report') {
+            $snapshot = $decoded;
+            break;
+        }
+    }
+
+    expect($snapshot)->not->toBeNull();
+    expect($snapshot)->not->toContain('App\\\\Models\\\\Student');
 });

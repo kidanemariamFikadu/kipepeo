@@ -237,8 +237,8 @@
                             @forelse ($hoursByStudentPage as $row)
                                 <tr class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $row['student']?->name ?? '—' }}</td>
-                                    <td class="px-4 py-3">{{ $row['student']?->gender ? ucfirst(strtolower($row['student']->gender)) : '—' }}</td>
+                                        {{ $row['studentName'] ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['studentGender'] ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                     <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                                 </tr>
@@ -270,8 +270,8 @@
                     <tbody>
                         @forelse ($hoursByStudent as $row)
                             <tr class="border-b">
-                                <td class="px-4 py-3 font-medium">{{ $row['student']?->name ?? '—' }}</td>
-                                <td class="px-4 py-3">{{ $row['student']?->gender ? ucfirst(strtolower($row['student']->gender)) : '—' }}</td>
+                                <td class="px-4 py-3 font-medium">{{ $row['studentName'] ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['studentGender'] ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                             </tr>
@@ -372,8 +372,8 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $row['student']?->name ?? '—' }}</td>
-                                    <td class="px-4 py-3">{{ $row['student']?->grades->first()?->gradeTable?->grade ?? '—' }}</td>
+                                        {{ $row['studentName'] ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['studentGrade'] ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
                                     <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                                     <td class="px-4 py-3">
@@ -416,8 +416,8 @@
                         @forelse ($girlsAttendance as $row)
                             <tr class="border-b">
                                 <td class="px-4 py-3">{{ $row['rank'] }}{{ $row['rank'] <= 5 ? ' (Top)' : '' }}</td>
-                                <td class="px-4 py-3 font-medium">{{ $row['student']?->name ?? '—' }}</td>
-                                <td class="px-4 py-3">{{ $row['student']?->grades->first()?->gradeTable?->grade ?? '—' }}</td>
+                                <td class="px-4 py-3 font-medium">{{ $row['studentName'] ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['studentGrade'] ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
                                 <td class="px-4 py-3">{{ $row['consistency'] }}%</td>
