@@ -133,6 +133,24 @@ class Student extends Model
         return  Carbon::parse($this->dob)->age;
     }
 
+    /**
+     * Books this student currently has out past their due date, so
+     * check-in flows can surface a reminder to collect them.
+     */
+    public function overdueRentals()
+    {
+        return $this->rentals()->overdue()->with('book')->get();
+    }
+
+    public function getIsBirthdayTodayAttribute()
+    {
+        if (! $this->dob) {
+            return false;
+        }
+
+        return Carbon::parse($this->dob)->format('m-d') === Carbon::now()->format('m-d');
+    }
+
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%"); //->orWhere('email','like',"%{$value}%");

@@ -56,6 +56,7 @@
                                     $todayAttendance = $student->attendances->first();
                                     $isIn = (bool) $todayAttendance?->current_in;
                                     $primaryGuardian = $student->guardians->firstWhere('is_primary', true) ?? $student->guardians->first();
+                                    $overdueTooltip = $student->rentals->map(fn ($r) => ($r->book?->title ?? 'Unknown book') . ' - overdue')->implode("\n");
                                 @endphp
                                 <tr wire:key="{{ $student->id }}" class="border-b dark:border-gray-700">
                                     <th scope="row"
@@ -68,6 +69,13 @@
                                                 @endif
                                             </span>
                                             {{ $student->name }}
+                                            @if ($student->rentals->isNotEmpty())
+                                                <span title="{{ $overdueTooltip }}" class="shrink-0 text-amber-500 dark:text-amber-400">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                                    </svg>
+                                                </span>
+                                            @endif
                                         </div>
                                     </th>
                                     <td class="px-4 py-3">{{ $student->grades->first()?->gradeTable?->grade ?? '—' }}</td>

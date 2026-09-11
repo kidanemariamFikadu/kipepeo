@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased bg-white dark:bg-gray-900">
+<body class="antialiased bg-white dark:bg-gray-900 h-full overflow-hidden">
     @php
         $navLinks = [
             ['href' => '/', 'label' => 'Home', 'active' => request()->is('/')],
@@ -242,6 +242,8 @@
         @livewire('wire-elements-modal')
 
         <x-toast-container />
+        <x-birthday-celebration />
+        <x-overdue-books-alert />
     </div>
 </body>
 

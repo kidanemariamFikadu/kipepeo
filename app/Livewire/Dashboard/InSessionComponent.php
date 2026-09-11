@@ -13,10 +13,17 @@ use Livewire\WithPagination;
 class InSessionComponent extends Component
 {
     use WithPagination;
-    
+
+    public $search = '';
+
     #[On('dashboard-changed')]
     function refreshDashboard($message)
     {
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage('in-session-page');
     }
 
     function checkOut($studentId)
@@ -43,8 +50,8 @@ class InSessionComponent extends Component
 
         $studentsInAttendanceToday = Attendance::whereDate('date', $today)
             ->where('current_in', true)
-            ->whereHas('student')
-            ->with('student') // eager load the student relationship
+            ->whereHas('student', fn ($query) => $query->when($this->search, fn ($query) => $query->search($this->search)))
+            ->with(['student.rentals' => fn ($query) => $query->overdue()->with('book')])
             ->paginate(6, ['*'], 'in-session-page');
 
         return view('livewire.dashboard.in-session-component', [
