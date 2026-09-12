@@ -109,3 +109,43 @@ test('the roster table numbers each row', function () {
 
     expect($html)->toContain('<th class="px-4 py-3">#</th>');
 });
+
+test('the roster is paginated on screen but the print table has every row', function () {
+    $user = User::factory()->create();
+    collect(range(1, 15))->each(function ($i) {
+        $student = Student::create(['name' => sprintf('Student %02d', $i), 'dob' => '2010-01-01', 'gender' => 'male']);
+        Attendance::create(['student_id' => $student->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+    });
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->call('getStudentByDate');
+
+    expect($component->get('students'))->toHaveCount(15);
+    expect($component->viewData('studentsPage')->count())->toBe(10);
+    expect($component->viewData('studentsPage')->total())->toBe(15);
+
+    $html = $component->html();
+    expect($html)->toContain('Student 01');
+    expect(substr_count($html, 'Student 11'))->toBe(1);
+});
+
+test('changing perPage or re-filtering the roster resets back to page 1', function () {
+    $user = User::factory()->create();
+    collect(range(1, 15))->each(function ($i) {
+        $student = Student::create(['name' => sprintf('Student %02d', $i), 'dob' => '2010-01-01', 'gender' => 'male']);
+        Attendance::create(['student_id' => $student->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+    });
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->call('getStudentByDate')
+        ->call('gotoPage', 2, 'roster-page');
+
+    expect($component->viewData('studentsPage')->currentPage())->toBe(2);
+
+    $component->call('getStudentByDate');
+    expect($component->viewData('studentsPage')->currentPage())->toBe(1);
+});

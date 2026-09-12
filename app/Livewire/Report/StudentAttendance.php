@@ -3,17 +3,41 @@
 namespace App\Livewire\Report;
 
 use App\Models\Attendance;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class StudentAttendance extends Component
 {
+    use WithPagination;
+
     public $date;
+    public $perPage = 10;
     public $students = [];
 
     public function mount()
     {
         $this->date = now()->format('Y-m-d');
         $this->getStudentByDate();
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage('roster-page');
+    }
+
+    /**
+     * See AttendanceReport::paginate() for why resolveCurrentPage() (not
+     * the trait's own getPage()) is used here - it's what keeps this
+     * pageName properly initialized on the client.
+     */
+    private function paginate(Collection $collection, string $pageName): LengthAwarePaginator
+    {
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage($pageName);
+        $items = $collection->forPage($page, $this->perPage)->values();
+
+        return new LengthAwarePaginator($items, $collection->count(), $this->perPage, $page, ['pageName' => $pageName]);
     }
 
     function secondsToHms($seconds)
@@ -65,11 +89,15 @@ class StudentAttendance extends Component
                     }),
                 ];
             });
+
+        $this->resetPage('roster-page');
     }
+
     public function render()
     {
         return view('livewire.report.student-attendance', [
             'students' => $this->students,
+            'studentsPage' => $this->paginate($this->students, 'roster-page'),
         ]);
     }
 }
