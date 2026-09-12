@@ -23,7 +23,16 @@
             ['href' => '/books?tab=loan', 'label' => 'Books on Loan', 'active' => $booksActive && request('tab') === 'loan'],
         ];
         $dataEntryLink = ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')];
-        $reportLink = ['href' => '/report', 'label' => 'Report', 'active' => request()->is('report*')];
+        $reportsActive = request()->is('reports*');
+        $reportLinks = [
+            ['href' => route('reports.enrollment'), 'label' => 'Enrollment Summary', 'active' => request()->routeIs('reports.enrollment')],
+            ['href' => route('reports.grade-distribution'), 'label' => 'Grade Distribution', 'active' => request()->routeIs('reports.grade-distribution')],
+            ['href' => route('reports.attendance-analytics'), 'label' => 'Attendance Analytics', 'active' => request()->routeIs('reports.attendance-analytics')],
+            ['href' => route('reports.attendance-roster'), 'label' => 'Daily Attendance Roster', 'active' => request()->routeIs('reports.attendance-roster')],
+            ['href' => route('reports.book-rental'), 'label' => 'Book & Rental Circulation', 'active' => request()->routeIs('reports.book-rental')],
+            ['href' => route('reports.alumni'), 'label' => 'Alumni Report', 'active' => request()->routeIs('reports.alumni')],
+            ['href' => route('reports.volunteer'), 'label' => 'Volunteer Activity', 'active' => request()->routeIs('reports.volunteer')],
+        ];
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
             $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
@@ -111,15 +120,29 @@
                         </a>
                     </li>
 
-                    <li>
-                        <a href="{{ $reportLink['href'] }}" @if ($reportLink['active']) aria-current="page" @endif
-                            class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium
-                                {{ $reportLink['active'] ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
-                            <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
-                            </span>
-                            <span class="truncate" :class="{ 'lg:hidden': collapsed }">{{ $reportLink['label'] }}</span>
-                        </a>
+                    <li :class="{ 'lg:hidden': collapsed }">
+                        <details class="group" @if ($reportsActive) open @endif>
+                            <summary
+                                class="flex cursor-pointer list-none items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium marker:content-none hover:bg-white/10
+                                    {{ $reportsActive ? 'text-white' : 'text-gray-200' }}">
+                                <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+                                </span>
+                                <span class="flex-1 truncate">Reports</span>
+                                <svg class="h-3 w-3 shrink-0 text-gray-400 transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                            </summary>
+                            <ul class="mt-0.5 flex flex-col gap-0.5 pl-[30px]">
+                                @foreach ($reportLinks as $link)
+                                    <li>
+                                        <a href="{{ $link['href'] }}" @if ($link['active']) aria-current="page" @endif
+                                            class="block rounded-lg px-2.5 py-1.5 text-sm
+                                                {{ $link['active'] ? 'font-semibold text-white' : 'text-gray-400 hover:bg-white/10 hover:text-gray-200' }}">
+                                            {{ $link['label'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </details>
                     </li>
 
                     @if ($adminLinks !== [])
@@ -226,7 +249,7 @@
                         <ul class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
                             <li><a href="/" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Home</a></li>
                             <li><a href="/students" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Students</a></li>
-                            <li><a href="/report" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Reports</a></li>
+                            <li><a href="{{ route('reports.attendance-analytics') }}" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Reports</a></li>
                             <li><a href="/books" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">Books</a></li>
                             <li><a href="{{ route('my-profile') }}" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">My Profile</a></li>
                             <li><a href="https://kipepeosafespace.org" target="_blank" rel="noopener" class="hover:underline hover:text-primary-700 dark:hover:text-primary-400">kipepeosafespace.org</a></li>

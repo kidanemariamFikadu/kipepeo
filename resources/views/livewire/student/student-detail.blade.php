@@ -343,7 +343,7 @@
             </div>
             @if ($this->studentDetails->attendances->count() >= 15)
                 <p class="px-4 pt-2 text-xs text-gray-400 dark:text-gray-500">
-                    Showing most recent 15 &mdash; see the <a href="{{ route('report') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Attendance Analytics report</a> for full history.
+                    Showing most recent 15 &mdash; see the <a href="{{ route('reports.attendance-analytics') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Attendance Analytics report</a> for full history.
                 </p>
             @endif
         </div>

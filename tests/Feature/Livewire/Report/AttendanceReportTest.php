@@ -251,7 +251,7 @@ test('the wire payload does not embed full Student models in the paginated table
         Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60 * $i]);
     });
 
-    $page = $this->actingAs($user)->get('/report');
+    $page = $this->actingAs($user)->get('/reports/attendance-analytics');
     $page->assertOk();
 
     preg_match_all('/wire:snapshot="(.*?)"(?=\s|>)/s', $page->getContent(), $matches);

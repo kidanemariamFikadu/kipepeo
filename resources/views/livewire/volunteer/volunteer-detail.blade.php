@@ -186,7 +186,7 @@
                 </div>
                 @if ($volunteerDetails->attendances->count() >= 15)
                     <p class="px-4 pt-2 text-xs text-gray-400 dark:text-gray-500">
-                        Showing most recent 15 &mdash; see the <a href="{{ route('report') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Volunteer Activity report</a> for full history.
+                        Showing most recent 15 &mdash; see the <a href="{{ route('reports.volunteer') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Volunteer Activity report</a> for full history.
                     </p>
                 @endif
             </div>
@@ -227,7 +227,7 @@
                 </div>
                 @if ($volunteerDetails->activities->count() >= 20)
                     <p class="px-4 pt-2 text-xs text-gray-400 dark:text-gray-500">
-                        Showing most recent 20 &mdash; see the <a href="{{ route('report') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Volunteer Activity report</a> for full history.
+                        Showing most recent 20 &mdash; see the <a href="{{ route('reports.volunteer') }}" class="underline hover:text-primary-600 dark:hover:text-primary-400">Volunteer Activity report</a> for full history.
                     </p>
                 @endif
             </div>

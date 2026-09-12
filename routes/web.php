@@ -45,7 +45,17 @@ Route::middleware([
     Route::get('/volunteers', AttendanceVolunteer::class)->name('volunteers');
     Route::get('/volunteer-detail/{volunteer_id}', VolunteerDetail::class)->name('volunteer-detail');
     Route::get('/data-entry', \App\Livewire\DataEntry\Index::class)->name('data-entry');
-    Route::get('/report', \App\Livewire\Report\Index::class)->name('report');
+
+    // Each report is its own page (own URL, own bookmark) rather than tabs
+    // on a shared /report page, so they can be linked to individually and
+    // only the one being viewed ever queries the database.
+    Route::get('/reports/enrollment', \App\Livewire\Report\StudentReport::class)->name('reports.enrollment');
+    Route::get('/reports/grade-distribution', \App\Livewire\Report\GradeDistributionReport::class)->name('reports.grade-distribution');
+    Route::get('/reports/attendance-analytics', \App\Livewire\Report\AttendanceReport::class)->name('reports.attendance-analytics');
+    Route::get('/reports/attendance-roster', \App\Livewire\Report\StudentAttendance::class)->name('reports.attendance-roster');
+    Route::get('/reports/book-rental', \App\Livewire\Report\BookRentalReport::class)->name('reports.book-rental');
+    Route::get('/reports/alumni', \App\Livewire\Report\AlumniReport::class)->name('reports.alumni');
+    Route::get('/reports/volunteer', \App\Livewire\Report\VolunteerReport::class)->name('reports.volunteer');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
     Route::get('/book-detail/{id}', \App\Livewire\Book\BookDetail::class)->name('book-detail');
 
