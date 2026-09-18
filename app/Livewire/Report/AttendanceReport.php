@@ -3,6 +3,7 @@
 namespace App\Livewire\Report;
 
 use App\Models\Attendance;
+use App\Models\Grade;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,11 +20,13 @@ class AttendanceReport extends Component
      * own list) but shares one page-size control, matching the "paginate on
      * screen, print the full table" convention used elsewhere in this app.
      */
-    private const PAGE_NAMES = ['daily-page', 'hours-student-page', 'hours-grade-page', 'girls-page', 'log-page'];
+    private const PAGE_NAMES = ['daily-page', 'hours-student-page', 'hours-grade-page', 'consistency-page', 'log-page'];
 
     public $fromDate;
     public $toDate;
     public $studentId = '';
+    public $gender = '';
+    public $gradeId = '';
     public $perPage = 10;
 
     public $totalStudents;
@@ -36,7 +39,7 @@ class AttendanceReport extends Component
     public $dailyStatistics = [];
     public $hoursByStudent = [];
     public $hoursByGrade = [];
-    public $girlsAttendance = [];
+    public $attendanceConsistency = [];
     public $attendanceLog = [];
 
     public function mount()
@@ -88,6 +91,8 @@ class AttendanceReport extends Component
             'fromDate' => 'required|date',
             'toDate' => 'required|date|after_or_equal:fromDate',
             'studentId' => 'nullable|exists:students,id',
+            'gender' => 'nullable|in:male,female,other',
+            'gradeId' => 'nullable|exists:grades,id',
         ]);
 
         $attendances = Attendance::whereBetween('date', [
@@ -98,6 +103,8 @@ class AttendanceReport extends Component
             // and chart above reflects the selected student instead of the
             // whole cohort once one is picked.
             ->when($this->studentId, fn ($q) => $q->where('student_id', $this->studentId))
+            ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
+            ->when($this->gradeId, fn ($q) => $q->whereHas('student.grades', fn ($sq) => $sq->where('is_current', true)->where('grade', $this->gradeId)))
             ->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'), 'attrs'])
             ->get();
 
@@ -165,8 +172,8 @@ class AttendanceReport extends Component
 
         $weekdaysInRange = $this->countWeekdays(Carbon::parse($this->fromDate), Carbon::parse($this->toDate));
 
-        $this->girlsAttendance = $attendances
-            ->filter(fn ($a) => $a->student && strtolower($a->student->gender ?? '') === 'female')
+        $this->attendanceConsistency = $attendances
+            ->filter(fn ($a) => $a->student)
             ->groupBy('student_id')
             ->map(function ($rows, $studentId) use ($weekdaysInRange) {
                 $student = $rows->first()->student;
@@ -175,6 +182,7 @@ class AttendanceReport extends Component
                 return [
                     'studentId' => (int) $studentId,
                     'studentName' => $student?->name,
+                    'studentGender' => $student?->gender ? ucfirst(strtolower($student->gender)) : null,
                     'studentGrade' => $student?->grades->first()?->gradeTable?->grade,
                     'daysPresent' => $daysPresent,
                     'totalSeconds' => $rows->sum('total_time'),
@@ -263,15 +271,16 @@ class AttendanceReport extends Component
             'dailyStatistics' => $this->dailyStatistics,
             'hoursByStudent' => $this->hoursByStudent,
             'hoursByGrade' => $this->hoursByGrade,
-            'girlsAttendance' => $this->girlsAttendance,
+            'attendanceConsistency' => $this->attendanceConsistency,
             'attendanceLog' => $this->attendanceLog,
             // Paginated - used for the on-screen tables.
             'dailyStatisticsPage' => $this->paginate($this->dailyStatistics, 'daily-page'),
             'hoursByStudentPage' => $this->paginate($this->hoursByStudent, 'hours-student-page'),
             'hoursByGradePage' => $this->paginate($this->hoursByGrade, 'hours-grade-page'),
-            'girlsAttendancePage' => $this->paginate($this->girlsAttendance, 'girls-page'),
+            'attendanceConsistencyPage' => $this->paginate($this->attendanceConsistency, 'consistency-page'),
             'attendanceLogPage' => $this->paginate($this->attendanceLog, 'log-page'),
             'students' => Student::active()->orderBy('name')->get(),
+            'grades' => Grade::orderBy('grade')->get(),
         ]);
     }
 }

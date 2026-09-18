@@ -40,6 +40,32 @@
                 @enderror
             </div>
             <div>
+                <label for="gender" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Gender</label>
+                <select id="gender" wire:model="gender"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All genders</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                @error('gender')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
+                <label for="gradeId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Grade</label>
+                <select id="gradeId" wire:model="gradeId"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All grades</option>
+                    @foreach ($grades as $grade)
+                        <option value="{{ $grade->id }}">{{ $grade->grade }}</option>
+                    @endforeach
+                </select>
+                @error('gradeId')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
                 <label for="perPage" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Rows per
                     page</label>
                 <select id="perPage" wire:model.live="perPage"
@@ -344,9 +370,9 @@
                 </table>
             </div>
 
-            <!-- Girls Attendance & Consistency Table -->
+            <!-- Attendance & Consistency Table -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden page-break mb-6 no-print">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Girls Attendance &amp; Consistency</h3>
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-white px-4 pt-4">Attendance &amp; Consistency</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 px-4">
                     Consistency is days present divided by weekdays in the selected range. Sorted most to least consistent.
                 </p>
@@ -356,6 +382,7 @@
                             <tr>
                                 <th class="px-4 py-3">#</th>
                                 <th class="px-4 py-3">Student</th>
+                                <th class="px-4 py-3">Gender</th>
                                 <th class="px-4 py-3">Grade</th>
                                 <th class="px-4 py-3">Days Present</th>
                                 <th class="px-4 py-3">Total Hours</th>
@@ -363,7 +390,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($girlsAttendancePage as $row)
+                            @forelse ($attendanceConsistencyPage as $row)
                                 <tr class="border-b dark:border-gray-700 {{ $row['rank'] <= 5 ? 'bg-primary-50/50 dark:bg-primary-900/10' : '' }}">
                                     <td class="px-4 py-3">
                                         {{ $row['rank'] }}
@@ -373,6 +400,7 @@
                                     </td>
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $row['studentName'] ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $row['studentGender'] ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $row['studentGrade'] ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
                                     <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
@@ -387,25 +415,26 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                                        No girls' attendance found for the selected filters.
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                        No attendance found for the selected filters.
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                <div class="px-4 py-3">{{ $girlsAttendancePage->links() }}</div>
+                <div class="px-4 py-3">{{ $attendanceConsistencyPage->links() }}</div>
             </div>
 
-            <!-- Girls Attendance & Consistency: print only, every girl in range -->
+            <!-- Attendance & Consistency: print only, every student in range -->
             <div class="hidden print:block page-break mb-6">
-                <h3 class="text-lg font-medium mb-2">Girls Attendance &amp; Consistency</h3>
+                <h3 class="text-lg font-medium mb-2">Attendance &amp; Consistency</h3>
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50">
                         <tr>
                             <th class="px-4 py-3">#</th>
                             <th class="px-4 py-3">Student</th>
+                            <th class="px-4 py-3">Gender</th>
                             <th class="px-4 py-3">Grade</th>
                             <th class="px-4 py-3">Days Present</th>
                             <th class="px-4 py-3">Total Hours</th>
@@ -413,10 +442,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($girlsAttendance as $row)
+                        @forelse ($attendanceConsistency as $row)
                             <tr class="border-b">
                                 <td class="px-4 py-3">{{ $row['rank'] }}{{ $row['rank'] <= 5 ? ' (Top)' : '' }}</td>
                                 <td class="px-4 py-3 font-medium">{{ $row['studentName'] ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $row['studentGender'] ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['studentGrade'] ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['daysPresent'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
@@ -424,7 +454,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center">No girls' attendance found for the selected filters.</td>
+                                <td colspan="7" class="px-4 py-6 text-center">No attendance found for the selected filters.</td>
                             </tr>
                         @endforelse
                     </tbody>

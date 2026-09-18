@@ -2,6 +2,8 @@
 
 use App\Livewire\Report\AttendanceReport;
 use App\Models\Attendance;
+use App\Models\Grade;
+use App\Models\GradeStudent;
 use App\Models\Student;
 use App\Models\User;
 use Livewire\Livewire;
@@ -139,7 +141,99 @@ test('selecting a student scopes every card and chart to that student, not the w
     expect($hoursByStudent->first()['studentId'])->toBe($studentA->id);
 
     // Student B's data must not leak into a report scoped to student A.
-    expect($component->viewData('girlsAttendance'))->toHaveCount(0);
+    $attendanceConsistency = $component->viewData('attendanceConsistency');
+    expect($attendanceConsistency)->toHaveCount(1);
+    expect($attendanceConsistency->first()['studentId'])->toBe($studentA->id);
+});
+
+test('the gender filter scopes every card and chart to the selected gender', function () {
+    $user = User::factory()->create();
+    $studentA = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'B', 'dob' => '2010-01-01', 'gender' => 'female']);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->set('gender', 'female')
+        ->call('filter');
+
+    expect($component->get('totalStudents'))->toBe(1);
+
+    $hoursByStudent = $component->viewData('hoursByStudent');
+    expect($hoursByStudent)->toHaveCount(1);
+    expect($hoursByStudent->first()['studentId'])->toBe($studentB->id);
+});
+
+test('the gender filter rejects a value outside male/female/other', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('gender', 'not-a-real-gender')
+        ->call('filter')
+        ->assertHasErrors(['gender']);
+});
+
+test('the grade filter scopes every card and chart to students currently in that grade', function () {
+    $user = User::factory()->create();
+    $gradeOne = Grade::create(['grade' => 'Grade 1']);
+    $gradeTwo = Grade::create(['grade' => 'Grade 2']);
+
+    $studentA = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'B', 'dob' => '2010-01-01', 'gender' => 'female']);
+    GradeStudent::create(['student_id' => $studentA->id, 'grade' => $gradeOne->id, 'is_current' => true]);
+    GradeStudent::create(['student_id' => $studentB->id, 'grade' => $gradeTwo->id, 'is_current' => true]);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->set('gradeId', $gradeOne->id)
+        ->call('filter');
+
+    expect($component->get('totalStudents'))->toBe(1);
+
+    $hoursByStudent = $component->viewData('hoursByStudent');
+    expect($hoursByStudent)->toHaveCount(1);
+    expect($hoursByStudent->first()['studentId'])->toBe($studentA->id);
+});
+
+test('the grade filter only matches a student\'s current grade, not a past one', function () {
+    $user = User::factory()->create();
+    $oldGrade = Grade::create(['grade' => 'Grade 1']);
+    $currentGrade = Grade::create(['grade' => 'Grade 2']);
+
+    $student = Student::create(['name' => 'A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    GradeStudent::create(['student_id' => $student->id, 'grade' => $oldGrade->id, 'is_current' => false]);
+    GradeStudent::create(['student_id' => $student->id, 'grade' => $currentGrade->id, 'is_current' => true]);
+
+    Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->set('gradeId', $oldGrade->id)
+        ->call('filter');
+
+    expect($component->get('totalStudents'))->toBe(0);
+});
+
+test('the grade filter rejects a grade id that does not exist', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('gradeId', 999999)
+        ->call('filter')
+        ->assertHasErrors(['gradeId']);
 });
 
 test('attendanceLog is only populated once a studentId filter is set', function () {
@@ -210,13 +304,13 @@ test('changing perPage or re-filtering resets every table back to page 1', funct
     expect($component->viewData('hoursByStudentPage')->currentPage())->toBe(1);
 });
 
-test("a girl's rank for the Top 5 badge survives pagination instead of resetting per page", function () {
+test("a student's rank for the Top 5 badge survives pagination instead of resetting per page", function () {
     $user = User::factory()->create();
 
-    // 12 girls, all with the same consistency (100%), so ordering is stable
-    // and rank 11 should land on page 2 when perPage is 10.
+    // 12 students, all with the same consistency (100%), so ordering is
+    // stable and rank 11 should land on page 2 when perPage is 10.
     collect(range(1, 12))->each(function ($i) {
-        $student = Student::create(['name' => "Girl {$i}", 'dob' => '2010-01-01', 'gender' => 'female']);
+        $student = Student::create(['name' => "Student {$i}", 'dob' => '2010-01-01', 'gender' => 'female']);
         Attendance::create(['student_id' => $student->id, 'date' => now(), 'current_in' => false, 'total_time' => 60]);
     });
 
@@ -225,9 +319,9 @@ test("a girl's rank for the Top 5 badge survives pagination instead of resetting
         ->set('fromDate', now()->format('Y-m-d'))
         ->set('toDate', now()->format('Y-m-d'))
         ->call('filter')
-        ->call('gotoPage', 2, 'girls-page');
+        ->call('gotoPage', 2, 'consistency-page');
 
-    $page2 = $component->viewData('girlsAttendancePage');
+    $page2 = $component->viewData('attendanceConsistencyPage');
     expect($page2)->toHaveCount(2);
     expect($page2->first()['rank'])->toBe(11);
     // Rank 11 is past the top 5, so it must not be flagged as "Top".
@@ -238,7 +332,7 @@ test('the wire payload does not embed full Student models in the paginated table
     // Regression test for a production crash: a client-side sync bug
     // (Livewire\Exceptions\PublicPropertyNotFoundException, "Public
     // property [$] not found") occurred when navigating pages on a report
-    // whose hoursByStudent/girlsAttendance collections carried a full
+    // whose hoursByStudent/attendanceConsistency collections carried a full
     // Student model per row. Hundreds of rows meant a very large wire
     // payload, which is outside Livewire's well-supported path for a
     // component with several independent paginators. Only primitive
