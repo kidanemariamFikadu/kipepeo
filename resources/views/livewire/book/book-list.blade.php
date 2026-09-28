@@ -67,12 +67,17 @@
                                             {{ $book->category }}
                                         </span>
                                     </td>
+                                    @php
+                                        // Matches Book::getAvailableCopiesAttribute(): a copy out on
+                                        // loan still has status "available", so loans are subtracted.
+                                        $availableNow = max(0, $book->on_shelf_count - $book->on_loan_count);
+                                    @endphp
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                                            {{ $book->available_copies_count > 0
+                                            {{ $availableNow > 0
                                                 ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
                                                 : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200' }}">
-                                            {{ $book->available_copies_count }} / {{ $book->copies }}
+                                            {{ $availableNow }} / {{ $book->on_shelf_count }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3">{{ $book->created_at->format('Y-m-d') }}</td>
@@ -113,7 +118,7 @@
                                                     <x-spinner class="h-5 w-5" wire:loading wire:target="deleteBook({{ $book->id }})" />
                                                 </button>
                                             @endif
-                                            @if ($book->available_copies_count > 0)
+                                            @if ($availableNow > 0)
                                                 <button title="Rent this book"
                                                     class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg dark:text-primary-300 dark:hover:bg-gray-700"
                                                     wire:click="$dispatch('openModal', { component: 'book.rent', arguments: { bookId: {{ $book->id }} }})">

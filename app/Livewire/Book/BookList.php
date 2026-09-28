@@ -60,7 +60,13 @@ class BookList extends Component
     {
         $books = Book::search($this->search)
             ->with('bookCategory')
-            ->withCount(['bookCopies as available_copies_count' => fn ($query) => $query->where('status', 'available')]);
+            // Counted rather than using the available_copies accessor so the
+            // list stays one query; open rentals are subtracted in the view
+            // for the same reason the accessor subtracts them.
+            ->withCount([
+                'bookCopies as on_shelf_count' => fn ($query) => $query->where('status', 'available'),
+                'rentals as on_loan_count' => fn ($query) => $query->whereNull('returned_at'),
+            ]);
 
         // "category" is no longer a column on books -- it lives on the
         // related book_categories table, so sorting by it needs a join.

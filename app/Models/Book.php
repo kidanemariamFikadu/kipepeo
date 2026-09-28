@@ -53,9 +53,19 @@ class Book extends Model
             : BookCategory::firstOrCreate(['name' => $value])->id;
     }
 
+    /**
+     * Renting does not currently reserve a specific book_copy row, so a
+     * copy's status stays "available" while it is out on loan. Open rentals
+     * therefore have to be subtracted here -- without it this returns the
+     * shelf count rather than what is actually available, and the check in
+     * Rent::rent() lets a single copy be lent to unlimited students.
+     */
     public function getAvailableCopiesAttribute()
     {
-        return $this->bookCopies()->where('status', 'available')->count();
+        $onShelf = $this->bookCopies()->where('status', 'available')->count();
+        $onLoan = $this->rentals()->whereNull('returned_at')->count();
+
+        return max(0, $onShelf - $onLoan);
     }
 
     public function getLostCopies()

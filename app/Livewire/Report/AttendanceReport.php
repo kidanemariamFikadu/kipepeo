@@ -99,6 +99,10 @@ class AttendanceReport extends Component
             Carbon::parse($this->fromDate)->startOfDay(),
             Carbon::parse($this->toDate)->endOfDay(),
         ])
+            // Soft-deleted students keep their attendance rows, which
+            // otherwise still count towards every total and chart on this
+            // page under a blank name.
+            ->whereHas('student')
             // Scoping here (not just the log at the bottom) means every card
             // and chart above reflects the selected student instead of the
             // whole cohort once one is picked.

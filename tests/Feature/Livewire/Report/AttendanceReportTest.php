@@ -363,3 +363,33 @@ test('the wire payload does not embed full Student models in the paginated table
     expect($snapshot)->not->toBeNull();
     expect($snapshot)->not->toContain('App\\\\Models\\\\Student');
 });
+
+test('a soft-deleted student no longer counts towards the report totals', function () {
+    // Regression test: deleting a student leaves their attendance rows
+    // behind, and this report had no whereHas('student') guard -- so the
+    // rows kept inflating every card, chart and grade breakdown under a
+    // blank name.
+    $user = User::factory()->create();
+
+    $kept = Student::create(['name' => 'Kept Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $removed = Student::create(['name' => 'Removed Student', 'dob' => '2010-01-01', 'gender' => 'female']);
+
+    Attendance::create(['student_id' => $kept->id, 'date' => now(), 'current_in' => false, 'total_time' => 3600]);
+    Attendance::create(['student_id' => $removed->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $removed->delete();
+
+    $component = Livewire::actingAs($user)
+        ->test(AttendanceReport::class)
+        ->set('fromDate', now()->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'))
+        ->call('filter');
+
+    expect($component->get('totalStudents'))->toBe(1);
+    // The average must come from the surviving row only, not both.
+    expect((int) $component->get('averageAttendanceDuration'))->toBe(3600);
+
+    $hoursByStudent = $component->viewData('hoursByStudent');
+    expect($hoursByStudent)->toHaveCount(1);
+    expect($hoursByStudent->first()['studentId'])->toBe($kept->id);
+});

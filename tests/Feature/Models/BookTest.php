@@ -64,3 +64,43 @@ test('rentals relationship returns rentals for the book', function () {
     expect($book->rentals)->toHaveCount(1);
     expect($book->rentals->first()->student_id)->toBe($student->id);
 });
+
+test('available copies subtracts books that are currently out on loan', function () {
+    // Regression test: renting never marks a book_copy as rented, so
+    // counting copies with status "available" reported the shelf total and
+    // the availability guard in Rent::rent() was a no-op -- a single copy
+    // could be lent to unlimited students.
+    $book = makeBook();
+    BookCopy::create(['book_id' => $book->id, 'status' => 'available']);
+    BookCopy::create(['book_id' => $book->id, 'status' => 'available']);
+
+    $user = User::factory()->create();
+    $borrower = Student::create(['name' => 'Borrower', 'dob' => '2010-01-01', 'gender' => 'male']);
+
+    expect($book->available_copies)->toBe(2);
+
+    Rental::create(['book_id' => $book->id, 'student_id' => $borrower->id, 'user_id' => $user->id, 'rented_at' => now(), 'due_at' => now()->addWeek()]);
+    expect($book->fresh()->available_copies)->toBe(1);
+
+    $returned = Rental::create(['book_id' => $book->id, 'student_id' => $borrower->id, 'user_id' => $user->id, 'rented_at' => now(), 'due_at' => now()->addWeek()]);
+    expect($book->fresh()->available_copies)->toBe(0);
+
+    // Returning a copy puts it back into circulation.
+    $returned->update(['returned_at' => now()]);
+    expect($book->fresh()->available_copies)->toBe(1);
+});
+
+test('available copies never reports a negative number', function () {
+    $book = makeBook();
+    BookCopy::create(['book_id' => $book->id, 'status' => 'available']);
+
+    $user = User::factory()->create();
+    $borrower = Student::create(['name' => 'Borrower', 'dob' => '2010-01-01', 'gender' => 'male']);
+
+    // Existing data already contains books lent beyond their shelf count.
+    foreach (range(1, 3) as $i) {
+        Rental::create(['book_id' => $book->id, 'student_id' => $borrower->id, 'user_id' => $user->id, 'rented_at' => now(), 'due_at' => now()->addWeek()]);
+    }
+
+    expect($book->fresh()->available_copies)->toBe(0);
+});
