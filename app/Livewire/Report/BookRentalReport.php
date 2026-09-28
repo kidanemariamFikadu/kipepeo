@@ -6,6 +6,7 @@ use App\Models\BookCategory;
 use App\Models\BookCopy;
 use App\Models\Rental;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -45,9 +46,16 @@ class BookRentalReport extends Component
             'status' => 'nullable|in:on_time,late,out',
         ]);
         $this->resetPage();
+    }
 
-        $rentals = $this->rangeQuery()->get();
-
+    /**
+     * Derived in render() from the collection that the print table already
+     * needs, rather than re-running the range query here: filter() and
+     * render() were each issuing their own ->get() with the same eager
+     * loads, so a filter change fetched the whole range twice.
+     */
+    private function computeStatistics(Collection $rentals): void
+    {
         $this->totalRentals = $rentals->count();
 
         $returned = $rentals->whereNotNull('returned_at');
@@ -75,6 +83,11 @@ class BookRentalReport extends Component
 
     public function render()
     {
+        // Printing must include every rental in range, not just the current
+        // page -- and the summary cards are derived from the same set.
+        $fullRentals = $this->rangeQuery()->get();
+        $this->computeStatistics($fullRentals);
+
         return view('livewire.report.book-rental-report', [
             // Live, unfiltered by date range - "what's the state right now".
             'currentlyBorrowed' => Rental::whereNull('returned_at')->count(),
@@ -92,8 +105,7 @@ class BookRentalReport extends Component
             'topBooks' => $this->topBooks,
             'rentalsByCategory' => $this->rentalsByCategory,
             'rentals' => $this->rangeQuery()->paginate($this->perPage),
-            // Printing must include every rental in range, not just the current page.
-            'fullRentals' => $this->rangeQuery()->get(),
+            'fullRentals' => $fullRentals,
             'categories' => BookCategory::orderBy('name')->get(),
         ]);
     }
