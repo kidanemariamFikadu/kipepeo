@@ -49,15 +49,20 @@ class VolunteerReport extends Component
     {
         $attendances = VolunteerAttendance::query()
             ->with('volunteer')
-            ->when($this->fromDate, fn ($query) => $query->whereDate('date', '>=', $this->fromDate))
-            ->when($this->toDate, fn ($query) => $query->whereDate('date', '<=', $this->toDate))
+            ->when($this->fromDate, fn ($query) => $query->where('date', '>=', $this->fromDate))
+            ->when($this->toDate, fn ($query) => $query->where('date', '<=', $this->toDate))
             ->when($this->volunteerId, fn ($query) => $query->where('volunteer_id', $this->volunteerId))
             ->get();
 
+        // Pay is admin-only. Resolved here rather than hidden in the view:
+        // a Blade @if still ships the numbers to the browser in the Livewire
+        // payload, where anyone can read them.
+        $showPay = (bool) auth()->user()?->isAdmin();
+
         $hoursByVolunteer = $attendances->groupBy('volunteer_id')
-            ->map(function ($rows) {
+            ->map(function ($rows) use ($showPay) {
                 $totalSeconds = $rows->sum('total_time');
-                $rate = $rows->first()->volunteer?->hourly_rate;
+                $rate = $showPay ? $rows->first()->volunteer?->hourly_rate : null;
 
                 return [
                     'volunteer' => $rows->first()->volunteer,
@@ -72,8 +77,8 @@ class VolunteerReport extends Component
 
         $activities = VolunteerActivity::query()
             ->with(['activityType', 'volunteer', 'students'])
-            ->when($this->fromDate, fn ($query) => $query->whereDate('date', '>=', $this->fromDate))
-            ->when($this->toDate, fn ($query) => $query->whereDate('date', '<=', $this->toDate))
+            ->when($this->fromDate, fn ($query) => $query->where('date', '>=', $this->fromDate))
+            ->when($this->toDate, fn ($query) => $query->where('date', '<=', $this->toDate))
             ->when($this->volunteerId, fn ($query) => $query->where('volunteer_id', $this->volunteerId))
             ->when($this->activityTypeId, fn ($query) => $query->where('activity_type_id', $this->activityTypeId))
             ->get();
@@ -95,6 +100,7 @@ class VolunteerReport extends Component
             'volunteersActive' => $attendances->pluck('volunteer_id')->unique()->count(),
             'volunteers' => Volunteer::orderBy('name')->get(),
             'activityTypes' => ActivityType::orderBy('name')->get(),
+            'showPay' => $showPay,
         ]);
     }
 }

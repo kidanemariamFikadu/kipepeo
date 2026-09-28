@@ -50,7 +50,7 @@ class AttendanceHistory extends ModalComponent
     {
         $student = Student::findOrFail($this->studentId);
 
-        $this->attendance = $student->attendances()->whereDate('date', $this->date)->first();
+        $this->attendance = $student->attendances()->where('date', $this->date)->first();
     }
 
     public function mount(Student $student)

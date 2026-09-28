@@ -49,7 +49,7 @@ class AttendingStudentsBySchool extends Component
 
         return School::withCount(['students' => function ($query) use ($today) {
             $query->whereHas('attendances', function ($query) use ($today) {
-                $query->whereDate('date', $today);
+                $query->where('date', $today);
             });
         }])
             ->having('students_count', '>', 0)
@@ -61,7 +61,7 @@ class AttendingStudentsBySchool extends Component
     function getTotalStudentsAttendedTodayProperty()
     {
         return Student::whereHas('attendances', function ($query) {
-            $query->whereDate('date', Carbon::now()->toDateString());
+            $query->where('date', Carbon::now()->toDateString());
         })->count();
     }
 

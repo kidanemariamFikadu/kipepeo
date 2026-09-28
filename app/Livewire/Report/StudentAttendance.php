@@ -65,7 +65,7 @@ class StudentAttendance extends Component
             'gradeId' => 'nullable|exists:grades,id',
         ]);
 
-        $this->students = Attendance::whereDate('date', $this->date)
+        $this->students = Attendance::where('date', $this->date)
             ->whereHas('student')
             ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
             ->when($this->schoolId, fn ($q) => $q->whereHas('student.schools', fn ($sq) => $sq->where('is_current', true)->where('school_id', $this->schoolId)))

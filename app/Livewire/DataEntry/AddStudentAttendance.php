@@ -30,7 +30,7 @@ class AddStudentAttendance extends Component
 
 
         $attendance = Attendance::where('student_id', $this->form->student_id)
-            ->whereDate('date', $this->form->date)->first();
+            ->where('date', $this->form->date)->first();
 
         if (!$attendance) {
             $attendance = Attendance::create([

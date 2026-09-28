@@ -40,7 +40,7 @@ class LogVolunteerActivity extends ModalComponent
     public function eligibleStudents()
     {
         return Student::active()
-            ->whereHas('attendances', fn ($query) => $query->whereDate('date', now()))
+            ->whereHas('attendances', fn ($query) => $query->where('date', now()->toDateString()))
             ->orderBy('name')
             ->get();
     }
@@ -56,7 +56,7 @@ class LogVolunteerActivity extends ModalComponent
         ]);
 
         $attendance = VolunteerAttendance::where('volunteer_id', $this->volunteerId)
-            ->whereDate('date', now())
+            ->where('date', now()->toDateString())
             ->where('current_in', true)
             ->first();
 

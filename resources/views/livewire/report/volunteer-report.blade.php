@@ -99,7 +99,9 @@
                             <th class="px-4 py-3">Volunteer</th>
                             <th class="px-4 py-3">Days Volunteered</th>
                             <th class="px-4 py-3">Total Hours</th>
-                            <th class="px-4 py-3">Est. Stipend</th>
+                            @if ($showPay)
+                                <th class="px-4 py-3">Est. Stipend</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -109,11 +111,13 @@
                                     {{ $row['volunteer']?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $row['visits'] }}</td>
                                 <td class="px-4 py-3">{{ $this->secondsToHms($row['totalSeconds']) }}</td>
-                                <td class="px-4 py-3">{{ $row['estStipend'] !== null ? 'KSH ' . number_format($row['estStipend'], 2) : '—' }}</td>
+                                @if ($showPay)
+                                    <td class="px-4 py-3">{{ $row['estStipend'] !== null ? 'KSH ' . number_format($row['estStipend'], 2) : '—' }}</td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="{{ $showPay ? 4 : 3 }}" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                     No volunteer visits found for the selected filters.
                                 </td>
                             </tr>

@@ -23,7 +23,7 @@ class QuickCheckInVolunteers extends ModalComponent
         return Volunteer::search($this->search)
             ->active()
             ->with([
-                'attendances' => fn ($query) => $query->whereDate('date', now()),
+                'attendances' => fn ($query) => $query->where('date', now()->toDateString()),
             ])
             ->orderBy('name')
             ->limit(8)
@@ -34,7 +34,7 @@ class QuickCheckInVolunteers extends ModalComponent
     {
         $volunteer = Volunteer::findOrFail($volunteerId);
         $attendance = VolunteerAttendance::where('volunteer_id', $volunteer->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
 
         $attr = VolunteerAttendanceAttr::where(['volunteer_attendance_id' => $attendance->id, 'time_out' => null])->first();
 
@@ -53,7 +53,7 @@ class QuickCheckInVolunteers extends ModalComponent
     {
         $volunteer = Volunteer::findOrFail($volunteerId);
         $attendance = VolunteerAttendance::where('volunteer_id', $volunteer->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
         if (!$attendance) {
             $attendance = VolunteerAttendance::create([
                 'volunteer_id' => $volunteer->id,

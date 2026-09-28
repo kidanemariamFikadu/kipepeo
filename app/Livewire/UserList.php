@@ -19,7 +19,7 @@ class UserList extends Component
         return ['created_at', 'name', 'email', 'job_title_id', 'role'];
     }
 
-    #[Url(history: true)]
+    // Deliberately not #[Url]: searches staff by name and email.
     public $search = '';
 
     #[Url(history: true)]

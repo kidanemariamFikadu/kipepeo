@@ -74,7 +74,8 @@ test('volunteer report shows a per-activity log only when a specific volunteer i
 });
 
 test('volunteer report computes an estimated stipend as hours times hourly rate', function () {
-    $user = User::factory()->create();
+    // Pay figures are admin-only, so this has to be viewed as an admin.
+    $user = User::factory()->create(['role' => 'admin']);
     $rated = Volunteer::create(['name' => 'Rated Volunteer', 'status' => 'active', 'hourly_rate' => 100]);
     $unrated = Volunteer::create(['name' => 'Unrated Volunteer', 'status' => 'active']);
     VolunteerAttendance::create(['volunteer_id' => $rated->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
@@ -116,4 +117,28 @@ test('volunteer report validates toDate is not before fromDate', function () {
         ->set('toDate', now()->subDay()->format('Y-m-d'))
         ->call('filter')
         ->assertHasErrors(['toDate']);
+});
+
+test('volunteer pay is withheld from non-admins, not just hidden in the view', function () {
+    // The numbers must not reach the browser at all: a Blade @if still
+    // ships them in the Livewire payload where anyone can read them.
+    $volunteer = Volunteer::create(['name' => 'Paid Volunteer', 'status' => 'active', 'hourly_rate' => 250]);
+    VolunteerAttendance::create(['volunteer_id' => $volunteer->id, 'date' => now(), 'current_in' => false, 'total_time' => 7200]);
+
+    $staff = User::factory()->create(['role' => 'user']);
+    $component = Livewire::actingAs($staff)->test(VolunteerReport::class);
+
+    $row = $component->viewData('hoursByVolunteer')->first();
+    expect($row['hourlyRate'])->toBeNull();
+    expect($row['estStipend'])->toBeNull();
+    expect($component->viewData('showPay'))->toBeFalse();
+    expect($component->html())->not->toContain('KSH');
+    // The non-sensitive part of the report still works for them.
+    expect($row['totalSeconds'])->toBe(7200);
+
+    $admin = User::factory()->create(['role' => 'admin']);
+    $adminView = Livewire::actingAs($admin)->test(VolunteerReport::class);
+
+    expect($adminView->viewData('hoursByVolunteer')->first()['estStipend'])->toBe(500.0);
+    expect($adminView->html())->toContain('KSH');
 });

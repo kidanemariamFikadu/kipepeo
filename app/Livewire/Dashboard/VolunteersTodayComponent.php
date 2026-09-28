@@ -15,7 +15,7 @@ class VolunteersTodayComponent extends Component
 
     public function render()
     {
-        $attendanceToday = VolunteerAttendance::whereDate('date', today())
+        $attendanceToday = VolunteerAttendance::where('date', today()->toDateString())
             ->with(['attrs' => fn ($query) => $query->whereNull('time_out')])
             ->get();
 

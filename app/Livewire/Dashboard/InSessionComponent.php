@@ -48,7 +48,7 @@ class InSessionComponent extends Component
     {
         $today = Carbon::now()->toDateString();
 
-        $studentsInAttendanceToday = Attendance::whereDate('date', $today)
+        $studentsInAttendanceToday = Attendance::where('date', $today)
             ->where('current_in', true)
             ->whereHas('student', fn ($query) => $query->when($this->search, fn ($query) => $query->search($this->search)))
             ->with(['student.rentals' => fn ($query) => $query->overdue()->with('book')])

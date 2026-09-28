@@ -18,7 +18,7 @@ class AttendanceVolunteer extends Component
     use HasSortableColumns;
     use WithPagination;
 
-    #[Url(history: true)]
+    // Deliberately not #[Url]: searches volunteers by name.
     public $search = '';
 
     #[Url(history: true)]
@@ -49,7 +49,7 @@ class AttendanceVolunteer extends Component
     {
         $volunteer = Volunteer::findOrFail($volunteerId);
         $attendance = VolunteerAttendance::where('volunteer_id', $volunteer->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
 
         $attr = VolunteerAttendanceAttr::where(['volunteer_attendance_id' => $attendance->id, 'time_out' => null])->first();
 
@@ -68,7 +68,7 @@ class AttendanceVolunteer extends Component
     {
         $volunteer = Volunteer::findOrFail($volunteerId);
         $attendance = VolunteerAttendance::where('volunteer_id', $volunteer->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
         if (!$attendance) {
             $attendance = VolunteerAttendance::create([
                 'volunteer_id' => $volunteer->id,
@@ -102,17 +102,17 @@ class AttendanceVolunteer extends Component
             'volunteers' => Volunteer::search($this->search)
                 ->active()
                 ->with([
-                    'attendances' => fn ($query) => $query->whereDate('date', now()),
+                    'attendances' => fn ($query) => $query->where('date', now()->toDateString()),
                 ])
                 ->when($this->currentlyIn !== '' && $this->currentlyIn, function ($query) {
                     $query->whereHas('attendances', function ($query) {
-                        $query->whereDate('date', now()->toDateString())->where('current_in', $this->currentlyIn);
+                        $query->where('date', now()->toDateString())->where('current_in', $this->currentlyIn);
                     });
                 })
                 ->when($this->currentlyIn !== '' && !$this->currentlyIn, function ($query) {
                     $query->where(function ($query) {
                         $query->whereHas('attendances', function ($query) {
-                            $query->whereDate('date', now()->toDateString())->where('current_in', $this->currentlyIn);
+                            $query->where('date', now()->toDateString())->where('current_in', $this->currentlyIn);
                         })->orWhereDoesntHave('attendances');
                     });
                 })

@@ -26,7 +26,7 @@ class GreetingComponent extends Component
     function checkOut()
     {
         $attendance = Attendance::where('current_in', true)
-            ->whereDate('date', now())->get();
+            ->where('date', now()->toDateString())->get();
 
         foreach ($attendance as $att) {
             $attr = AttendanceAttr::where(['attendance_id' => $att->id])
@@ -82,7 +82,7 @@ class GreetingComponent extends Component
         $totalStudents = $attendances->count();
         $averageAttendanceDuration = $attendances->avg('total_time');
 
-        $studentsInAttendanceToday = Attendance::whereDate('date', now())
+        $studentsInAttendanceToday = Attendance::where('date', now()->toDateString())
             ->where('current_in', true)
             ->get()
             ->count();

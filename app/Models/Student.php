@@ -110,12 +110,12 @@ class Student extends Model
     public function getCurrentAttendanceAttribute()
     {
         return $this->attendances()->where('current_in', true)
-            ->whereDate('date', now())->first()?->current_in;
+            ->where('date', now()->toDateString())->first()?->current_in;
     }
 
     public function getTodayTotalTimeAttribute()
     {
-        $total= $this->attendances()->whereDate('date', now())->first()?->total_time;
+        $total= $this->attendances()->where('date', now()->toDateString())->first()?->total_time;
         return $this->secondsToHms($total);
     }
 

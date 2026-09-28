@@ -27,7 +27,8 @@ class BookOnRent extends Component
     /** Sortable columns that live on the related books row. */
     private const BOOK_SORTS = ['title', 'author', 'publisher'];
 
-    #[Url(history: true)]
+    // Deliberately not #[Url]: Rental::search matches the borrowing
+    // student's name as well as the book, so this can hold a child's name.
     public $search;
     public $sortBy = 'due_at';
 

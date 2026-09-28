@@ -23,7 +23,7 @@ class QuickCheckInStudents extends ModalComponent
         return Student::search($this->search)
             ->active()
             ->with([
-                'attendances' => fn ($query) => $query->whereDate('date', now()),
+                'attendances' => fn ($query) => $query->where('date', now()->toDateString()),
                 'schools' => fn ($query) => $query->where('is_current', true)->with('school'),
                 'grades' => fn ($query) => $query->where('is_current', true)->with('gradeTable'),
                 'rentals' => fn ($query) => $query->overdue()->with('book'),
@@ -37,7 +37,7 @@ class QuickCheckInStudents extends ModalComponent
     {
         $student = Student::findOrFail($studentId);
         $attendance = Attendance::where('student_id', $student->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
 
         $attr = AttendanceAttr::where(['attendance_id' => $attendance->id, 'time_out' => null])->first();
 
@@ -56,7 +56,7 @@ class QuickCheckInStudents extends ModalComponent
     {
         $student = Student::findOrFail($studentId);
         $attendance = Attendance::where('student_id', $student->id)
-            ->whereDate('date', now())->first();
+            ->where('date', now()->toDateString())->first();
         if (!$attendance) {
             $attendance = Attendance::create([
                 'student_id' => $student->id,

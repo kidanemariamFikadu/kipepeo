@@ -29,7 +29,9 @@ class StudentList extends Component
         session()->flash($message['type'], $message['content']);
     }
 
-    #[Url(history: true)]
+    // Deliberately not #[Url]: this searches children by name, and binding
+    // it to the query string writes what staff type into the address bar,
+    // browser history and the web server's access log.
     public $search = '';
 
     #[Url(history: true)]

@@ -92,7 +92,7 @@ class Rent extends ModalComponent
     {
         return Student::where(function ($query) {
             $query->whereHas('attendances', function ($query) {
-                $query->whereDate('date', now());
+                $query->where('date', now()->toDateString());
             })->orWhereNotNull('graduated_at');
         })->orderBy('name')->get();
     }
