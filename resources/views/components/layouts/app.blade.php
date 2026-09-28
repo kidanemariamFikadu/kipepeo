@@ -222,9 +222,6 @@
 
         <div class="flex min-w-0 flex-1 flex-col overflow-y-auto">
             <div class="no-print flex items-center justify-between border-b border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800 lg:hidden">
-                <a href="/" class="flex items-center rounded-md bg-white p-1.5 shadow">
-                    <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}" class="h-6 w-auto" alt="Kipepeo Logo" />
-                </a>
                 <button type="button" @click="mobileOpen = true"
                     class="inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                     <span class="sr-only">Open main menu</span>
@@ -234,6 +231,9 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </button>
+                <a href="/" class="flex items-center rounded-md bg-white p-1.5 shadow">
+                    <img src="{{ asset('images/kipepeo-logo-dark.jpg') }}" class="h-6 w-auto" alt="Kipepeo Logo" />
+                </a>
             </div>
 
             <main class="mt-2 p-5 mb-auto">
