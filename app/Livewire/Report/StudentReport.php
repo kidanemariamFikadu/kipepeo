@@ -29,21 +29,22 @@ class StudentReport extends Component
 
     protected function baseQuery()
     {
-        return School::withCount([
-            'students as total_students',
-            'students as current_students' => function ($query) {
-                $query->where('is_current', true);
-            },
-            'students as male_students_count' => function ($query) {
-                $query->whereRaw('LOWER(gender) = ?', ['male']);
-            },
-            'students as female_students_count' => function ($query) {
-                $query->whereRaw('LOWER(gender) = ?', ['female']);
-            },
-            'students as other_students_count' => function ($query) {
-                $query->whereRaw('LOWER(gender) = ?', ['other']);
-            },
-        ])->search($this->search)->orderBy('name');
+        return School::when($this->school, fn ($query) => $query->where('id', $this->school))
+            ->withCount([
+                'students as total_students',
+                'students as current_students' => function ($query) {
+                    $query->where('is_current', true);
+                },
+                'students as male_students_count' => function ($query) {
+                    $query->whereRaw('LOWER(gender) = ?', ['male']);
+                },
+                'students as female_students_count' => function ($query) {
+                    $query->whereRaw('LOWER(gender) = ?', ['female']);
+                },
+                'students as other_students_count' => function ($query) {
+                    $query->whereRaw('LOWER(gender) = ?', ['other']);
+                },
+            ])->search($this->search)->orderBy('name');
     }
 
     public function render()
@@ -54,6 +55,7 @@ class StudentReport extends Component
             // page currently visible on screen, so it's queried separately here
             // without pagination.
             'fullSchoolReport' => $this->baseQuery()->get(),
+            'schools' => School::orderBy('name')->get(),
         ]);
     }
 }

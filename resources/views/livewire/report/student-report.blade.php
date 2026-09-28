@@ -39,6 +39,15 @@
                                     <x-spinner class="h-4 w-4" />
                                 </div>
                             </div>
+                            <div class="w-full max-w-xs">
+                                <select wire:model.live="school"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <option value="">All schools</option>
+                                    @foreach ($schools as $s)
+                                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="overflow-x-auto no-print">
                             <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">

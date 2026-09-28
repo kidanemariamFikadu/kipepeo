@@ -36,6 +36,20 @@ test('search filters the school report by school name', function () {
     expect($component->viewData('schoolReport'))->toHaveCount(1);
 });
 
+test('the school filter scopes the report to a single school', function () {
+    $user = User::factory()->create();
+    $schoolA = School::create(['name' => 'School A']);
+    School::create(['name' => 'School B']);
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentReport::class)
+        ->set('school', $schoolA->id);
+
+    $report = $component->viewData('schoolReport');
+    expect($report)->toHaveCount(1);
+    expect($report->first()->id)->toBe($schoolA->id);
+});
+
 test('the full report used for printing includes every matching school, not just the current page', function () {
     // Regression test: printing used to only show whatever page the paginator was
     // on. The print view now renders a separate, unpaginated query.

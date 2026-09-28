@@ -40,6 +40,19 @@
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
+            <div>
+                <label for="gender" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Gender</label>
+                <select id="gender" wire:model="gender"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All genders</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                @error('gender')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
             <div class="flex items-center space-x-2">
                 <button type="submit" wire:loading.attr="disabled" wire:target="filter"
                     class="inline-flex items-center p-2 px-4 bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm disabled:opacity-50">

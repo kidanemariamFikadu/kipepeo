@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Report;
 
+use App\Models\ActivityType;
 use App\Models\Volunteer;
 use App\Models\VolunteerActivity;
 use App\Models\VolunteerAttendance;
@@ -14,6 +15,8 @@ class VolunteerReport extends Component
     public $toDate = '';
 
     public $volunteerId = '';
+
+    public $activityTypeId = '';
 
     public function mount()
     {
@@ -28,6 +31,7 @@ class VolunteerReport extends Component
             'fromDate' => 'nullable|date',
             'toDate' => 'nullable|date|after_or_equal:fromDate',
             'volunteerId' => 'nullable|exists:volunteers,id',
+            'activityTypeId' => 'nullable|exists:activity_types,id',
         ]);
     }
 
@@ -71,6 +75,7 @@ class VolunteerReport extends Component
             ->when($this->fromDate, fn ($query) => $query->whereDate('date', '>=', $this->fromDate))
             ->when($this->toDate, fn ($query) => $query->whereDate('date', '<=', $this->toDate))
             ->when($this->volunteerId, fn ($query) => $query->where('volunteer_id', $this->volunteerId))
+            ->when($this->activityTypeId, fn ($query) => $query->where('activity_type_id', $this->activityTypeId))
             ->get();
 
         $activityCountsByType = $activities->groupBy('activity_type_id')
@@ -84,11 +89,12 @@ class VolunteerReport extends Component
         return view('livewire.report.volunteer-report', [
             'hoursByVolunteer' => $hoursByVolunteer,
             'activityCountsByType' => $activityCountsByType,
-            'activityLog' => $this->volunteerId ? $activities->sortByDesc('date')->values() : collect(),
+            'activityLog' => ($this->volunteerId || $this->activityTypeId) ? $activities->sortByDesc('date')->values() : collect(),
             'totalHoursSeconds' => $attendances->sum('total_time'),
             'totalActivities' => $activities->count(),
             'volunteersActive' => $attendances->pluck('volunteer_id')->unique()->count(),
             'volunteers' => Volunteer::orderBy('name')->get(),
+            'activityTypes' => ActivityType::orderBy('name')->get(),
         ]);
     }
 }

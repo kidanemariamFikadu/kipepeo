@@ -110,6 +110,50 @@ test('the full rental list used for printing includes every rental in range, not
     expect($component->viewData('fullRentals'))->toHaveCount(3);
 });
 
+test('the category filter scopes rentals to books in that category', function () {
+    $user = User::factory()->create();
+    $fiction = makeRentalTestBook('Fiction Book', 'Fiction');
+    $nonFiction = makeRentalTestBook('Non-Fiction Book', 'Non-Fiction');
+    $student = Student::create(['name' => 'Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+
+    Rental::create(['book_id' => $fiction->id, 'student_id' => $student->id, 'user_id' => $user->id, 'rented_at' => now(), 'due_at' => now()->addDays(7)]);
+    Rental::create(['book_id' => $nonFiction->id, 'student_id' => $student->id, 'user_id' => $user->id, 'rented_at' => now(), 'due_at' => now()->addDays(7)]);
+
+    $component = Livewire::actingAs($user)->test(BookRentalReport::class)
+        ->set('categoryId', $fiction->category_id)
+        ->call('filter');
+
+    expect($component->get('totalRentals'))->toBe(1);
+    expect($component->viewData('fullRentals')->first()->book->title)->toBe('Fiction Book');
+});
+
+test('the status filter scopes rentals to currently-out, on-time, or late', function () {
+    $user = User::factory()->create();
+    $book = makeRentalTestBook('Book A');
+    $student = Student::create(['name' => 'Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+
+    Rental::create([
+        'book_id' => $book->id, 'student_id' => $student->id, 'user_id' => $user->id,
+        'rented_at' => now()->subDays(5), 'due_at' => now()->addDays(2),
+    ]);
+    Rental::create([
+        'book_id' => $book->id, 'student_id' => $student->id, 'user_id' => $user->id,
+        'rented_at' => now()->subDays(10), 'due_at' => now()->subDays(3), 'returned_at' => now()->subDays(4),
+    ]);
+    Rental::create([
+        'book_id' => $book->id, 'student_id' => $student->id, 'user_id' => $user->id,
+        'rented_at' => now()->subDays(10), 'due_at' => now()->subDays(3), 'returned_at' => now()->subDays(1),
+    ]);
+
+    $component = Livewire::actingAs($user)->test(BookRentalReport::class)
+        ->set('fromDate', now()->subDays(20)->format('Y-m-d'))
+        ->set('toDate', now()->format('Y-m-d'));
+
+    expect($component->set('status', 'out')->call('filter')->get('totalRentals'))->toBe(1);
+    expect($component->set('status', 'on_time')->call('filter')->get('totalRentals'))->toBe(1);
+    expect($component->set('status', 'late')->call('filter')->get('totalRentals'))->toBe(1);
+});
+
 test('inventory totals count book copies by status', function () {
     $user = User::factory()->create();
     $book = makeRentalTestBook('Book A');

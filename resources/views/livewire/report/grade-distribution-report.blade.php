@@ -13,6 +13,17 @@
         </button>
     </div>
 
+    <div class="mb-6 no-print">
+        <label for="schoolId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">School</label>
+        <select id="schoolId" wire:model.live="schoolId"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full max-w-xs p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="">All schools</option>
+            @foreach ($schools as $school)
+                <option value="{{ $school->id }}">{{ $school->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
     <div class="printable">
         <x-report.print-header title="Grade Distribution" subtitle="Currently enrolled students by grade" />
 

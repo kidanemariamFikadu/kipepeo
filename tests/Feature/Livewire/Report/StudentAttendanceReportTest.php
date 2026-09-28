@@ -3,6 +3,8 @@
 use App\Livewire\Report\StudentAttendance;
 use App\Models\Attendance;
 use App\Models\AttendanceAttr;
+use App\Models\Grade;
+use App\Models\GradeStudent;
 use App\Models\School;
 use App\Models\SchoolStudent;
 use App\Models\Student;
@@ -148,4 +150,71 @@ test('changing perPage or re-filtering the roster resets back to page 1', functi
 
     $component->call('getStudentByDate');
     expect($component->viewData('studentsPage')->currentPage())->toBe(1);
+});
+
+test('the gender filter scopes the roster to the selected gender', function () {
+    $user = User::factory()->create();
+    $boy = Student::create(['name' => 'Boy', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $girl = Student::create(['name' => 'Girl', 'dob' => '2010-01-01', 'gender' => 'female']);
+    Attendance::create(['student_id' => $boy->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+    Attendance::create(['student_id' => $girl->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->set('gender', 'female')
+        ->call('getStudentByDate');
+
+    $students = $component->get('students');
+    expect($students)->toHaveCount(1);
+    expect($students->first()['name'])->toBe('Girl');
+});
+
+test('the school filter scopes the roster to the selected current school', function () {
+    $user = User::factory()->create();
+    $schoolA = School::create(['name' => 'School A']);
+    $schoolB = School::create(['name' => 'School B']);
+
+    $studentA = Student::create(['name' => 'Student A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'Student B', 'dob' => '2010-01-01', 'gender' => 'male']);
+    SchoolStudent::create(['student_id' => $studentA->id, 'school_id' => $schoolA->id, 'is_current' => true]);
+    SchoolStudent::create(['student_id' => $studentB->id, 'school_id' => $schoolB->id, 'is_current' => true]);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->set('schoolId', $schoolA->id)
+        ->call('getStudentByDate');
+
+    $students = $component->get('students');
+    expect($students)->toHaveCount(1);
+    expect($students->first()['name'])->toBe('Student A');
+});
+
+test('the grade filter scopes the roster to students currently in that grade', function () {
+    $user = User::factory()->create();
+    $gradeOne = Grade::create(['grade' => 'Grade 1']);
+    $gradeTwo = Grade::create(['grade' => 'Grade 2']);
+
+    $studentA = Student::create(['name' => 'Student A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'Student B', 'dob' => '2010-01-01', 'gender' => 'male']);
+    GradeStudent::create(['student_id' => $studentA->id, 'grade' => $gradeOne->id, 'is_current' => true]);
+    GradeStudent::create(['student_id' => $studentB->id, 'grade' => $gradeTwo->id, 'is_current' => true]);
+
+    Attendance::create(['student_id' => $studentA->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+    Attendance::create(['student_id' => $studentB->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+
+    $component = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->set('gradeId', $gradeOne->id)
+        ->call('getStudentByDate');
+
+    $students = $component->get('students');
+    expect($students)->toHaveCount(1);
+    expect($students->first()['name'])->toBe('Student A');
+    expect($students->first()['grade'])->toBe('Grade 1');
 });

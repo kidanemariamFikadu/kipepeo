@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Report;
 
+use App\Models\BookCategory;
 use App\Models\BookCopy;
 use App\Models\Rental;
 use Carbon\Carbon;
@@ -15,6 +16,8 @@ class BookRentalReport extends Component
 
     public $fromDate;
     public $toDate;
+    public $categoryId = '';
+    public $status = '';
 
     #[Url()]
     public $perPage = 10;
@@ -38,6 +41,8 @@ class BookRentalReport extends Component
         $this->validate([
             'fromDate' => 'required|date',
             'toDate' => 'required|date|after_or_equal:fromDate',
+            'categoryId' => 'nullable|exists:book_categories,id',
+            'status' => 'nullable|in:on_time,late,out',
         ]);
         $this->resetPage();
 
@@ -61,6 +66,10 @@ class BookRentalReport extends Component
                 Carbon::parse($this->fromDate)->startOfDay(),
                 Carbon::parse($this->toDate)->endOfDay(),
             ])
+            ->when($this->categoryId, fn ($q) => $q->whereHas('book', fn ($sq) => $sq->where('category_id', $this->categoryId)))
+            ->when($this->status === 'out', fn ($q) => $q->whereNull('returned_at'))
+            ->when($this->status === 'on_time', fn ($q) => $q->whereNotNull('returned_at')->whereColumn('returned_at', '<=', 'due_at'))
+            ->when($this->status === 'late', fn ($q) => $q->whereNotNull('returned_at')->whereColumn('returned_at', '>', 'due_at'))
             ->orderByDesc('rented_at');
     }
 
@@ -85,6 +94,7 @@ class BookRentalReport extends Component
             'rentals' => $this->rangeQuery()->paginate($this->perPage),
             // Printing must include every rental in range, not just the current page.
             'fullRentals' => $this->rangeQuery()->get(),
+            'categories' => BookCategory::orderBy('name')->get(),
         ]);
     }
 }

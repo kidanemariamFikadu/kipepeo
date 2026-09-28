@@ -89,6 +89,25 @@ test('volunteer report computes an estimated stipend as hours times hourly rate'
     expect($unratedRow['estStipend'])->toBeNull();
 });
 
+test('volunteer report filters activities by activity type', function () {
+    $user = User::factory()->create();
+    $volunteer = Volunteer::create(['name' => 'Test Volunteer', 'status' => 'active']);
+    $tutoring = ActivityType::create(['name' => 'Tutoring']);
+    $mentorship = ActivityType::create(['name' => 'Mentorship']);
+    $attendance = VolunteerAttendance::create(['volunteer_id' => $volunteer->id, 'date' => now(), 'current_in' => false]);
+
+    VolunteerActivity::create(['volunteer_attendance_id' => $attendance->id, 'volunteer_id' => $volunteer->id, 'activity_type_id' => $tutoring->id, 'date' => now()]);
+    VolunteerActivity::create(['volunteer_attendance_id' => $attendance->id, 'volunteer_id' => $volunteer->id, 'activity_type_id' => $mentorship->id, 'date' => now()]);
+
+    $component = Livewire::actingAs($user)->test(VolunteerReport::class)
+        ->set('activityTypeId', $tutoring->id)
+        ->call('filter');
+
+    expect($component->viewData('totalActivities'))->toBe(1);
+    expect($component->viewData('activityLog'))->toHaveCount(1);
+    expect($component->viewData('activityLog')->first()->activity_type_id)->toBe($tutoring->id);
+});
+
 test('volunteer report validates toDate is not before fromDate', function () {
     $user = User::factory()->create();
 

@@ -17,6 +17,45 @@
                 @enderror
             </div>
             <div>
+                <label for="gender" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Gender</label>
+                <select id="gender" wire:model="gender"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All genders</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                @error('gender')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
+                <label for="schoolId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">School</label>
+                <select id="schoolId" wire:model="schoolId"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All schools</option>
+                    @foreach ($schools as $school)
+                        <option value="{{ $school->id }}">{{ $school->name }}</option>
+                    @endforeach
+                </select>
+                @error('schoolId')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
+                <label for="gradeId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Grade</label>
+                <select id="gradeId" wire:model="gradeId"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">All grades</option>
+                    @foreach ($grades as $grade)
+                        <option value="{{ $grade->id }}">{{ $grade->grade }}</option>
+                    @endforeach
+                </select>
+                @error('gradeId')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+            <div>
                 <label for="perPage" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Rows per
                     page</label>
                 <select id="perPage" wire:model.live="perPage"
@@ -67,6 +106,7 @@
                             <th class="px-4 py-3">#</th>
                             <th class="px-4 py-3">Name</th>
                             <th class="px-4 py-3">School</th>
+                            <th class="px-4 py-3">Grade</th>
                             <th class="px-4 py-3">Guardian</th>
                             <th class="px-4 py-3">Guardian Phone</th>
                             <th class="px-4 py-3">Time Stayed</th>
@@ -82,6 +122,7 @@
                                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                     {{ $student['name'] }}</td>
                                 <td class="px-4 py-3">{{ $student['school'] }}</td>
+                                <td class="px-4 py-3">{{ $student['grade'] }}</td>
                                 <td class="px-4 py-3">
                                     {{ $student['guardians']->pluck('guardian_name')->filter()->implode(', ') ?: '—' }}
                                 </td>
@@ -99,7 +140,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
                                     No students found for the selected date.
                                 </td>
                             </tr>
@@ -119,6 +160,7 @@
                         <th class="px-4 py-3">#</th>
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">School</th>
+                        <th class="px-4 py-3">Grade</th>
                         <th class="px-4 py-3">Guardian</th>
                         <th class="px-4 py-3">Guardian Phone</th>
                         <th class="px-4 py-3">Time Stayed</th>
@@ -131,6 +173,7 @@
                             <td class="px-4 py-3">{{ $loop->iteration }}</td>
                             <td class="px-4 py-3 font-medium">{{ $student['name'] }}</td>
                             <td class="px-4 py-3">{{ $student['school'] }}</td>
+                            <td class="px-4 py-3">{{ $student['grade'] }}</td>
                             <td class="px-4 py-3">
                                 {{ $student['guardians']->pluck('guardian_name')->filter()->implode(', ') ?: '—' }}
                             </td>
@@ -148,7 +191,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-6 text-center">No students found for the selected date.</td>
+                            <td colspan="8" class="px-4 py-6 text-center">No students found for the selected date.</td>
                         </tr>
                     @endforelse
                 </tbody>

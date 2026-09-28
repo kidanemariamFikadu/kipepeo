@@ -14,6 +14,8 @@ class AlumniReport extends Component
 
     public $gradeId = '';
 
+    public $gender = '';
+
     public function mount()
     {
         $this->filter();
@@ -25,6 +27,7 @@ class AlumniReport extends Component
             'fromDate' => 'nullable|date',
             'toDate' => 'nullable|date|after_or_equal:fromDate',
             'gradeId' => 'nullable|exists:grades,id',
+            'gender' => 'nullable|in:male,female,other',
         ]);
     }
 
@@ -36,6 +39,7 @@ class AlumniReport extends Component
             ->when($this->fromDate, fn ($query) => $query->whereDate('graduated_at', '>=', $this->fromDate))
             ->when($this->toDate, fn ($query) => $query->whereDate('graduated_at', '<=', $this->toDate))
             ->when($this->gradeId, fn ($query) => $query->where('graduated_grade_id', $this->gradeId))
+            ->when($this->gender, fn ($query) => $query->where('gender', $this->gender))
             ->orderByDesc('graduated_at')
             ->get();
 

@@ -46,3 +46,24 @@ test('grade distribution counts currently-enrolled students who have no current 
     expect($component->viewData('totalEnrolled'))->toBe(2);
     expect($component->viewData('unassignedCount'))->toBe(1);
 });
+
+test('the school filter scopes grade counts and totals to students currently at that school', function () {
+    $user = User::factory()->create();
+    $schoolA = School::create(['name' => 'School A']);
+    $schoolB = School::create(['name' => 'School B']);
+    $grade = Grade::create(['grade' => 'GRADE 1']);
+
+    $studentA = Student::create(['name' => 'Student A', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $studentB = Student::create(['name' => 'Student B', 'dob' => '2010-01-01', 'gender' => 'male']);
+    SchoolStudent::create(['student_id' => $studentA->id, 'school_id' => $schoolA->id, 'is_current' => true]);
+    SchoolStudent::create(['student_id' => $studentB->id, 'school_id' => $schoolB->id, 'is_current' => true]);
+    GradeStudent::create(['student_id' => $studentA->id, 'grade' => $grade->id, 'is_current' => true]);
+    GradeStudent::create(['student_id' => $studentB->id, 'grade' => $grade->id, 'is_current' => true]);
+
+    $component = Livewire::actingAs($user)->test(GradeDistributionReport::class)
+        ->set('schoolId', $schoolA->id);
+
+    $report = $component->viewData('grades')->firstWhere('id', $grade->id);
+    expect($report->total_students)->toBe(1);
+    expect($component->viewData('totalEnrolled'))->toBe(1);
+});

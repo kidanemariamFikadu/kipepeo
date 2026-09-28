@@ -48,6 +48,20 @@ test('alumni report filters by graduated-from grade', function () {
     expect($component->viewData('alumni')->pluck('id')->all())->toBe([$fromA->id]);
 });
 
+test('alumni report filters by gender', function () {
+    $user = User::factory()->create();
+    $grade = Grade::create(['grade' => 'GRADE 12']);
+
+    $male = Student::create(['name' => 'Male Graduate', 'dob' => '2005-01-01', 'gender' => 'male', 'graduated_at' => now(), 'graduated_grade_id' => $grade->id]);
+    Student::create(['name' => 'Female Graduate', 'dob' => '2005-01-01', 'gender' => 'female', 'graduated_at' => now(), 'graduated_grade_id' => $grade->id]);
+
+    $component = Livewire::actingAs($user)->test(AlumniReport::class)
+        ->set('gender', 'male')
+        ->call('filter');
+
+    expect($component->viewData('alumni')->pluck('id')->all())->toBe([$male->id]);
+});
+
 test('alumni report validates toDate is not before fromDate', function () {
     $user = User::factory()->create();
 
