@@ -47,35 +47,45 @@ class PromoteStudents extends Component
             'selectedGrades.required' => 'Select at least one grade to promote or graduate.',
         ]);
 
-        $grades = Grade::whereIn('id', $this->selectedGrades)->get();
+        $grades = Grade::whereIn('id', $this->selectedGrades)->get()->keyBy('id');
+
+        // Snapshot every eligible record BEFORE promoting anyone. The rows
+        // this creates are themselves `is_current` in the next grade up, so
+        // re-querying per grade inside the loop picked students up again on
+        // a later iteration: selecting every grade (the year-end default)
+        // walked a Grade 6 student through 7, 8, 9, 10, 11, 12 and then
+        // graduated them, in one click.
+        $records = GradeStudent::query()
+            ->whereIn('grade', $grades->keys())
+            ->where('is_current', true)
+            ->whereHas('student')
+            ->get();
 
         $promotedCount = 0;
         $graduatedCount = 0;
 
-        DB::transaction(function () use ($grades, &$promotedCount, &$graduatedCount) {
-            foreach ($grades as $grade) {
-                $currentRecords = GradeStudent::query()
-                    ->where('grade', $grade->id)
-                    ->where('is_current', true)
-                    ->whereIn('student_id', Student::query()->pluck('id'))
-                    ->get();
+        DB::transaction(function () use ($grades, $records, &$promotedCount, &$graduatedCount) {
+            foreach ($records as $record) {
+                $grade = $grades->get($record->grade);
 
-                foreach ($currentRecords as $record) {
-                    if ($grade->next_grade_id) {
-                        $record->update(['is_current' => false]);
+                if (! $grade) {
+                    continue;
+                }
 
-                        GradeStudent::create([
-                            'student_id' => $record->student_id,
-                            'grade' => $grade->next_grade_id,
-                            'is_current' => true,
-                        ]);
+                if ($grade->next_grade_id) {
+                    $record->update(['is_current' => false]);
 
-                        $promotedCount++;
-                    } else {
-                        Student::find($record->student_id)->graduate($grade->id);
+                    GradeStudent::create([
+                        'student_id' => $record->student_id,
+                        'grade' => $grade->next_grade_id,
+                        'is_current' => true,
+                    ]);
 
-                        $graduatedCount++;
-                    }
+                    $promotedCount++;
+                } else {
+                    Student::find($record->student_id)?->graduate($grade->id);
+
+                    $graduatedCount++;
                 }
             }
         });

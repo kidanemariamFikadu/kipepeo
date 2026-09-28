@@ -180,3 +180,51 @@ test('a soft-deleted student is not promoted', function () {
 
     expect(GradeStudent::where('student_id', $student->id)->count())->toBe(1);
 });
+
+test('selecting every grade advances each student exactly one grade', function () {
+    // Regression test: eligible records used to be re-queried inside the
+    // loop, so rows created by promoting into grade N were picked up again
+    // when the loop reached grade N. Selecting all grades -- the year-end
+    // default -- walked a Grade 1 student all the way up the chain and
+    // graduated them in a single click.
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $grade1 = Grade::create(['grade' => 'GRADE 1']);
+    $grade2 = Grade::create(['grade' => 'GRADE 2']);
+    $grade3 = Grade::create(['grade' => 'GRADE 3']);
+    $grade1->update(['next_grade_id' => $grade2->id]);
+    $grade2->update(['next_grade_id' => $grade3->id]);
+
+    $student = makeStudentInGrade($grade1);
+
+    Livewire::actingAs($admin)
+        ->test(PromoteStudents::class)
+        ->set('selectedGrades', [$grade1->id, $grade2->id, $grade3->id])
+        ->call('promote');
+
+    $current = GradeStudent::where('student_id', $student->id)->where('is_current', true)->first();
+
+    expect((int) $current->grade)->toBe($grade2->id);
+    expect($student->fresh()->graduated_at)->toBeNull();
+    // One row for the old grade, one for the new -- not a row per grade.
+    expect(GradeStudent::where('student_id', $student->id)->count())->toBe(2);
+});
+
+test('selecting every grade still graduates only students already in a terminal grade', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $grade1 = Grade::create(['grade' => 'GRADE 1']);
+    $final = Grade::create(['grade' => 'GRADE 12']);
+    $grade1->update(['next_grade_id' => $final->id]);
+
+    $rising = makeStudentInGrade($grade1);
+    $leaving = makeStudentInGrade($final);
+
+    Livewire::actingAs($admin)
+        ->test(PromoteStudents::class)
+        ->set('selectedGrades', [$grade1->id, $final->id])
+        ->call('promote');
+
+    expect($rising->fresh()->graduated_at)->toBeNull();
+    expect($leaving->fresh()->graduated_at)->not->toBeNull();
+});
