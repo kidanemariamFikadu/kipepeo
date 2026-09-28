@@ -18,6 +18,18 @@
         </div>
         <!-- Modal body -->
         <div class="p-4 md:p-5">
+            @php
+                // Allow-list rather than dumping the whole audit payload: it is
+                // the last line of defence keeping credential columns off this
+                // screen if one ever slips back into the recorded values.
+                $auditFields = [
+                    'name' => 'Name',
+                    'email' => 'Email',
+                    'role' => 'Role',
+                    'job_title_id' => 'Job title',
+                    'must_reset_password' => 'Must reset password',
+                ];
+            @endphp
             <div class="relative overflow-x-auto">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
@@ -36,8 +48,18 @@
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $audit->user?->name ?? 'Unknown user' }}
                                 </th>
-                                <td class="px-4 py-3 break-words">{{ json_encode($audit->old_values) }}</td>
-                                <td class="px-4 py-3 break-words">{{ json_encode($audit->new_values) }}</td>
+                                @foreach (['old_values', 'new_values'] as $valueSet)
+                                    <td class="px-4 py-3 break-words">
+                                        @forelse (array_intersect_key($audit->{$valueSet} ?? [], $auditFields) as $field => $value)
+                                            <div>
+                                                <span class="text-gray-500 dark:text-gray-400">{{ $auditFields[$field] }}:</span>
+                                                {{ is_bool($value) ? ($value ? 'Yes' : 'No') : ($value ?? '—') }}
+                                            </div>
+                                        @empty
+                                            <span class="text-gray-400 dark:text-gray-500">&mdash;</span>
+                                        @endforelse
+                                    </td>
+                                @endforeach
                                 <td class="px-4 py-3">
                                     <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
                                         {{ Str::title($audit->event) }}

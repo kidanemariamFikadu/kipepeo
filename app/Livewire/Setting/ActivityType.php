@@ -13,6 +13,8 @@ class ActivityType extends ModalComponent
 
     public function mount($activityTypeId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->activityTypeId = $activityTypeId;
         if ($activityTypeId) {
             $activityType = \App\Models\ActivityType::find($activityTypeId);
@@ -22,6 +24,8 @@ class ActivityType extends ModalComponent
 
     function saveActivityType()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate([
             'name' => ['required', 'min:2', 'max:255', Rule::unique('activity_types', 'name')->ignore($this->activityTypeId)],
         ]);

@@ -25,6 +25,8 @@ class Volunteer extends ModalComponent
 
     public function mount($volunteerId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->volunteerId = $volunteerId;
         if ($volunteerId) {
             $volunteer = \App\Models\Volunteer::find($volunteerId);
@@ -44,6 +46,8 @@ class Volunteer extends ModalComponent
 
     function saveVolunteer()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate([
             'name' => ['required', 'min:2', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

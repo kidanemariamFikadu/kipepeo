@@ -17,6 +17,8 @@ class Grade extends ModalComponent
 
     public function mount($gradeId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->gradeId = $gradeId;
         if ($gradeId) {
             $grade = \App\Models\Grade::find($gradeId);
@@ -35,6 +37,8 @@ class Grade extends ModalComponent
 
     function createGrade()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate([
             'grade' => ['required', 'min:3', 'max:255', Rule::unique('grades', 'grade')->ignore($this->gradeId)],
             'nextGradeId' => ['nullable', 'exists:grades,id'],

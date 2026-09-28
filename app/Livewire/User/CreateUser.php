@@ -12,8 +12,23 @@ use LivewireUI\Modal\ModalComponent;
 class CreateUser extends ModalComponent
 {
     public UserForm $form;
+
+    /**
+     * Guarded here and in create() rather than relying on the admin
+     * middleware: Livewire only re-applies a fixed allowlist of middleware
+     * to /livewire/update, which the app's `admin` middleware is not part
+     * of, and the modal host is rendered on every page -- so any logged-in
+     * user can otherwise mount this component and mint themselves an admin.
+     */
+    function mount()
+    {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+    }
+
     function create()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate();
 
         User::create([

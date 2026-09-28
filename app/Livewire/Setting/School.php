@@ -14,6 +14,8 @@ class School extends ModalComponent
 
     public function mount($schoolId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->schoolId = $schoolId;
         if ($schoolId) {
             $school = \App\Models\School::find($schoolId);
@@ -23,6 +25,8 @@ class School extends ModalComponent
 
     function createSchool()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate();
         if ($this->schoolId) {
             $checkDuplicate = \App\Models\School::where('name', $this->school)->where('id', '!=', $this->schoolId)->first();

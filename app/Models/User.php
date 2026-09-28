@@ -50,6 +50,21 @@ class User extends Authenticatable implements Auditable
     ];
 
     /**
+     * Never write credential material into the audit trail. $hidden alone
+     * does not cover this -- laravel-auditing only honours it in strict
+     * mode -- and audit rows are rendered in the user history screen, so
+     * anything recorded here is readable by whoever can open that screen.
+     *
+     * @var array<int, string>
+     */
+    protected $auditExclude = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

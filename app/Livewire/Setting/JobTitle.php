@@ -17,6 +17,8 @@ class JobTitle extends ModalComponent
 
     public function mount($jobTitleId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->jobTitleId = $jobTitleId;
         if ($jobTitleId) {
             $jobTitleRaw = \App\Models\JobTitle::find($jobTitleId);
@@ -26,6 +28,8 @@ class JobTitle extends ModalComponent
 
     public function save()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate();
         if ($this->jobTitleId) {
             $jobTitle = \App\Models\JobTitle::find($this->jobTitleId);

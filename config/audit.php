@@ -72,7 +72,10 @@ return [
     |
     */
 
-    'strict' => false,
+    // On: a model's $hidden attributes are also kept out of the audit
+    // trail. User is the only audited model, and its $hidden is exactly the
+    // credential set, so this is a second layer behind User::$auditExclude.
+    'strict' => true,
 
     /*
     |--------------------------------------------------------------------------

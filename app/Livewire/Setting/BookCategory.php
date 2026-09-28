@@ -13,6 +13,8 @@ class BookCategory extends ModalComponent
 
     public function mount($bookCategoryId = null)
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->bookCategoryId = $bookCategoryId;
         if ($bookCategoryId) {
             $bookCategory = \App\Models\BookCategory::find($bookCategoryId);
@@ -22,6 +24,8 @@ class BookCategory extends ModalComponent
 
     function saveBookCategory()
     {
+        abort_unless(auth()->user()?->isAdmin(), 403);
+
         $this->validate([
             'name' => ['required', 'min:2', 'max:255', Rule::unique('book_categories', 'name')->ignore($this->bookCategoryId)],
         ]);

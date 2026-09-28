@@ -42,7 +42,11 @@ test('history does not crash when the auditing user account no longer exists', f
 
     $admin->delete();
 
-    $html = Livewire::actingAs($target)->test(UserHistory::class, ['user' => $target->fresh()])->html();
+    // Viewed by a second admin: this screen is admin-only, and the original
+    // causer has just been deleted.
+    $viewer = User::factory()->create(['role' => 'admin']);
+
+    $html = Livewire::actingAs($viewer)->test(UserHistory::class, ['user' => $target->fresh()])->html();
 
     expect($html)->toContain('Unknown user');
 });
