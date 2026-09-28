@@ -29,7 +29,6 @@ class ImportBooksJob implements ShouldQueue
      */
     public function handle(): void
     {
-        logger(json_encode($this->bookExcel));
         foreach ($this->bookExcel as $books) {
             foreach ($books as $book) {
                 if ($book[1]) {

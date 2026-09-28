@@ -30,7 +30,6 @@ class ImportStudentsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        logger(json_encode($this->studentExcel));
         foreach ($this->studentExcel as $students) {
             foreach ($students as $student) {
                 $school = School::where('name', $student[3])->first();

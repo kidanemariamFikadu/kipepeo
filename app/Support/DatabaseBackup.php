@@ -29,6 +29,8 @@ class DatabaseBackup
 
     public static function dumpUsing(string $host, string $port, string $database, string $username, string $password): string
     {
+        self::assertSafeDatabaseName($database);
+
         $binary = self::locateBinary('mysqldump');
         if ($binary === null) {
             throw new RuntimeException('mysqldump was not found on this server.');
@@ -41,6 +43,9 @@ class DatabaseBackup
             '--user='.$username,
             '--routines',
             '--single-transaction',
+            // Everything after `--` is positional, so a database name
+            // beginning with a dash can never be read as an option.
+            '--',
             $database,
         ]);
         $process->setTimeout(null);
@@ -60,6 +65,8 @@ class DatabaseBackup
 
     public static function restoreUsing(string $sql, string $host, string $port, string $database, string $username, string $password): void
     {
+        self::assertSafeDatabaseName($database);
+
         $binary = self::locateBinary('mysql');
         if ($binary === null) {
             throw new RuntimeException('The mysql client was not found on this server.');
@@ -70,6 +77,11 @@ class DatabaseBackup
             '--host='.$host,
             '--port='.$port,
             '--user='.$username,
+            // Everything after `--` is positional, so a database name
+            // beginning with a dash can never be read as an option. Without
+            // this, a restore archive supplying a name like `--tee=<path>`
+            // turns an import into an arbitrary file write.
+            '--',
             $database,
         ]);
         $process->setTimeout(null);
@@ -78,6 +90,19 @@ class DatabaseBackup
 
         if (! $process->isSuccessful()) {
             throw new ProcessFailedException($process);
+        }
+    }
+
+    /**
+     * Belt-and-braces alongside the `--` separator: the database name can
+     * arrive from a restore archive's .env, so anything outside the set
+     * MySQL actually permits in an identifier is rejected outright rather
+     * than handed to the client.
+     */
+    private static function assertSafeDatabaseName(string $database): void
+    {
+        if (preg_match('/^[A-Za-z0-9_$-]+$/', $database) !== 1) {
+            throw new RuntimeException('Refusing to run against an unsafe database name.');
         }
     }
 
