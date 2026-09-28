@@ -55,7 +55,7 @@
                                     'displayName' => 'Borrowed At',
                                 ])
                                 @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'due_date',
+                                    'name' => 'due_at',
                                     'displayName' => 'Due Date',
                                 ])
                                 @include('livewire.includes.table-sortable-th', [

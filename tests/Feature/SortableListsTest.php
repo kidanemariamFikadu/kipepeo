@@ -66,3 +66,42 @@ test('book list paginates and searches correctly', function () {
         ->assertSee('Zebra Book')
         ->assertDontSee('Apple Book');
 });
+
+test('books on loan sorts by every column its header offers', function () {
+    // Regression test: title/author/publisher/borrowed_by are not columns on
+    // `rentals`, so these headers used to raise a SQL error. They resolve
+    // through a join now. due_date was also the wrong name for due_at.
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $zebra = Book::create(['title' => 'Zebra Tales', 'author' => 'Zed Writer', 'publisher' => 'Zulu Press', 'class' => 'A', 'category' => 'Fiction', 'copies' => 1]);
+    $apple = Book::create(['title' => 'Apple Days', 'author' => 'Ada Writer', 'publisher' => 'Alpha Press', 'class' => 'A', 'category' => 'Fiction', 'copies' => 1]);
+
+    $yusuf = Student::create(['name' => 'Yusuf Last', 'dob' => '2010-01-01', 'gender' => 'male']);
+    $amina = Student::create(['name' => 'Amina First', 'dob' => '2010-01-01', 'gender' => 'female']);
+
+    \App\Models\Rental::create(['book_id' => $zebra->id, 'student_id' => $yusuf->id, 'user_id' => $admin->id, 'rented_at' => now()->subDays(2), 'due_at' => now()->addDays(9)]);
+    \App\Models\Rental::create(['book_id' => $apple->id, 'student_id' => $amina->id, 'user_id' => $admin->id, 'rented_at' => now()->subDay(), 'due_at' => now()->addDays(3)]);
+
+    foreach (['title', 'author', 'publisher', 'borrowed_by', 'due_at', 'returned_at', 'created_at'] as $column) {
+        Livewire::actingAs($admin)
+            ->test(\App\Livewire\Book\BookOnRent::class)
+            ->set('sortBy', $column)
+            ->assertOk();
+    }
+
+    $byTitle = Livewire::actingAs($admin)
+        ->test(\App\Livewire\Book\BookOnRent::class)
+        ->set('sortBy', 'title')
+        ->set('sortDir', 'ASC')
+        ->viewData('booksOnRent');
+
+    expect($byTitle->items()[0]->book->title)->toBe('Apple Days');
+
+    $byBorrower = Livewire::actingAs($admin)
+        ->test(\App\Livewire\Book\BookOnRent::class)
+        ->set('sortBy', 'borrowed_by')
+        ->set('sortDir', 'ASC')
+        ->viewData('booksOnRent');
+
+    expect($byBorrower->items()[0]->checkedOutTo->name)->toBe('Amina First');
+});

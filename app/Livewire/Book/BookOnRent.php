@@ -15,15 +15,17 @@ class BookOnRent extends Component
     use WithPagination;
 
     /**
-     * Only the columns that exist on `rentals`. The table header also
-     * offers title/author/publisher/borrowed_by/due_date, none of which are
-     * columns here -- those have never sorted (they raise a SQL error) and
-     * need joins to work. They are left out rather than left crashing.
+     * title/author/publisher live on `books` and borrowed_by is the
+     * student's name, so those four are resolved through a join in
+     * render() rather than as columns on `rentals`.
      */
     protected function sortableColumns(): array
     {
-        return ['due_at', 'returned_at', 'created_at'];
+        return ['due_at', 'returned_at', 'created_at', 'title', 'author', 'publisher', 'borrowed_by'];
     }
+
+    /** Sortable columns that live on the related books row. */
+    private const BOOK_SORTS = ['title', 'author', 'publisher'];
 
     #[Url(history: true)]
     public $search;
@@ -54,7 +56,27 @@ class BookOnRent extends Component
             $query->where('returned_at', null);
         }
 
-        $bookOnRent = $query->search($this->search)->orderBy($this->safeSortBy(), $this->safeSortDir())->paginate($this->perPage);
+        $query->search($this->search);
+
+        $sortBy = $this->safeSortBy();
+        $sortDir = $this->safeSortDir();
+
+        // Title, author, publisher and the borrower's name are not columns
+        // on `rentals` -- sorting by them needs the related table joined in.
+        // select() keeps the joined columns from overwriting the rental's own.
+        if (in_array($sortBy, self::BOOK_SORTS, true)) {
+            $query->leftJoin('books', 'books.id', '=', 'rentals.book_id')
+                ->select('rentals.*')
+                ->orderBy('books.'.$sortBy, $sortDir);
+        } elseif ($sortBy === 'borrowed_by') {
+            $query->leftJoin('students', 'students.id', '=', 'rentals.student_id')
+                ->select('rentals.*')
+                ->orderBy('students.name', $sortDir);
+        } else {
+            $query->orderBy($sortBy, $sortDir);
+        }
+
+        $bookOnRent = $query->paginate($this->perPage);
         return view('livewire.book.book-on-rent', [
             'booksOnRent' => $bookOnRent
         ]);
