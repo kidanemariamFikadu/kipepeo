@@ -145,6 +145,41 @@ test('the audit trail never records credential columns', function () {
     expect($recorded)->toContain('name');
 });
 
+test('an arbitrary sort column set over the wire cannot reach the query', function () {
+    // $sortBy is a public Livewire property, so it can be set to anything
+    // via /livewire/update without going through setSortBy(). Eloquent
+    // quotes identifiers so this is not injectable, but an unknown column
+    // raises a SQL error that confirms which columns exist.
+    $admin = makeUser('admin');
+
+    Livewire::actingAs($admin)
+        ->test(\App\Livewire\UserList::class)
+        ->set('sortBy', 'password')
+        ->set('sortDir', 'ASC); DROP TABLE users; --')
+        ->assertOk();
+
+    Livewire::actingAs($admin)
+        ->test(\App\Livewire\StudentList::class)
+        ->set('sortBy', 'no_such_column')
+        ->assertOk();
+
+    expect(\App\Models\User::count())->toBeGreaterThan(0);
+});
+
+test('setSortBy ignores a column that is not on the allow-list', function () {
+    $admin = makeUser('admin');
+
+    $component = Livewire::actingAs($admin)
+        ->test(\App\Livewire\UserList::class)
+        ->call('setSortBy', 'password');
+
+    expect($component->get('sortBy'))->not->toBe('password');
+
+    // A legitimate column still works.
+    $component->call('setSortBy', 'email');
+    expect($component->get('sortBy'))->toBe('email');
+});
+
 test('non-admin cannot mass-delete students', function () {
     $user = makeUser('user');
     $student = Student::create(['name' => 'Test Student', 'dob' => '2010-01-01', 'gender' => 'male']);

@@ -14,6 +14,11 @@ class UserList extends Component
     use HasSortableColumns;
     use WithPagination;
 
+    protected function sortableColumns(): array
+    {
+        return ['created_at', 'name', 'email', 'job_title_id', 'role'];
+    }
+
     #[Url(history: true)]
     public $search = '';
 
@@ -44,7 +49,7 @@ class UserList extends Component
                 ->when($this->admin !== '', function ($query) {
                     $query->where('role', $this->admin);
                 })
-                ->orderBy($this->sortBy, $this->sortDir)
+                ->orderBy($this->safeSortBy(), $this->safeSortDir())
                 ->paginate($this->perPage)
         ])->title('Users');
     }

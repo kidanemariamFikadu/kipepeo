@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Attendance;
 
+use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\Attendance;
 use App\Models\AttendanceAttr;
 use App\Models\School;
@@ -15,6 +16,7 @@ use Livewire\WithPagination;
 #[Title('Attendance')]
 class AttendanceStudent extends Component
 {
+    use HasSortableColumns;
     use WithPagination;
 
     #[Url(history: true)]
@@ -44,16 +46,9 @@ class AttendanceStudent extends Component
         return School::all();
     }
 
-    public function setSortBy($sortByField)
+    protected function sortableColumns(): array
     {
-
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
-        }
-
-        $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
+        return ['name'];
     }
 
     public function checkOut($studentId)
@@ -140,7 +135,7 @@ class AttendanceStudent extends Component
                         })->orWhereDoesntHave('attendances');
                     });
                 })
-                ->orderBy($this->sortBy, $this->sortDir)
+                ->orderBy($this->safeSortBy(), $this->safeSortDir())
                 ->paginate($this->perPage)
         ]);
     }

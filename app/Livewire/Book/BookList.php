@@ -15,6 +15,13 @@ class BookList extends Component
     use HasSortableColumns;
     use WithPagination;
 
+    protected function sortableColumns(): array
+    {
+        // "category" is resolved through a join in render(), not as a
+        // column on books.
+        return ['title', 'author', 'publisher', 'category', 'created_at'];
+    }
+
     #[Url(history: true)]
     public $search = '';
 
@@ -62,7 +69,7 @@ class BookList extends Component
                 ->select('books.*')
                 ->orderBy('book_categories.name', $this->sortDir);
         } else {
-            $books->orderBy($this->sortBy, $this->sortDir);
+            $books->orderBy($this->safeSortBy(), $this->safeSortDir());
         }
 
         return view('livewire.book.book-list', [

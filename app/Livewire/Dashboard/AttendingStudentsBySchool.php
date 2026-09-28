@@ -16,6 +16,11 @@ class AttendingStudentsBySchool extends Component
     use HasSortableColumns;
     use WithPagination;
 
+    protected function sortableColumns(): array
+    {
+        return ['students_count', 'name'];
+    }
+
     #[On('dashboard-changed')]
     public function refreshDashboard()
     {
@@ -49,7 +54,7 @@ class AttendingStudentsBySchool extends Component
         }])
             ->having('students_count', '>', 0)
             ->search($this->search)
-            ->orderBy($this->sortBy, $this->sortDir)
+            ->orderBy($this->safeSortBy(), $this->safeSortDir())
             ->paginate($this->perPage, ['*'], 'schools-page');
     }
 

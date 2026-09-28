@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Book;
 
+use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\Rental;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -10,7 +11,19 @@ use Livewire\WithPagination;
 
 class BookOnRent extends Component
 {
+    use HasSortableColumns;
     use WithPagination;
+
+    /**
+     * Only the columns that exist on `rentals`. The table header also
+     * offers title/author/publisher/borrowed_by/due_date, none of which are
+     * columns here -- those have never sorted (they raise a SQL error) and
+     * need joins to work. They are left out rather than left crashing.
+     */
+    protected function sortableColumns(): array
+    {
+        return ['due_at', 'returned_at', 'created_at'];
+    }
 
     #[Url(history: true)]
     public $search;
@@ -41,7 +54,7 @@ class BookOnRent extends Component
             $query->where('returned_at', null);
         }
 
-        $bookOnRent = $query->search($this->search)->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
+        $bookOnRent = $query->search($this->search)->orderBy($this->safeSortBy(), $this->safeSortDir())->paginate($this->perPage);
         return view('livewire.book.book-on-rent', [
             'booksOnRent' => $bookOnRent
         ]);

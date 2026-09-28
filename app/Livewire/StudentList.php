@@ -18,6 +18,11 @@ class StudentList extends Component
     use HasSortableColumns;
     use WithPagination;
 
+    protected function sortableColumns(): array
+    {
+        return ['name', 'gender', 'created_at'];
+    }
+
     #[On('student-changed')]
     public function refreshStudents($message)
     {
@@ -64,7 +69,7 @@ class StudentList extends Component
                             ->where('is_current', true);
                     });
                 })
-                ->orderBy($this->sortBy, $this->sortDir)
+                ->orderBy($this->safeSortBy(), $this->safeSortDir())
                 ->paginate($this->perPage)->pluck('id')->toArray();
             $this->selectAll = true;
         }
@@ -105,7 +110,7 @@ class StudentList extends Component
                             ->where('is_current', true);
                     });
                 })
-                ->orderBy($this->sortBy, $this->sortDir)
+                ->orderBy($this->safeSortBy(), $this->safeSortDir())
                 ->paginate($this->perPage)
         ]);
     }

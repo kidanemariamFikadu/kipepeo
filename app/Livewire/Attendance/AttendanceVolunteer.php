@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Attendance;
 
+use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\Volunteer;
 use App\Models\VolunteerAttendance;
 use App\Models\VolunteerAttendanceAttr;
@@ -14,6 +15,7 @@ use Livewire\WithPagination;
 #[Title('Volunteers')]
 class AttendanceVolunteer extends Component
 {
+    use HasSortableColumns;
     use WithPagination;
 
     #[Url(history: true)]
@@ -38,15 +40,9 @@ class AttendanceVolunteer extends Component
             session()->flash($message['type'], $message['content']);
     }
 
-    public function setSortBy($sortByField)
+    protected function sortableColumns(): array
     {
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
-        }
-
-        $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
+        return ['name'];
     }
 
     public function checkOut($volunteerId)
@@ -120,7 +116,7 @@ class AttendanceVolunteer extends Component
                         })->orWhereDoesntHave('attendances');
                     });
                 })
-                ->orderBy($this->sortBy, $this->sortDir)
+                ->orderBy($this->safeSortBy(), $this->safeSortDir())
                 ->paginate($this->perPage)
         ]);
     }
