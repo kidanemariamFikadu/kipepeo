@@ -151,7 +151,14 @@
             <div class="mt-3">{{ $studentsPage->links() }}</div>
         </div>
 
-        <!-- Print only: every student present, not just the current page -->
+        <!--
+            Print only: every student present, not just the current page.
+
+            Guardian name and phone are deliberately omitted here while
+            staying on screen. Staff still need to call a parent from the
+            live roster, but a printed sheet listing every child's guardian
+            contact is the copy most likely to be left lying around.
+        -->
         <div class="hidden print:block">
             <h3 class="text-lg font-medium mb-2">Students Present ({{ $students->count() }})</h3>
             <table class="w-full text-sm text-left">
@@ -161,8 +168,6 @@
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">School</th>
                         <th class="px-4 py-3">Grade</th>
-                        <th class="px-4 py-3">Guardian</th>
-                        <th class="px-4 py-3">Guardian Phone</th>
                         <th class="px-4 py-3">Time Stayed</th>
                         <th class="px-4 py-3">Sign In/Out</th>
                     </tr>
@@ -174,12 +179,6 @@
                             <td class="px-4 py-3 font-medium">{{ $student['name'] }}</td>
                             <td class="px-4 py-3">{{ $student['school'] }}</td>
                             <td class="px-4 py-3">{{ $student['grade'] }}</td>
-                            <td class="px-4 py-3">
-                                {{ $student['guardians']->pluck('guardian_name')->filter()->implode(', ') ?: '—' }}
-                            </td>
-                            <td class="px-4 py-3">
-                                {{ $student['guardians']->pluck('guardian_phone')->filter()->implode(', ') ?: '—' }}
-                            </td>
                             <td class="px-4 py-3">{{ $student['total_time'] }}</td>
                             <td class="px-4 py-3">
                                 @if ($student['attributes']->isNotEmpty())
@@ -191,7 +190,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-6 text-center">No students found for the selected date.</td>
+                            <td colspan="6" class="px-4 py-6 text-center">No students found for the selected date.</td>
                         </tr>
                     @endforelse
                 </tbody>

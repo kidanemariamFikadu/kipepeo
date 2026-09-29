@@ -218,3 +218,33 @@ test('the grade filter scopes the roster to students currently in that grade', f
     expect($students->first()['name'])->toBe('Student A');
     expect($students->first()['grade'])->toBe('Grade 1');
 });
+
+test('guardian contact appears on screen but not on the printed roster', function () {
+    $user = User::factory()->create();
+    $student = Student::create(['name' => 'Rostered Student', 'dob' => '2010-01-01', 'gender' => 'male']);
+    StudentGuardian::create([
+        'student_id' => $student->id,
+        'guardian_name' => 'Mercy Guardian',
+        'guardian_phone' => '0700111222',
+        'is_primary' => true,
+    ]);
+    Attendance::create(['student_id' => $student->id, 'date' => '2026-01-15', 'current_in' => true, 'total_time' => 0]);
+
+    $html = Livewire::actingAs($user)
+        ->test(StudentAttendance::class)
+        ->set('date', '2026-01-15')
+        ->call('getStudentByDate')
+        ->html();
+
+    // The screen table keeps them so staff can phone a parent.
+    expect($html)->toContain('Guardian Phone');
+    expect($html)->toContain('0700111222');
+
+    // The print-only block must not repeat them: a printed sheet listing
+    // every child's guardian contact is the copy most likely to be mislaid.
+    $printBlock = substr($html, strpos($html, 'hidden print:block'));
+    expect($printBlock)->not->toContain('0700111222');
+    expect($printBlock)->not->toContain('Mercy Guardian');
+    // The rest of the printed roster still works.
+    expect($printBlock)->toContain('Rostered Student');
+});
