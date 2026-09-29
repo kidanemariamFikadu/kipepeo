@@ -95,44 +95,81 @@ class AttendanceReport extends Component
             'gradeId' => 'nullable|exists:grades,id',
         ]);
 
-        $attendances = Attendance::whereBetween('date', [
-            Carbon::parse($this->fromDate)->startOfDay(),
-            Carbon::parse($this->toDate)->endOfDay(),
-        ])
-            // Soft-deleted students keep their attendance rows, which
-            // otherwise still count towards every total and chart on this
-            // page under a blank name.
-            ->whereHas('student')
-            // Scoping here (not just the log at the bottom) means every card
-            // and chart above reflects the selected student instead of the
-            // whole cohort once one is picked.
-            ->when($this->studentId, fn ($q) => $q->where('student_id', $this->studentId))
-            ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
-            ->when($this->gradeId, fn ($q) => $q->whereHas('student.grades', fn ($sq) => $sq->where('is_current', true)->where('grade', $this->gradeId)))
-            ->with(['student', 'student.schools' => fn ($q) => $q->where('is_current', true)->with('school'), 'student.grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'), 'attrs'])
+        // Everything below is aggregated in SQL and then assembled from
+        // results bounded by days-in-range and distinct students. Loading
+        // the attendance rows themselves cost ~3.4KB each, so a year of a
+        // few hundred children ran to hundreds of megabytes per render.
+        $totals = (clone $this->baseQuery())
+            ->selectRaw('COUNT(*) as rows_count, AVG(total_time) as avg_time')
+            ->first();
+
+        $this->totalStudents = (int) $totals->rows_count;
+        $this->averageAttendanceDuration = $totals->avg_time === null ? null : (float) $totals->avg_time;
+
+        $perStudent = (clone $this->baseQuery())
+            ->selectRaw('student_id, SUM(total_time) as total_seconds, COUNT(*) as visits, COUNT(DISTINCT date) as days_present')
+            ->groupBy('student_id')
             ->get();
 
-        $this->totalStudents = $attendances->count();
-        $this->averageAttendanceDuration = $attendances->avg('total_time');
-        $this->studentsByGender = $attendances->groupBy(fn ($a) => $a->student?->gender ? ucfirst(strtolower($a->student->gender)) : 'Unspecified')->map->count()->sortDesc();
-        $this->studentsBySchool = $attendances->groupBy(fn ($a) => $a->student?->schools->first()?->school?->name ?: 'Unassigned')->map->count()->sortDesc();
-        $this->studentsByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')->map->count()->sortDesc();
+        // One lookup for the students actually involved, so school and grade
+        // are resolved per student rather than by joining their history
+        // tables -- a student carrying two is_current rows would otherwise
+        // silently multiply every count on this page.
+        $students = Student::with([
+            'schools' => fn ($q) => $q->where('is_current', true)->with('school'),
+            'grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable'),
+        ])->findMany($perStudent->pluck('student_id'))->keyBy('id');
 
-        $attendancesGroupedByDate = $attendances->groupBy(function ($attendance) {
-            return Carbon::parse($attendance->date)->toDateString();
-        })->sortKeys();
+        $genderOf = fn (?Student $s) => $s?->gender ? ucfirst(strtolower($s->gender)) : null;
+        $schoolOf = fn (?Student $s) => $s?->schools->first()?->school?->name ?: 'Unassigned';
+        $gradeOf = fn (?Student $s) => $s?->grades->first()?->gradeTable?->grade;
 
-        $dailyStatistics = collect();
-        foreach ($attendancesGroupedByDate as $date => $attendancesForDate) {
-            $dailyStatistics->push([
+        $rowsFor = fn ($studentId) => $students->get($studentId);
+
+        // Attendance counts per student, folded up by the student's current
+        // school/grade/gender -- identical to grouping the raw rows, without
+        // holding them.
+        $this->studentsByGender = $perStudent
+            ->groupBy(fn ($r) => $genderOf($rowsFor($r->student_id)) ?: 'Unspecified')
+            ->map(fn ($rows) => (int) $rows->sum('visits'))
+            ->sortDesc();
+
+        $this->studentsBySchool = $perStudent
+            ->groupBy(fn ($r) => $schoolOf($rowsFor($r->student_id)))
+            ->map(fn ($rows) => (int) $rows->sum('visits'))
+            ->sortDesc();
+
+        $this->studentsByGrade = $perStudent
+            ->groupBy(fn ($r) => $gradeOf($rowsFor($r->student_id)) ?: 'Unassigned')
+            ->map(fn ($rows) => (int) $rows->sum('visits'))
+            ->sortDesc();
+
+        $dailyTotals = (clone $this->baseQuery())
+            ->selectRaw('date, COUNT(*) as rows_count, AVG(total_time) as avg_time')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // students is a belongsTo, so joining it cannot multiply rows.
+        $dailyGender = (clone $this->baseQuery())
+            ->join('students', 'students.id', '=', 'attendances.student_id')
+            ->selectRaw('attendances.date as date, students.gender as gender, COUNT(*) as rows_count')
+            ->groupBy('attendances.date', 'students.gender')
+            ->get()
+            ->groupBy(fn ($r) => Carbon::parse($r->date)->toDateString());
+
+        $this->dailyStatistics = $dailyTotals->map(function ($day) use ($dailyGender) {
+            $date = Carbon::parse($day->date)->toDateString();
+
+            return [
                 'date' => $date,
-                'totalStudents' => $attendancesForDate->count(),
-                'averageAttendanceDuration' => $this->secondsToHms($attendancesForDate->avg('total_time')),
-                'studentsByGender' => $attendancesForDate->groupBy(fn ($a) => $a->student?->gender ? ucfirst(strtolower($a->student->gender)) : 'Unspecified')->map->count(),
-            ]);
-        }
-
-        $this->dailyStatistics = $dailyStatistics;
+                'totalStudents' => (int) $day->rows_count,
+                'averageAttendanceDuration' => $this->secondsToHms($day->avg_time),
+                'studentsByGender' => ($dailyGender->get($date) ?? collect())
+                    ->groupBy(fn ($r) => $r->gender ? ucfirst(strtolower($r->gender)) : 'Unspecified')
+                    ->map(fn ($rows) => (int) $rows->sum('rows_count')),
+            ];
+        })->values();
 
         // Only the primitive fields the table actually displays are kept
         // here (not the Student model itself) - these collections can run
@@ -140,56 +177,53 @@ class AttendanceReport extends Component
         // Eloquent models is both unnecessarily large and, per Livewire's
         // own pagination docs, outside the well-trodden path for a
         // component with several independent paginators on one page.
-        $this->hoursByStudent = $attendances->groupBy('student_id')
-            ->map(function ($rows, $studentId) {
-                $student = $rows->first()->student;
+        $this->hoursByStudent = $perStudent
+            ->map(function ($row) use ($rowsFor, $genderOf) {
+                $student = $rowsFor($row->student_id);
 
                 return [
-                    'studentId' => (int) $studentId,
+                    'studentId' => (int) $row->student_id,
                     'studentName' => $student?->name,
-                    'studentGender' => $student?->gender ? ucfirst(strtolower($student->gender)) : null,
-                    'totalSeconds' => $rows->sum('total_time'),
-                    'visits' => $rows->count(),
+                    'studentGender' => $genderOf($student),
+                    'totalSeconds' => (int) $row->total_seconds,
+                    'visits' => (int) $row->visits,
                 ];
             })
             ->sortByDesc('totalSeconds')
             ->values();
 
-        $this->hoursByGrade = $attendances->groupBy(fn ($a) => $a->student?->grades->first()?->gradeTable?->grade ?: 'Unassigned')
-            ->map(function ($rows, $grade) {
-                return [
-                    'grade' => $grade,
-                    'totalSeconds' => $rows->sum('total_time'),
-                    'students' => $rows->pluck('student_id')->unique()->count(),
-                ];
-            })
+        $this->hoursByGrade = $perStudent
+            ->groupBy(fn ($r) => $gradeOf($rowsFor($r->student_id)) ?: 'Unassigned')
+            ->map(fn ($rows, $grade) => [
+                'grade' => $grade,
+                'totalSeconds' => (int) $rows->sum('total_seconds'),
+                'students' => $rows->pluck('student_id')->unique()->count(),
+            ])
             ->sortByDesc('totalSeconds')
             ->values();
 
         // Unique students, bucketed by age, so the range reflects who is
         // actually using the space rather than being skewed by how often
         // any one child attended.
-        $this->studentsByAge = $attendances->pluck('student')->filter()->unique('id')
-            ->groupBy(fn ($student) => $this->ageBucket($student->student_age))
+        $this->studentsByAge = $students
+            ->groupBy(fn (Student $student) => $this->ageBucket($student->student_age))
             ->map->count()
             ->sortKeys();
 
         $weekdaysInRange = $this->countWeekdays(Carbon::parse($this->fromDate), Carbon::parse($this->toDate));
 
-        $this->attendanceConsistency = $attendances
-            ->filter(fn ($a) => $a->student)
-            ->groupBy('student_id')
-            ->map(function ($rows, $studentId) use ($weekdaysInRange) {
-                $student = $rows->first()->student;
-                $daysPresent = $rows->pluck('date')->unique()->count();
+        $this->attendanceConsistency = $perStudent
+            ->map(function ($row) use ($rowsFor, $genderOf, $gradeOf, $weekdaysInRange) {
+                $student = $rowsFor($row->student_id);
+                $daysPresent = (int) $row->days_present;
 
                 return [
-                    'studentId' => (int) $studentId,
+                    'studentId' => (int) $row->student_id,
                     'studentName' => $student?->name,
-                    'studentGender' => $student?->gender ? ucfirst(strtolower($student->gender)) : null,
-                    'studentGrade' => $student?->grades->first()?->gradeTable?->grade,
+                    'studentGender' => $genderOf($student),
+                    'studentGrade' => $gradeOf($student),
                     'daysPresent' => $daysPresent,
-                    'totalSeconds' => $rows->sum('total_time'),
+                    'totalSeconds' => (int) $row->total_seconds,
                     'consistency' => $weekdaysInRange > 0 ? round(($daysPresent / $weekdaysInRange) * 100) : 0,
                 ];
             })
@@ -204,11 +238,36 @@ class AttendanceReport extends Component
                 return $row;
             });
 
+        // Row-level by nature, but only ever built for a single student.
         $this->attendanceLog = $this->studentId
-            ? $attendances->sortByDesc('date')->values()
+            ? (clone $this->baseQuery())->with('attrs')->orderByDesc('date')->get()
             : collect();
 
         $this->resetAllPages();
+    }
+
+    /**
+     * The filtered set of attendance rows every figure on this page derives
+     * from. Returned as a builder so each aggregate runs in SQL instead of
+     * hydrating the rows.
+     */
+    private function baseQuery()
+    {
+        return Attendance::query()
+            ->whereBetween('date', [
+                Carbon::parse($this->fromDate)->toDateString(),
+                Carbon::parse($this->toDate)->toDateString(),
+            ])
+            // Soft-deleted students keep their attendance rows, which
+            // otherwise still count towards every total and chart on this
+            // page under a blank name.
+            ->whereHas('student')
+            // Scoping here (not just the log at the bottom) means every card
+            // and chart above reflects the selected student instead of the
+            // whole cohort once one is picked.
+            ->when($this->studentId, fn ($q) => $q->where('attendances.student_id', $this->studentId))
+            ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
+            ->when($this->gradeId, fn ($q) => $q->whereHas('student.grades', fn ($sq) => $sq->where('is_current', true)->where('grade', $this->gradeId)));
     }
 
     /**
