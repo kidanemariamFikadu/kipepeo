@@ -10,9 +10,10 @@
                             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
                             {{ Str::of($student->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
                         </span>
-                        <span class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-white">
+                        <a href="{{ route('student-detail', $student->id) }}"
+                            class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:text-white dark:hover:text-primary-400">
                             {{ $student->name }}
-                        </span>
+                        </a>
                         <span
                             class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                             🎂 {{ \Carbon\Carbon::parse($student->dob)->format('M j') }}

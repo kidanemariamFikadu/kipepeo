@@ -28,9 +28,10 @@
                             <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"
                                 title="Currently checked in"></span>
                         </span>
-                        <span class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-white">
+                        <a href="{{ route('student-detail', $attendance->student->id) }}"
+                            class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:text-white dark:hover:text-primary-400">
                             {{ $attendance->student->name }}
-                        </span>
+                        </a>
                         @if ($isBirthday)
                             <span class="text-xs">🎂</span>
                         @endif

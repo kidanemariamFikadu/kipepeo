@@ -36,7 +36,16 @@
                     @forelse ($this->studentsBySchool as $school)
                         <tr wire:key="{{ $school->id }}" class="border-b dark:border-gray-700">
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{ $school->name }}
+                                {{-- School detail is an admin-only route, so non-admins get plain
+                                     text rather than a link that would 403 on them. --}}
+                                @if (auth()->user()?->isAdmin())
+                                    <a href="{{ route('school-detail', $school->id) }}"
+                                        class="hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:hover:text-primary-400">
+                                        {{ $school->name }}
+                                    </a>
+                                @else
+                                    {{ $school->name }}
+                                @endif
                             </th>
                             <td class="px-4 py-3">
                                 <span class="inline-flex items-center justify-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
