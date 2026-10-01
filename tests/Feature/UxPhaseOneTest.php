@@ -134,12 +134,47 @@ test('the collapsed sidebar still offers a way into Books, Reports and Admin', f
 
     $html = $this->actingAs($admin)->get('/dashboard')->getContent();
 
-    foreach ([
-        ['/books', 'Books'],
-        [route('reports.enrollment'), 'Reports'],
-        ['/users', 'Admin'],
-    ] as [$href, $label]) {
-        // A collapsed-only icon link, shown precisely when the group is hidden.
-        expect($html)->toMatch('/<li class="hidden" :class="\{ \'lg:block\': collapsed \}">\s*<a href="'.preg_quote($href, '/').'"[^>]*title="'.$label.'"/');
+    // One collapsed-only counterpart per group, shown precisely when the
+    // expanded group is hidden.
+    expect(substr_count($html, 'lg:block\': collapsed'))->toBe(3);
+
+    foreach (['Books', 'Reports', 'Admin'] as $label) {
+        expect($html)->toContain('title="'.$label.'"');
     }
+});
+
+test('the collapsed nav flyout lists every page in its group', function () {
+    // The icon alone only reached the group's first page. Hovering reveals
+    // the whole group, so nothing is unreachable from a collapsed sidebar.
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $html = $this->actingAs($admin)->get('/dashboard')->getContent();
+
+    // Each destination appears at least twice: once in the expanded submenu
+    // and once in the collapsed flyout. Some appear more (a group's first
+    // page is also the flyout's icon link, and the footer links one report),
+    // so this asserts presence in both menus rather than an exact count.
+    $destinations = array_map(fn ($r) => route($r), [
+        'reports.enrollment', 'reports.grade-distribution', 'reports.attendance-analytics',
+        'reports.attendance-roster', 'reports.book-rental', 'reports.alumni', 'reports.volunteer',
+    ]);
+    $destinations[] = '/users';
+    $destinations[] = '/settings';
+    $destinations[] = '/books?tab=loan';
+
+    foreach ($destinations as $href) {
+        expect(substr_count($html, 'href="'.$href.'"'))
+            ->toBeGreaterThanOrEqual(2, "{$href} should appear in both the expanded menu and the collapsed flyout");
+    }
+});
+
+test('a plain staff member gets no admin flyout', function () {
+    $staff = User::factory()->create(['role' => 'user']);
+
+    $html = $this->actingAs($staff)->get('/dashboard')->getContent();
+
+    expect($html)->not->toContain('title="Admin"');
+    expect($html)->not->toContain('href="/users"');
+    // Books and Reports are still theirs.
+    expect(substr_count($html, 'lg:block\': collapsed'))->toBe(2);
 });
