@@ -52,7 +52,7 @@
             <div class="space-y-4">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <livewire:dashboard.attendance-trend-chart />
-                    <livewire:dashboard.student-breakdown-chart />
+                    <livewire:dashboard.students-with-overdue-books />
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
