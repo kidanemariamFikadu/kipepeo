@@ -58,7 +58,18 @@ class AttendanceStudent extends Component
         $attendance = Attendance::where('student_id', $student->id)
             ->where('date', now()->toDateString())->first();
 
-        $attr = AttendanceAttr::where(['attendance_id' => $attendance->id, 'time_out' => null])->first();
+        // Two staff can act on the same child at once -- one checks everyone
+        // out from the dashboard while the other still has a stale row here.
+        // Without this the second click is a 500.
+        $attr = $attendance
+            ? AttendanceAttr::where(['attendance_id' => $attendance->id, 'time_out' => null])->first()
+            : null;
+
+        if (! $attendance || ! $attr) {
+            session()->flash('success', $student->name.' is already checked out.');
+
+            return;
+        }
 
         $attr->update([
             'time_out' => now(),

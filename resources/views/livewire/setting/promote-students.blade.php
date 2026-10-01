@@ -22,7 +22,17 @@
                     No grades currently have students assigned.
                 </div>
             @else
-                <form wire:submit="promote">
+                @php
+                    $impact = $this->selectionImpact;
+                    $confirmMessage = $impact['graduating'] > 0
+                        ? "Promote {$impact['promoting']} student(s) and graduate {$impact['graduating']} student(s)?\n\nGraduated students are removed from the active roster. This cannot be undone."
+                        : "Promote {$impact['promoting']} student(s) to their next grade?\n\nThis cannot be undone.";
+                @endphp
+
+                {{-- wire:confirm must sit on the element carrying the action. On the
+                     submit button it is never read, and the promotion fires on a
+                     single click. --}}
+                <form wire:submit="promote" wire:confirm="{{ $confirmMessage }}">
                     <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
@@ -41,8 +51,11 @@
                                     @foreach ($this->gradeSummary as $grade)
                                         <tr wire:key="{{ $grade->id }}" class="border-b dark:border-gray-700">
                                             <td class="px-4 py-3">
+                                                {{-- .live so the selected count and the confirmation
+                                                     message reflect what is actually ticked. --}}
                                                 <input type="checkbox" value="{{ $grade->id }}"
-                                                    wire:model="selectedGrades"
+                                                    wire:model.live="selectedGrades"
+                                                    aria-label="Select {{ $grade->grade }}"
                                                     class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                                             </td>
                                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -73,7 +86,6 @@
                                 {{ count($selectedGrades) }} grade(s) selected
                             </span>
                             <button type="submit" wire:loading.attr="disabled" wire:target="promote"
-                                wire:confirm="This will move every student in the selected grade(s) up to their next grade, or mark them as graduated if the grade has no next grade configured. Continue?"
                                 class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
                                 <x-spinner class="h-4 w-4 mr-2 text-white" wire:loading wire:target="promote" />
                                 Promote / graduate selected grades

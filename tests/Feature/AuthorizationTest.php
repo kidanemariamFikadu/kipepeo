@@ -17,7 +17,6 @@ test('non-admin routes to admin-only pages are forbidden', function () {
 
     foreach ([
         '/users',
-        '/user-create',
         '/settings',
         '/settings/schools',
         '/settings/grades',
@@ -33,13 +32,18 @@ test('non-admin routes to admin-only pages are forbidden', function () {
     }
 });
 
-test('non-admin cannot edit another user', function () {
+test('user editing is reachable only as a modal, never as a page', function () {
+    // /edit-user and /user-create used to route to ModalComponents. Nothing
+    // linked to them and every request 500'd, so they were removed; the user
+    // list opens both as modals. The components themselves are guarded —
+    // see "non-admin cannot mount or drive the admin-only modal components".
     $this->withoutMiddleware(\Laravel\Jetstream\Http\Middleware\AuthenticateSession::class);
 
-    $user = makeUser('user');
+    $admin = makeUser('admin');
     $target = makeUser('user');
 
-    $this->actingAs($user)->get("/edit-user/{$target->id}")->assertForbidden();
+    $this->actingAs($admin)->get("/edit-user/{$target->id}")->assertNotFound();
+    $this->actingAs($admin)->get('/user-create')->assertNotFound();
 });
 
 test('non-admin cannot delete a single student', function () {

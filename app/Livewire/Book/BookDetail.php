@@ -28,11 +28,13 @@ class BookDetail extends Component
 
     public function mount($id)
     {
+        // findOr, not find: a stale bookmark or a deleted book otherwise
+        // assigned null to a typed property and showed staff a stack trace.
         $this->book = Book::with([
             'bookCopies',
             'rentals' => fn ($q) => $q->orderByDesc('rented_at')->limit(20),
             'rentals.checkedOutTo',
-        ])->find($id);
+        ])->findOr($id, fn () => abort(404));
         $this->bookId = $id;
         $this->title = $this->book->title;
         $this->author = $this->book->author;

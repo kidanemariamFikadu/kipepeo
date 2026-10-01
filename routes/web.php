@@ -5,8 +5,6 @@ use App\Livewire\Attendance\AttendanceVolunteer;
 use App\Livewire\Student\StudentDetail;
 use App\Livewire\StudentList;
 use App\Livewire\Attendance\StudentList as Attendance;
-use App\Livewire\User\CreateUser;
-use App\Livewire\User\EditUser;
 use App\Livewire\User\ForcePasswordReset;
 use App\Livewire\User\MyProfile;
 use App\Livewire\UserList;
@@ -61,8 +59,10 @@ Route::middleware([
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/users', UserList::class)->name('users');
-        Route::get('/user-create', CreateUser::class)->name('Create User');
-        Route::get('/edit-user/{user_id}', EditUser::class)->name('edit-user');
+        // CreateUser and EditUser are ModalComponents opened from the user
+        // list, not pages. Routing to them produced a 500 on every request
+        // (EditUser's route param never matched its mount signature) and
+        // nothing linked to either.
         Route::get('/settings', \App\Livewire\Setting\Index::class)->name('settings');
         Route::get('/settings/schools', \App\Livewire\Setting\SchoolList::class)->name('settings-schools');
         Route::get('/school-detail/{school_id}', SchoolDetail::class)->name('school-detail');

@@ -109,6 +109,21 @@
                         </details>
                     </li>
 
+                    {{-- Collapsed counterpart. Hiding the <li> above on its own
+                         left no way to reach Books at all from a collapsed
+                         sidebar, and the collapsed state persists in
+                         localStorage. --}}
+                    <li class="hidden" :class="{ 'lg:block': collapsed }">
+                        <a href="/books" title="Books" @if ($booksActive) aria-current="page" @endif
+                            class="flex items-center justify-center rounded-lg px-2.5 py-2
+                                {{ $booksActive ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                            <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"/></svg>
+                            </span>
+                            <span class="sr-only">Books</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="{{ $dataEntryLink['href'] }}" @if ($dataEntryLink['active']) aria-current="page" @endif
                             class="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium
@@ -145,6 +160,18 @@
                         </details>
                     </li>
 
+                    {{-- Collapsed counterpart for Reports, see the note on Books. --}}
+                    <li class="hidden" :class="{ 'lg:block': collapsed }">
+                        <a href="{{ route('reports.enrollment') }}" title="Reports" @if ($reportsActive) aria-current="page" @endif
+                            class="flex items-center justify-center rounded-lg px-2.5 py-2
+                                {{ $reportsActive ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                            <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+                            </span>
+                            <span class="sr-only">Reports</span>
+                        </a>
+                    </li>
+
                     @if ($adminLinks !== [])
                         <li class="px-2.5 pb-1.5 pt-3.5 text-[10px] font-bold uppercase tracking-wider text-gray-400"
                             :class="{ 'lg:hidden': collapsed }">Admin only</li>
@@ -172,6 +199,18 @@
                                     @endforeach
                                 </ul>
                             </details>
+                        </li>
+
+                        {{-- Collapsed counterpart for Admin, see the note on Books. --}}
+                        <li class="hidden" :class="{ 'lg:block': collapsed }">
+                            <a href="{{ $adminLinks[0]['href'] }}" title="Admin" @if ($adminActive) aria-current="page" @endif
+                                class="flex items-center justify-center rounded-lg px-2.5 py-2
+                                    {{ $adminActive ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                                <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+                                </span>
+                                <span class="sr-only">Admin</span>
+                            </a>
                         </li>
                     @endif
                 </ul>

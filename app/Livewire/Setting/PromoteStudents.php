@@ -30,6 +30,25 @@ class PromoteStudents extends Component
             ->get();
     }
 
+    /**
+     * How many students the current selection would move, split by outcome.
+     * Graduating is the consequential half -- those students leave the active
+     * roster -- so the confirmation names both numbers rather than describing
+     * the action in the abstract.
+     *
+     * @return array{promoting: int, graduating: int}
+     */
+    #[Computed]
+    public function selectionImpact(): array
+    {
+        $selected = $this->gradeSummary->whereIn('id', $this->selectedGrades);
+
+        return [
+            'promoting' => (int) $selected->filter(fn ($grade) => $grade->next_grade_id !== null)->sum('current_students_count'),
+            'graduating' => (int) $selected->filter(fn ($grade) => $grade->next_grade_id === null)->sum('current_students_count'),
+        ];
+    }
+
     public function toggleSelectAll(bool $selectAll): void
     {
         $this->selectedGrades = $selectAll

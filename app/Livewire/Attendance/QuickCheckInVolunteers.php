@@ -36,7 +36,17 @@ class QuickCheckInVolunteers extends ModalComponent
         $attendance = VolunteerAttendance::where('volunteer_id', $volunteer->id)
             ->where('date', now()->toDateString())->first();
 
-        $attr = VolunteerAttendanceAttr::where(['volunteer_attendance_id' => $attendance->id, 'time_out' => null])->first();
+        // The row can already be closed by another staff member or another
+        // tab; without this guard the second click is a 500.
+        $attr = $attendance
+            ? VolunteerAttendanceAttr::where(['volunteer_attendance_id' => $attendance->id, 'time_out' => null])->first()
+            : null;
+
+        if (! $attendance || ! $attr) {
+            $this->dispatch('dashboard-changed', ['type' => 'success', 'content' => $volunteer->name.' is already checked out.']);
+
+            return;
+        }
 
         $attr->update([
             'time_out' => now(),
