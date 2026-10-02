@@ -46,7 +46,7 @@
                     >
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">
-                                <label for="tile"
+                                <label for="title"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model='title' id="title"

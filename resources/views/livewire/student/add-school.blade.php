@@ -22,7 +22,7 @@
         <form class="p-4 md:p-5" wire:submit="createSchool">
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2 sm:col-span-1">
-                    <label for="guardian_name"
+                    <label for="school_id"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">School</label>
                     <select name="school_id" id="school_id" wire:model='school_id'
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
