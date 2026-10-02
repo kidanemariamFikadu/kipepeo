@@ -21,7 +21,9 @@ class AddStudentAttendance extends Component
     }
     public function getStudentsProperty()
     {
-        return \App\Models\Student::orderBy('name')->get();
+        // Only the two columns the <option> needs: this loads the whole
+        // roster, so there is no reason to hydrate every column with it.
+        return \App\Models\Student::select(['id', 'name'])->orderBy('name')->get();
     }
 
     function addAttendance()
