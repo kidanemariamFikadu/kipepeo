@@ -3,7 +3,9 @@
 
     <div class="p-2 md:p-6">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Volunteers</h2>
+            {{-- "Manage Volunteers", not "Volunteers": the main nav already has a
+                 Volunteers page, which is the daily check-in screen. --}}
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Manage Volunteers</h2>
             <a href="{{ route('settings') }}" class="text-sm text-primary-700 dark:text-primary-300 hover:underline">
                 &larr; Back to settings
             </a>

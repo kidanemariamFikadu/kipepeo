@@ -7,7 +7,9 @@ use App\Models\Volunteer;
 use App\Models\VolunteerActivity;
 use App\Models\VolunteerAttendance;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
+#[Title('Volunteer Activity')]
 class VolunteerReport extends Component
 {
     public $fromDate = '';

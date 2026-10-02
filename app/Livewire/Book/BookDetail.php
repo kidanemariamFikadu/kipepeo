@@ -7,7 +7,9 @@ use App\Models\BookCopy;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
+#[Title('Book Details')]
 class BookDetail extends Component
 {
     var Book $book;

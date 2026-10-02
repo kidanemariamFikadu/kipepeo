@@ -5,7 +5,9 @@ namespace App\Livewire\Report;
 use App\Models\Grade;
 use App\Models\Student;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
+#[Title('Alumni Report')]
 class AlumniReport extends Component
 {
     public $fromDate = '';

@@ -5,7 +5,9 @@ namespace App\Livewire\Setting;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
+#[Title('Activity Types')]
 class ActivityTypeList extends Component
 {
     #[On('activity-type-changed')]

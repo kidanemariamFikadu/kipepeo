@@ -6,7 +6,9 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Manage Volunteers')]
 class VolunteerList extends Component
 {
     use WithPagination;

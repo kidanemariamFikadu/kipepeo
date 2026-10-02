@@ -6,7 +6,9 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Grades')]
 class GradeList extends Component
 {
     use WithPagination;

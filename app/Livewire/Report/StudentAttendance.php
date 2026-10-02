@@ -9,7 +9,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Daily Attendance Roster')]
 class StudentAttendance extends Component
 {
     use WithPagination;

@@ -10,7 +10,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Attendance Analytics')]
 class AttendanceReport extends Component
 {
     use WithPagination;

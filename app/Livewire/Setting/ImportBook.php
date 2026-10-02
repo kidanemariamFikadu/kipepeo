@@ -9,7 +9,9 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
+use Livewire\Attributes\Title;
 
+#[Title('Import Books')]
 class ImportBook extends Component
 {
     use ValidatesSpreadsheetUpload;

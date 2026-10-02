@@ -12,14 +12,16 @@
 <body class="antialiased bg-white dark:bg-gray-900 h-full overflow-hidden">
     @php
         $navLinks = [
-            ['href' => '/', 'label' => 'Home', 'active' => request()->is('/')],
+            // Login lands on /dashboard, so Home has to match both or every
+            // shift starts with nothing selected in the sidebar.
+            ['href' => '/', 'label' => 'Home', 'active' => request()->is('/', 'dashboard')],
             ['href' => '/attendance', 'label' => 'Attendance', 'active' => request()->is('attendance*')],
-            ['href' => '/volunteers', 'label' => 'Volunteers', 'active' => request()->is('volunteers*')],
+            ['href' => '/volunteers', 'label' => 'Volunteers', 'active' => request()->is('volunteers*', 'volunteer-detail*')],
             ['href' => '/students', 'label' => 'Students', 'active' => request()->is('students*', 'student-detail*')],
         ];
         $booksActive = request()->is('books*', 'book-detail*');
         $bookLinks = [
-            ['href' => '/books', 'label' => 'Book', 'active' => $booksActive && request('tab') !== 'loan'],
+            ['href' => '/books', 'label' => 'All Books', 'active' => $booksActive && request('tab') !== 'loan'],
             ['href' => '/books?tab=loan', 'label' => 'Books on Loan', 'active' => $booksActive && request('tab') === 'loan'],
         ];
         $dataEntryLink = ['href' => '/data-entry', 'label' => 'Data Entry', 'active' => request()->is('data-entry*')];
@@ -36,7 +38,9 @@
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
             $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
-            $adminLinks[] = ['href' => '/settings', 'label' => 'Settings', 'active' => request()->is('settings*', 'promote-students*')];
+            // school-detail is reached from Settings > Schools, so it keeps
+            // the Admin group open rather than closing it mid-journey.
+            $adminLinks[] = ['href' => '/settings', 'label' => 'Settings', 'active' => request()->is('settings*', 'promote-students*', 'school-detail*')];
         }
         $adminActive = collect($adminLinks)->contains('active', true);
     @endphp

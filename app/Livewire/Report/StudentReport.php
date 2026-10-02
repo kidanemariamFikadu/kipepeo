@@ -6,7 +6,9 @@ use App\Models\School;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Enrollment Summary')]
 class StudentReport extends Component
 {
     use WithPagination;

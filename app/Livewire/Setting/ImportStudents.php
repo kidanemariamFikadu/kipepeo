@@ -12,7 +12,9 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
+use Livewire\Attributes\Title;
 
+#[Title('Import Students')]
 class ImportStudents extends Component
 {
     use ValidatesSpreadsheetUpload;

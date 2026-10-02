@@ -10,7 +10,9 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Title;
 
+#[Title('Book & Rental Circulation')]
 class BookRentalReport extends Component
 {
     use WithPagination;

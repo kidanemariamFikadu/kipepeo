@@ -68,7 +68,12 @@
                                                     <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"></span>
                                                 @endif
                                             </span>
-                                            {{ $student->name }}
+                                            {{-- A child's record is the obvious next click from the
+                                                 check-in desk; the volunteer screen already links. --}}
+                                            <a href="{{ route('student-detail', $student->id) }}"
+                                                class="hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:hover:text-primary-400">
+                                                {{ $student->name }}
+                                            </a>
                                             @if ($student->rentals->isNotEmpty())
                                                 <span title="{{ $overdueTooltip }}" class="shrink-0 text-amber-500 dark:text-amber-400">
                                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -71,12 +71,31 @@
                         <tbody>
                             @forelse ($booksOnRent as $bookOnRent)
                                 <tr wire:key="{{ $bookOnRent->id }}" class="border-b dark:border-gray-700">
+                                    {{-- This is the screen for chasing an overdue book, so the
+                                         title and the borrower both need to be one click away. --}}
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $bookOnRent->book?->title ?? '(book removed)' }}</th>
+                                        @if ($bookOnRent->book)
+                                            <a href="{{ route('book-detail', $bookOnRent->book->id) }}"
+                                                class="hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:hover:text-primary-400">
+                                                {{ $bookOnRent->book->title }}
+                                            </a>
+                                        @else
+                                            (book removed)
+                                        @endif
+                                    </th>
                                     <td class="px-4 py-3">{{ $bookOnRent->book?->author ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $bookOnRent->book?->publisher ?? '—' }}</td>
-                                    <td class="px-4 py-3">{{ $bookOnRent->checkedOutTo?->name ?? '(student removed)' }}</td>
+                                    <td class="px-4 py-3">
+                                        @if ($bookOnRent->checkedOutTo)
+                                            <a href="{{ route('student-detail', $bookOnRent->checkedOutTo->id) }}"
+                                                class="hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:hover:text-primary-400">
+                                                {{ $bookOnRent->checkedOutTo->name }}
+                                            </a>
+                                        @else
+                                            (student removed)
+                                        @endif
+                                    </td>
                                     @php
                                         $dueDate = Carbon\Carbon::parse($bookOnRent->due_at);
                                         $createdAt = Carbon\Carbon::parse($bookOnRent->created_at);

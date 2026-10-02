@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Throwable;
 use ZipArchive;
+use Livewire\Attributes\Title;
 
+#[Title('Backup')]
 class Backup extends Component
 {
     public ?string $error = null;

@@ -7,7 +7,9 @@ use App\Models\GradeStudent;
 use App\Models\School;
 use App\Models\Student;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
+#[Title('Grade Distribution')]
 class GradeDistributionReport extends Component
 {
     public $schoolId = '';
