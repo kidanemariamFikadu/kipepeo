@@ -30,7 +30,18 @@ class Rent extends ModalComponent
 
     public function getSearchableBooksProperty()
     {
-        return Book::search($this->bookSearch)->orderBy('title')->limit(10)->get();
+        // Counted rather than read through the available_copies accessor, which
+        // issues two COUNTs every time it is touched -- and the list touches it
+        // twice per book, so ten books cost forty queries. Same approach the
+        // book list already takes.
+        return Book::search($this->bookSearch)
+            ->withCount([
+                'bookCopies as on_shelf_count' => fn ($query) => $query->where('status', 'available'),
+                'rentals as on_loan_count' => fn ($query) => $query->whereNull('returned_at'),
+            ])
+            ->orderBy('title')
+            ->limit(10)
+            ->get();
     }
 
     public function selectBook($bookId)

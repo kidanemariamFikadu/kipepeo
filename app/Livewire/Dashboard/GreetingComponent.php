@@ -71,20 +71,24 @@ class GreetingComponent extends Component
             $greeting .= 'Evening';
         }
 
-        $query = Attendance::query();
+        // Counted in SQL rather than by hydrating every attendance row. The
+        // greeting needs three numbers, and the student relation that used to
+        // be eager-loaded alongside them was never read.
+        $todayTotals = Attendance::query()
+            ->whereBetween('date', [
+                Carbon::now()->startOfDay(),
+                Carbon::now()->endOfDay(),
+            ])
+            ->selectRaw('COUNT(*) as rows_count, AVG(total_time) as avg_time')
+            ->first();
 
-        $query->whereBetween('date', [
-            Carbon::now()->startOfDay(),
-            Carbon::now()->endOfDay()
-        ]);
-
-        $attendances = $query->with(['student'])->get();
-        $totalStudents = $attendances->count();
-        $averageAttendanceDuration = $attendances->avg('total_time');
+        $totalStudents = (int) $todayTotals->rows_count;
+        $averageAttendanceDuration = $todayTotals->avg_time === null
+            ? null
+            : (float) $todayTotals->avg_time;
 
         $studentsInAttendanceToday = Attendance::where('date', now()->toDateString())
             ->where('current_in', true)
-            ->get()
             ->count();
 
         return view('livewire.dashboard.greeting-component', [
