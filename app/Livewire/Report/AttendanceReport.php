@@ -5,6 +5,7 @@ namespace App\Livewire\Report;
 use App\Models\Attendance;
 use App\Models\Grade;
 use App\Models\Student;
+use App\Support\ReportMetrics;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -208,11 +209,11 @@ class AttendanceReport extends Component
         // actually using the space rather than being skewed by how often
         // any one child attended.
         $this->studentsByAge = $students
-            ->groupBy(fn (Student $student) => $this->ageBucket($student->student_age))
+            ->groupBy(fn (Student $student) => ReportMetrics::ageBucket($student->student_age))
             ->map->count()
             ->sortKeys();
 
-        $weekdaysInRange = $this->countWeekdays(Carbon::parse($this->fromDate), Carbon::parse($this->toDate));
+        $weekdaysInRange = ReportMetrics::countWeekdays(Carbon::parse($this->fromDate), Carbon::parse($this->toDate));
 
         $this->attendanceConsistency = $perStudent
             ->map(function ($row) use ($rowsFor, $genderOf, $gradeOf, $weekdaysInRange) {
@@ -270,42 +271,6 @@ class AttendanceReport extends Component
             ->when($this->studentId, fn ($q) => $q->where('attendances.student_id', $this->studentId))
             ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
             ->when($this->gradeId, fn ($q) => $q->whereHas('student.grades', fn ($sq) => $sq->where('is_current', true)->where('grade', $this->gradeId)));
-    }
-
-    /**
-     * Buckets ages into ranges meaningful for a children's learning space
-     * rather than showing every single-year age as its own bar.
-     */
-    function ageBucket($age)
-    {
-        if (is_null($age)) {
-            return 'Unknown';
-        }
-
-        return match (true) {
-            $age <= 5 => 'Under 6',
-            $age <= 8 => '6-8',
-            $age <= 11 => '9-11',
-            $age <= 14 => '12-14',
-            $age <= 17 => '15-17',
-            default => '18+',
-        };
-    }
-
-    function countWeekdays(Carbon $from, Carbon $to)
-    {
-        $count = 0;
-        $cursor = $from->copy()->startOfDay();
-        $end = $to->copy()->startOfDay();
-
-        while ($cursor->lte($end)) {
-            if (! $cursor->isWeekend()) {
-                $count++;
-            }
-            $cursor->addDay();
-        }
-
-        return $count;
     }
 
     function secondsToHms($seconds)
