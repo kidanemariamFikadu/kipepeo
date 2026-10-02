@@ -214,3 +214,61 @@ test('the select component matches the input component', function () {
 
     expect($select)->toContain('<option>A</option>');
 });
+
+test('the auth pages still render after the Jetstream scaffolding was removed', function () {
+    // Deleting the unused Jetstream views also orphaned twelve of its
+    // components. The auth screens are the ones that still use that
+    // scaffolding, so they are what would break.
+    foreach (['/login', '/forgot-password'] as $path) {
+        $html = $this->get($path)->assertOk()->getContent();
+
+        expect($html)->toContain('<form')->toContain('name="email"');
+    }
+});
+
+test('no view references a deleted component', function () {
+    // A missing x-component is a 500 at render time, not a build error, so
+    // it only shows up when someone opens that page.
+    $components = [];
+    foreach (glob(resource_path('views/components/*.blade.php')) as $file) {
+        $components[] = basename($file, '.blade.php');
+    }
+    foreach (glob(resource_path('views/components/*/*.blade.php')) as $file) {
+        $components[] = basename(dirname($file)).'.'.basename($file, '.blade.php');
+    }
+
+    // Components resolved from classes rather than files.
+    $classBacked = ['slot', 'guest-layout'];
+
+    $files = [];
+    $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(resource_path('views')));
+    foreach ($dir as $file) {
+        if (str_ends_with((string) $file, '.blade.php')) {
+            $files[] = (string) $file;
+        }
+    }
+
+    $missing = [];
+
+    foreach ($files as $file) {
+        $source = file_get_contents($file);
+        preg_match_all('/<x-([a-z][a-z0-9.-]*)/', $source, $used);
+
+        foreach (array_unique($used[1]) as $name) {
+            // Alpine's x-data/x-on/x-ref and friends share the prefix.
+            if (in_array($name, ['data', 'on', 'ref', 'show', 'init', 'if', 'for', 'text', 'model', 'cloak', 'transition', 'bind', 'html', 'effect', 'ignore', 'teleport', 'id'], true)) {
+                continue;
+            }
+            if (str_starts_with($name, 'w-') || str_starts_with($name, 'slot')) {
+                continue;
+            }
+            if (in_array($name, $components, true) || in_array($name, $classBacked, true)) {
+                continue;
+            }
+
+            $missing[] = str_replace(resource_path('views').DIRECTORY_SEPARATOR, '', $file).": <x-{$name}";
+        }
+    }
+
+    expect($missing)->toBe([]);
+});
