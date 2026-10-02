@@ -14,8 +14,7 @@
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 Schools
             </h3>
-            <button wire:click="$dispatch('openModal', { component: 'setting.school' })"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add School</button>
+            <x-button size="sm" wire:click="$dispatch('openModal', { component: 'setting.school' })">+ Add School</x-button>
         </div>
 
         <div class="p-4">

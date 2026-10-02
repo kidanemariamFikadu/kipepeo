@@ -14,8 +14,7 @@
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 Book Categories
             </h3>
-            <button wire:click="$dispatch('openModal', { component: 'setting.book-category' })"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add Category</button>
+            <x-button size="sm" wire:click="$dispatch('openModal', { component: 'setting.book-category' })">+ Add Category</x-button>
         </div>
         <ul class="divide-y divide-gray-200 dark:divide-gray-700 mt-2">
             <div class="flex flex-wrap">

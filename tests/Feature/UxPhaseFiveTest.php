@@ -84,3 +84,83 @@ test('the pages that show status badges still render them', function () {
         expect($html)->toContain('rounded-full');
     }
 });
+
+test('the button component carries the focus ring and dark variants at both sizes', function () {
+    // The "+ Add X" buttons in list headers were a second, shorter class
+    // string that had lost the focus ring and every dark: variant.
+    foreach (['md' => 'px-5 py-2.5', 'sm' => 'px-4 py-2'] as $size => $padding) {
+        $html = Blade::render('<x-button size="'.$size.'">Save</x-button>');
+
+        expect($html)->toContain($padding)
+            ->toContain('focus:ring-primary-300')
+            ->toContain('dark:bg-primary-600')
+            ->toContain('disabled:opacity-50');
+    }
+});
+
+test('no view hand-rolls the primary button or the modal close button', function () {
+    $files = [];
+    $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(resource_path('views/livewire')));
+    foreach ($dir as $file) {
+        if (str_ends_with((string) $file, '.blade.php')) {
+            $files[] = (string) $file;
+        }
+    }
+
+    $offenders = [];
+
+    foreach ($files as $file) {
+        $source = file_get_contents($file);
+        $short = str_replace(resource_path('views/livewire').DIRECTORY_SEPARATOR, '', $file);
+
+        // Walk <button> tags, finding each tag's real end: a Blade
+        // expression in an attribute contains -> and would cut it short.
+        $length = strlen($source);
+        $offset = 0;
+
+        while (($start = stripos($source, '<button', $offset)) !== false) {
+            $quoted = false;
+            $end = null;
+
+            for ($i = $start + 7; $i < $length; $i++) {
+                if ($source[$i] === '"') {
+                    $quoted = ! $quoted;
+                } elseif ($source[$i] === '>' && ! $quoted) {
+                    $end = $i + 1;
+                    break;
+                }
+            }
+
+            if ($end === null) {
+                break;
+            }
+
+            $tag = preg_replace('/\s+/', ' ', substr($source, $start, $end - $start));
+            $offset = $end;
+
+            // The segmented day-range control and the small inline "Select"
+            // in the book search are deliberately their own sizes.
+            if (str_contains($tag, 'px-3 py-1') || str_contains($tag, 'rounded-md transition-colors')) {
+                continue;
+            }
+
+            if (str_contains($tag, 'bg-primary-700 hover:bg-primary-800')
+                || str_contains($tag, 'text-gray-400 bg-transparent hover:bg-gray-200')) {
+                $offenders[] = $short.': '.substr($tag, 0, 90);
+            }
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
+
+test('every modal still renders a close control', function () {
+    // 21 modals had this markup pasted in. If the component were wrong, all
+    // 21 would lose their X at once, so assert it renders.
+    $html = Blade::render('<x-modal-close wire:click="closeModal" />');
+
+    expect($html)->toContain('Close modal')
+        ->toContain('<svg')
+        ->toContain('wire:click="closeModal"')
+        ->toContain('type="button"');
+});

@@ -26,8 +26,7 @@
                 @enderror
             </div>
         </div>
-        <button type="submit" wire:loading.attr="disabled" wire:target="importBooks"
-            class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
+        <x-button type="submit" wire:loading.attr="disabled" wire:target="importBooks">
             <svg class="h-5 w-5 text-white mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 wire:loading.remove wire:target="importBooks">
@@ -38,7 +37,7 @@
             <x-spinner class="h-5 w-5 text-white mr-2" wire:loading wire:target="importBooks" />
             <span wire:loading.remove wire:target="importBooks">Submit</span>
             <span wire:loading wire:target="importBooks">Uploading…</span>
-        </button>
+        </x-button>
     </form>
     </div>
     </div>

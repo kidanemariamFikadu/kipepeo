@@ -53,14 +53,13 @@
                 @enderror
             </div>
             <div class="flex items-center space-x-2">
-                <button type="submit" wire:loading.attr="disabled" wire:target="filter"
-                    class="inline-flex items-center p-2 px-4 bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm disabled:opacity-50">
+                <x-button size="sm" type="submit" wire:loading.attr="disabled" wire:target="filter">
                     <span wire:loading.remove wire:target="filter">Filter</span>
                     <span wire:loading wire:target="filter" class="inline-flex items-center">
                         <x-spinner class="h-4 w-4 mr-1.5 text-white" />
                         Filtering…
                     </span>
-                </button>
+                </x-button>
                 <button type="button" onclick="window.print()"
                     class="inline-flex items-center p-2 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm">
                     <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

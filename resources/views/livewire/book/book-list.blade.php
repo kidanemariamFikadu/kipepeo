@@ -4,8 +4,7 @@
     <div>
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Books</h2>
-            <button wire:click="$dispatch('openModal', { component: 'book.create-book' })"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ New Book</button>
+            <x-button size="sm" wire:click="$dispatch('openModal', { component: 'book.create-book' })">+ New Book</x-button>
         </div>
 
         <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">

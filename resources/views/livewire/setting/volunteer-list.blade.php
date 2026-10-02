@@ -16,8 +16,7 @@
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 Volunteers
             </h3>
-            <button wire:click="$dispatch('openModal', { component: 'setting.volunteer' })"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add Volunteer</button>
+            <x-button size="sm" wire:click="$dispatch('openModal', { component: 'setting.volunteer' })">+ Add Volunteer</x-button>
         </div>
 
         <div class="p-4">

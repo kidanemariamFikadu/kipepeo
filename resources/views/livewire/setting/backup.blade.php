@@ -23,8 +23,7 @@
                 </div>
             @endif
 
-            <button wire:click="downloadBackup" wire:loading.attr="disabled" wire:target="downloadBackup"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2.5 disabled:opacity-50">
+            <x-button size="sm" wire:click="downloadBackup" wire:loading.attr="disabled" wire:target="downloadBackup">
                 <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
                     wire:loading.remove wire:target="downloadBackup">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
@@ -32,7 +31,7 @@
                 <x-spinner class="h-5 w-5 mr-2 text-white" wire:loading wire:target="downloadBackup" />
                 <span wire:loading.remove wire:target="downloadBackup">Download backup</span>
                 <span wire:loading wire:target="downloadBackup">Building backup&hellip;</span>
-            </button>
+            </x-button>
         </div>
 
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4 mt-4">

@@ -15,10 +15,9 @@
             <x-badge tone="primary">
                 {{ $roster->count() }} {{ Str::plural('student', $roster->count()) }}
             </x-badge>
-            <button wire:click="$dispatch('openModal', { component: 'setting.school', arguments: { schoolId: {{ $schoolId }} }})"
-                class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">
+            <x-button size="sm" wire:click="$dispatch('openModal', { component: 'setting.school', arguments: { schoolId: {{ $schoolId }} }})">
                 Edit
-            </button>
+            </x-button>
         </div>
 
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 p-4">

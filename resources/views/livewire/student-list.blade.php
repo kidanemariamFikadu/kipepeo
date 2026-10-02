@@ -5,8 +5,7 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Students</h2>
-                <button wire:click="$dispatch('openModal', { component: 'student.create-student' })"
-                    class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add student</button>
+                <x-button size="sm" wire:click="$dispatch('openModal', { component: 'student.create-student' })">+ Add student</x-button>
             </div>
 
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -47,12 +46,11 @@
                                 class="text-sm text-gray-600 dark:text-gray-300 hover:underline">
                                 Clear
                             </button>
-                            <button wire:click="deleteSelected" wire:loading.attr="disabled" wire:target="deleteSelected"
-                                wire:confirm="Delete {{ count($selectedStudents) }} selected student(s)? This can't be undone from here."
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
+                            <x-danger-button wire:click="deleteSelected" wire:loading.attr="disabled" wire:target="deleteSelected"
+                                wire:confirm="Delete {{ count($selectedStudents) }} selected student(s)? This can't be undone from here.">
                                 <x-spinner class="h-4 w-4 mr-1.5 text-white" wire:loading wire:target="deleteSelected" />
                                 Delete selected
-                            </button>
+                            </x-danger-button>
                         </div>
                     </div>
                 @endif

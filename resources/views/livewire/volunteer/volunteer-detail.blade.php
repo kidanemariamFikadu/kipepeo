@@ -80,11 +80,10 @@
                             @enderror
                         </div>
                     </div>
-                    <button type="submit" wire:loading.attr="disabled" wire:target="update"
-                        class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50">
+                    <x-button type="submit" wire:loading.attr="disabled" wire:target="update">
                         <x-spinner class="h-5 w-5 text-white mr-1.5" wire:loading wire:target="update" />
                         Save
-                    </button>
+                    </x-button>
                 </form>
             </div>
 
@@ -106,10 +105,9 @@
                             <input type="date" id="earningsToDate" wire:model="earningsToDate"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                         </div>
-                        <button type="submit" wire:loading.attr="disabled" wire:target="calculateEarnings"
-                            class="inline-flex items-center p-2 px-4 bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm disabled:opacity-50">
+                        <x-button size="sm" type="submit" wire:loading.attr="disabled" wire:target="calculateEarnings">
                             Update
-                        </button>
+                        </x-button>
                     </form>
                     @error('earningsFromDate')
                         <span class="text-red-500 text-xs mb-3 block">{{ $message }}</span>
