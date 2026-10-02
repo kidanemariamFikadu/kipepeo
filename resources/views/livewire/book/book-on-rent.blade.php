@@ -111,17 +111,17 @@
                                     <td class="px-4 py-3">{{ $returnedAt?->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3">
                                         @if ($returnedAt)
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            <x-badge tone="success">
                                                 Returned
-                                            </span>
+                                            </x-badge>
                                         @elseif ($isLate)
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">
+                                            <x-badge tone="danger">
                                                 Overdue
-                                            </span>
+                                            </x-badge>
                                         @else
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                            <x-badge tone="primary">
                                                 Borrowed
-                                            </span>
+                                            </x-badge>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">

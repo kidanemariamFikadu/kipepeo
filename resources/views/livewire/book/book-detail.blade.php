@@ -16,15 +16,12 @@
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $this->book->title }}</h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">by {{ $this->book->author }}</p>
             </div>
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+            <x-badge tone="primary">
                 {{ $this->book->category }}
-            </span>
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                {{ $this->book->available_copies > 0
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                    : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200' }}">
+            </x-badge>
+            <x-badge tone="{{ $this->book->available_copies > 0 ? 'success' : 'danger' }}">
                 {{ $this->book->available_copies }} / {{ $this->book->copies }} available
-            </span>
+            </x-badge>
         </div>
     </div>
 
@@ -173,17 +170,17 @@
                                     <td class="px-4 py-3">{{ $returnedAt?->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3">
                                         @if ($returnedAt)
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            <x-badge tone="success">
                                                 Returned
-                                            </span>
+                                            </x-badge>
                                         @elseif ($isLate)
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">
+                                            <x-badge tone="danger">
                                                 Overdue
-                                            </span>
+                                            </x-badge>
                                         @else
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                            <x-badge tone="primary">
                                                 Borrowed
-                                            </span>
+                                            </x-badge>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">

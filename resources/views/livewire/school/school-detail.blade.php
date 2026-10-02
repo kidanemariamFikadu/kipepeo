@@ -12,9 +12,9 @@
 
         <div class="flex flex-wrap items-center gap-2 mb-4">
             <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $schoolDetails->name }}</h2>
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+            <x-badge tone="primary">
                 {{ $roster->count() }} {{ Str::plural('student', $roster->count()) }}
-            </span>
+            </x-badge>
             <button wire:click="$dispatch('openModal', { component: 'setting.school', arguments: { schoolId: {{ $schoolId }} }})"
                 class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">
                 Edit
@@ -45,13 +45,13 @@
                                 <td class="px-4 py-3">{{ $row->student?->grades->first()?->gradeTable?->grade ?? '—' }}</td>
                                 <td class="px-4 py-3">
                                     @if ($row->is_current)
-                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                        <x-badge tone="success" size="sm">
                                             Current
-                                        </span>
+                                        </x-badge>
                                     @else
-                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                        <x-badge tone="neutral" size="sm">
                                             Past
-                                        </span>
+                                        </x-badge>
                                     @endif
                                 </td>
                             </tr>

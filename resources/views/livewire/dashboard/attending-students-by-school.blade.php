@@ -48,9 +48,9 @@
                                 @endif
                             </th>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center justify-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                <x-badge tone="primary">
                                     {{ $school->students_count }}
-                                </span>
+                                </x-badge>
                             </td>
                         </tr>
                     @empty

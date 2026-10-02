@@ -12,12 +12,9 @@
 
         <div class="flex flex-wrap items-center gap-2 mb-4">
             <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $volunteerDetails->name }}</h2>
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                {{ $volunteerDetails->isActive()
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                    : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+            <x-badge tone="{{ $volunteerDetails->isActive() ? 'success' : 'neutral' }}">
                 {{ $volunteerDetails->isActive() ? 'Active' : 'Inactive' }}
-            </span>
+            </x-badge>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">

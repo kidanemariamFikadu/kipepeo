@@ -3,9 +3,9 @@
         <h2 class="text-gray-700 dark:text-white text-xl font-semibold">Students with overdue books</h2>
 
         @if ($totalBooks > 0)
-            <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+            <x-badge tone="warning" soft>
                 {{ $totalBooks }} {{ Str::plural('book', $totalBooks) }}
-            </span>
+            </x-badge>
         @endif
     </div>
 

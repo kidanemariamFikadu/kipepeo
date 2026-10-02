@@ -24,21 +24,21 @@
                     </th>
                     <td class="px-4 py-3">
                         @if ($copy->status == 'borrowed')
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                            <x-badge tone="primary">
                                 Borrowed
-                            </span>
+                            </x-badge>
                         @elseif ($copy->status == 'lost')
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-200">
+                            <x-badge tone="warning">
                                 Lost
-                            </span>
+                            </x-badge>
                         @elseif ($copy->status == 'available')
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                            <x-badge tone="success">
                                 Available
-                            </span>
+                            </x-badge>
                         @elseif ($copy->status == 'stolen')
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">
+                            <x-badge tone="danger">
                                 Stolen
-                            </span>
+                            </x-badge>
                         @endif
                     </td>
                     @if (auth()->user()->isAdmin())

@@ -45,12 +45,9 @@
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <span class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $volunteer->name }}</span>
-                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
-                                    {{ $volunteer->isActive()
-                                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                                <x-badge tone="{{ $volunteer->isActive() ? 'success' : 'neutral' }}" size="sm">
                                     {{ $volunteer->isActive() ? 'Active' : 'Inactive' }}
-                                </span>
+                                </x-badge>
                             </div>
                             <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $volunteer->phone ?? $volunteer->email ?? '—' }}</p>
                         </div>

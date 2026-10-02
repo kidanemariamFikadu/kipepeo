@@ -70,12 +70,9 @@
                                     <td class="px-4 py-3">{{ $volunteer->phone ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $volunteer->email ?? '—' }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                                            {{ $isIn
-                                                ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                                        <x-badge tone="{{ $isIn ? 'success' : 'neutral' }}">
                                             {{ $isIn ? 'In' : 'Out' }}
-                                        </span>
+                                        </x-badge>
                                     </td>
                                     <td class="px-4 py-3">{{ $volunteer->secondsToHms($todayAttendance?->total_time ?? 0) }}</td>
                                     <td class="px-4 py-3">

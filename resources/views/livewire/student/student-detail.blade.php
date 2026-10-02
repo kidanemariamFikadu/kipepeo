@@ -13,9 +13,9 @@
     <div class="flex flex-wrap items-center gap-2 mb-4">
         <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $studentDetails->name }}</h2>
         @if ($studentDetails->graduated_at)
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+            <x-badge tone="primary">
                 Graduated {{ $studentDetails->graduated_at->format('Y-m-d') }}
-            </span>
+            </x-badge>
         @elseif (auth()->user()->isAdmin() && $studentDetails->current_grade && ! $studentDetails->current_grade->next_grade_id)
             <button wire:click="graduate"
                 wire:confirm="Graduate {{ $studentDetails->name }}? This marks them as an alumnus and removes them from the active roster."
@@ -115,9 +115,9 @@
                                     <div class="flex items-center gap-2">
                                         {{ $guardian->guardian_name }}
                                         @if ($guardian->is_primary)
-                                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            <x-badge tone="success" size="sm">
                                                 Primary
-                                            </span>
+                                            </x-badge>
                                         @endif
                                     </div>
                                 </td>
@@ -189,9 +189,9 @@
                                     <div class="flex items-center gap-2">
                                         {{ $school->school?->name ?? '(school removed)' }}
                                         @if ($school->is_current)
-                                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            <x-badge tone="success" size="sm">
                                                 Current
-                                            </span>
+                                            </x-badge>
                                         @endif
                                     </div>
                                 </td>
@@ -257,9 +257,9 @@
                                     <div class="flex items-center gap-2">
                                         {{ $grade->gradeTable?->grade ?? '(grade removed)' }}
                                         @if ($grade->is_current)
-                                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                            <x-badge tone="success" size="sm">
                                                 Current
-                                            </span>
+                                            </x-badge>
                                         @endif
                                     </div>
                                 </td>
@@ -379,17 +379,17 @@
                                 <td class="px-4 py-3">{{ \Carbon\Carbon::parse($rental->due_at)->format('Y-m-d') }}</td>
                                 <td class="px-4 py-3">
                                     @if ($returnedAt)
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                                        <x-badge tone="success">
                                             Returned
-                                        </span>
+                                        </x-badge>
                                     @elseif ($isLate)
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">
+                                        <x-badge tone="danger">
                                             Overdue
-                                        </span>
+                                        </x-badge>
                                     @else
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                        <x-badge tone="primary">
                                             Borrowed
-                                        </span>
+                                        </x-badge>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">

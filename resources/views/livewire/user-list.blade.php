@@ -79,12 +79,9 @@
                                     <td class="px-4 py-3">{{ $user->email }}</td>
                                     <td class="px-4 py-3">{{ $user->jobTitle?->name ?? '—' }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                                            {{ $user->isAdmin()
-                                                ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                                                : 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200' }}">
+                                        <x-badge tone="{{ $user->isAdmin() ? 'success' : 'primary' }}">
                                             {{ $user->isAdmin() ? 'Admin' : 'User' }}
-                                        </span>
+                                        </x-badge>
                                     </td>
                                     <td class="px-4 py-3">{{ $user->created_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3">

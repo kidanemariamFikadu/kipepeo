@@ -63,9 +63,9 @@
                                     <td class="px-4 py-3">{{ $book->author }}</td>
                                     <td class="px-4 py-3">{{ $book->publisher }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex items-center rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                        <x-badge tone="primary">
                                             {{ $book->category }}
-                                        </span>
+                                        </x-badge>
                                     </td>
                                     @php
                                         // Matches Book::getAvailableCopiesAttribute(): a copy out on
@@ -73,12 +73,9 @@
                                         $availableNow = max(0, $book->on_shelf_count - $book->on_loan_count);
                                     @endphp
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                                            {{ $availableNow > 0
-                                                ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
-                                                : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200' }}">
+                                        <x-badge tone="{{ $availableNow > 0 ? 'success' : 'danger' }}">
                                             {{ $availableNow }} / {{ $book->on_shelf_count }}
-                                        </span>
+                                        </x-badge>
                                     </td>
                                     <td class="px-4 py-3">{{ $book->created_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3">

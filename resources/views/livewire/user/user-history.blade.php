@@ -61,9 +61,9 @@
                                     </td>
                                 @endforeach
                                 <td class="px-4 py-3">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                                    <x-badge tone="primary">
                                         {{ Str::title($audit->event) }}
-                                    </span>
+                                    </x-badge>
                                 </td>
                                 <td class="px-4 py-3">{{ $audit->created_at->format('Y-m-d H:i') }}</td>
                             </tr>
