@@ -54,6 +54,10 @@ Route::middleware([
     Route::get('/reports/book-rental', \App\Livewire\Report\BookRentalReport::class)->name('reports.book-rental');
     Route::get('/reports/alumni', \App\Livewire\Report\AlumniReport::class)->name('reports.alumni');
     Route::get('/reports/volunteer', \App\Livewire\Report\VolunteerReport::class)->name('reports.volunteer');
+    // The only report that would send figures to a third party, so it is
+    // admin-gated in the component itself rather than relying on the nav
+    // simply not offering the link.
+    Route::get('/reports/narrative', \App\Livewire\Report\NarrativeReport::class)->name('reports.narrative');
     Route::get('/books', \App\Livewire\Book\Index::class)->name('books');
     Route::get('/book-detail/{id}', \App\Livewire\Book\BookDetail::class)->name('book-detail');
 
