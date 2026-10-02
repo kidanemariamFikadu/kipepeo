@@ -68,7 +68,7 @@ class AddStudentAttendance extends Component
         $this->form->startTime = '';
         $this->form->endTime = '';
         $student= \App\Models\Student::find($this->form->student_id);
-        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Student created successfully', 'student' => $student]);
+        $this->dispatch('student-changed', ['type' => 'success', 'content' => 'Attendance recorded for '.$student->name, 'student' => $student]);
     }
 
 

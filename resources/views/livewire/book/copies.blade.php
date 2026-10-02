@@ -1,4 +1,9 @@
 <div class="overflow-x-auto">
+    {{-- Marking a copy lost/stolen/available flashes from this component, so
+         the dispatcher has to render here -- the parent page does not
+         re-render on these actions. --}}
+    <x-flash-toast />
+
     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
             <tr>

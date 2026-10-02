@@ -18,7 +18,7 @@
                     class="inline-flex items-center bg-primary-700 hover:bg-primary-800 text-white rounded-lg text-sm px-4 py-2">+ Add Job title</button>
             </div>
             <ul class="max-w-md divide-y divide-gray-200 dark:divide-gray-700 mt-2">
-                @foreach ($this->jobTitleList as $jobTitle)
+                @forelse ($this->jobTitleList as $jobTitle)
                     <li class="pb-3 sm:pb-4">
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             <div class="flex-1 min-w-0">
@@ -58,7 +58,11 @@
                             </div>
                         </div>
                     </li>
-                @endforeach
+                @empty
+                    <li class="py-3 text-sm text-gray-500 dark:text-gray-400">
+                        No job titles yet. Add the titles you use for staff, and they become selectable when creating a user.
+                    </li>
+                @endforelse
             </ul>
             {{ $this->jobTitleList->links() }}
         </div>

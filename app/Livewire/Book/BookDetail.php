@@ -4,6 +4,7 @@ namespace App\Livewire\Book;
 
 use App\Models\Book;
 use App\Models\BookCopy;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -92,6 +93,17 @@ class BookDetail extends Component
     public function deleteBook()
     {
         abort_unless(auth()->user()->isAdmin(), 403);
+
+        // Deleting a book that is still out leaves the rental pointing at
+        // nothing -- the return screen already has to render "(book removed)".
+        // The school, grade and job-title lists block deletion the same way.
+        $onLoan = $this->book->rentals()->whereNull('returned_at')->count();
+
+        if ($onLoan > 0) {
+            session()->flash('error', "{$this->book->title} still has {$onLoan} ".Str::plural('copy', $onLoan)." on loan. Record the return first.");
+
+            return;
+        }
 
         $this->book->delete();
 

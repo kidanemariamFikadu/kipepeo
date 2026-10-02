@@ -15,16 +15,25 @@
 
     <div class="mb-6 no-print">
         <label for="schoolId" class="block text-sm font-medium text-gray-700 dark:text-gray-400">School</label>
-        <select id="schoolId" wire:model.live="schoolId"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full max-w-xs p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-            <option value="">All schools</option>
-            @foreach ($schools as $school)
-                <option value="{{ $school->id }}">{{ $school->name }}</option>
-            @endforeach
-        </select>
+        <div class="flex items-center gap-2">
+            <select id="schoolId" wire:model.live="schoolId" wire:loading.attr="disabled" wire:target="schoolId"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full max-w-xs p-2 disabled:opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">All schools</option>
+                @foreach ($schools as $school)
+                    <option value="{{ $school->id }}">{{ $school->name }}</option>
+                @endforeach
+            </select>
+            {{-- Changing this re-runs five aggregate queries, so say something
+                 is happening rather than leaving the page looking frozen. --}}
+            <span wire:loading wire:target="schoolId" class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+                <x-spinner class="h-4 w-4" />
+                Updating…
+            </span>
+        </div>
     </div>
 
-    <div class="printable">
+    <div class="printable relative">
+        <div wire:loading.class="opacity-40 pointer-events-none" wire:target="schoolId" class="transition-opacity">
         <x-report.print-header title="Grade Distribution" subtitle="Currently enrolled students by grade" />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -74,17 +83,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($grades as $grade)
+                        @forelse ($grades as $grade)
                             <tr class="border-b dark:border-gray-700 {{ $grade->total_students == 0 ? 'text-gray-400 dark:text-gray-600' : '' }}">
                                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $grade->grade }}</td>
                                 <td class="px-4 py-3">{{ $grade->total_students }}</td>
                                 <td class="px-4 py-3">{{ $grade->male_students_count }}</td>
                                 <td class="px-4 py-3">{{ $grade->female_students_count }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                    No grades have been set up yet — add them under Settings &rsaquo; Grades.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+        </div>
         </div>
     </div>
 </div>

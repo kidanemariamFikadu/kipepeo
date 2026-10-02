@@ -4,6 +4,7 @@ namespace App\Livewire\Book;
 
 use App\Livewire\Concerns\HasSortableColumns;
 use App\Models\Book;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -51,6 +52,17 @@ class BookList extends Component
         abort_unless(auth()->user()->isAdmin(), 403);
 
         $book = Book::findOrFail($id);
+
+        // Same guard as the detail page: a deleted book leaves any open
+        // rental pointing at nothing.
+        $onLoan = $book->rentals()->whereNull('returned_at')->count();
+
+        if ($onLoan > 0) {
+            session()->flash('error', "{$book->title} still has {$onLoan} ".Str::plural('copy', $onLoan).' on loan. Record the return first.');
+
+            return;
+        }
+
         $book->delete();
 
         session()->flash('success', 'Book deleted successfully.');

@@ -19,6 +19,11 @@
         </div>
         <ul class="divide-y divide-gray-200 dark:divide-gray-700 mt-2">
             <div class="flex flex-wrap">
+                @if ($this->gradeList->isEmpty())
+                    <p class="px-4 pb-4 text-sm text-gray-500 dark:text-gray-400">
+                        No grades yet. Add the grades your students are in, and set each one's next grade so year-end promotion knows where they go.
+                    </p>
+                @else
                 @php
                     $totalGrades= $this->gradeList->count();
                     $chunkSize = floor($totalGrades / 2) + ($totalGrades % 2);
@@ -77,6 +82,7 @@
                         @endforeach
                     </div>
                 @endforeach
+                @endif
             </div>
         </ul>
         {{-- {{ $this->gradeList->links() }} --}}

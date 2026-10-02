@@ -1,4 +1,6 @@
 <div>
+    <x-flash-toast />
+
     <div class="p-2 md:p-6">
     <div class="mb-3">
         <a href="{{ route('books') }}"
@@ -30,7 +32,18 @@
         <div class="overflow-x-auto">
             <div class="py-2 align middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                    <form class="p-4 md:p-5" wire:submit="update">
+                    @php
+                        // Lowering the count permanently removes that many
+                        // available copy records, which is not obvious from a
+                        // button labelled "Update".
+                        $removing = max(0, (int) $this->book->copies - (int) $this->copies);
+                    @endphp
+
+                    <form class="p-4 md:p-5" wire:submit="update"
+                        @if ($removing > 0)
+                            wire:confirm="Reduce copies from {{ $this->book->copies }} to {{ $this->copies }}?&#10;&#10;This permanently removes {{ $removing }} available copy record(s). Borrowed, lost and stolen copies are never removed."
+                        @endif
+                    >
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">
                                 <label for="tile"
@@ -82,7 +95,9 @@
                                 <label for="copies"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Number of Copies
                                     <span class="text-red-500">*</span></label>
-                                <input type="number" min="1" wire:model='copies' id="copies"
+                                {{-- .live so the confirmation below knows the
+                                     number actually typed, not the last saved one. --}}
+                                <input type="number" min="1" wire:model.live.debounce.400ms='copies' id="copies"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                 @error('copies')
                                     <span class="text-red-500 text-xs mt-3 block ">{{ $message }}</span>

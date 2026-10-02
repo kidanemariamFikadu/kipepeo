@@ -139,7 +139,7 @@
                                         </button>
                                         @if (!$guardian->is_primary && auth()->user()->isAdmin())
                                             <button wire:click="deleteGuardian({{ $guardian->id }})"
-                                                wire:confirm="Remove {{ $guardian->guardian_name }} as a guardian?"
+                                                wire:confirm="Remove {{ $guardian->guardian_name }} as a guardian?&#10;&#10;Their name and phone number are deleted permanently. This cannot be undone."
                                                 wire:loading.attr="disabled" wire:loading.class="opacity-50"
                                                 wire:target="deleteGuardian({{ $guardian->id }})"
                                                 class="text-xs text-red-600 hover:underline dark:text-red-300">
@@ -208,7 +208,7 @@
                                             @if (auth()->user()->isAdmin())
                                                 <button
                                                     wire:click="deleteSchool({{ $school->student_id }},{{ $school->school_id }})"
-                                                    wire:confirm="Remove this school record?"
+                                                    wire:confirm="Remove the {{ $school->school?->name ?? 'school' }} record?&#10;&#10;This deletes the enrolment permanently, including the history of when they were there. It cannot be undone."
                                                     wire:loading.attr="disabled" wire:loading.class="opacity-50"
                                                     wire:target="deleteSchool({{ $school->student_id }},{{ $school->school_id }})"
                                                     class="text-xs text-red-600 hover:underline dark:text-red-300">
@@ -276,7 +276,7 @@
                                             @if (auth()->user()->isAdmin())
                                                 <button
                                                     wire:click="deleteGrade({{ $grade->student_id }},{{ $grade->grade }})"
-                                                    wire:confirm="Remove this grade record?"
+                                                    wire:confirm="Remove the {{ $grade->gradeTable?->grade ?? 'grade' }} record?&#10;&#10;This deletes that part of the student's grade history permanently. It cannot be undone."
                                                     wire:loading.attr="disabled" wire:loading.class="opacity-50"
                                                     wire:target="deleteGrade({{ $grade->student_id }},{{ $grade->grade }})"
                                                     class="text-xs text-red-600 hover:underline dark:text-red-300">
