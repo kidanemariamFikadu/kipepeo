@@ -28,7 +28,7 @@
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <input wire:model.live.debounce.300ms="search" type="text"
+                <input aria-label="Search schools" wire:model.live.debounce.300ms="search" type="text"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
                     placeholder="Search schools">
             </div>

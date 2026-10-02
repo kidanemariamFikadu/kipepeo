@@ -45,13 +45,22 @@
         $adminActive = collect($adminLinks)->contains('active', true);
     @endphp
 
-    <div x-data="{ collapsed: false, mobileOpen: false }"
-        x-init="collapsed = localStorage.getItem('kp-sidebar-collapsed') === '1'" class="flex h-screen overflow-hidden">
+    {{-- isDesktop tracks the lg breakpoint so the drawer can be marked inert
+         when it is off-screen. Below lg it is a slide-over; at lg and above it
+         is a static rail that must stay reachable. --}}
+    <div x-data="{ collapsed: false, mobileOpen: false, isDesktop: window.innerWidth >= 1024 }"
+        x-init="collapsed = localStorage.getItem('kp-sidebar-collapsed') === '1'"
+        @resize.window="isDesktop = window.innerWidth >= 1024"
+        class="flex h-screen overflow-hidden">
 
         <div x-show="mobileOpen" x-transition.opacity @click="mobileOpen = false"
             class="fixed inset-0 z-30 bg-gray-900/50 lg:hidden" style="display: none;"></div>
 
-        <aside
+        {{-- inert while closed on a phone: the drawer is only translated
+             off-screen, so without it keyboard and screen-reader users tab
+             through a dozen invisible nav links before reaching the page. --}}
+        <aside id="main-sidebar"
+            :inert="!mobileOpen && !isDesktop"
             class="no-print fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col bg-[#0d1e33] transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
             :class="[mobileOpen ? 'translate-x-0' : '-translate-x-full', collapsed ? 'lg:w-[72px]' : 'lg:w-64']">
             <div class="flex items-center border-b border-white/10 p-4">
@@ -249,6 +258,7 @@
         <div class="flex min-w-0 flex-1 flex-col overflow-y-auto">
             <div class="no-print flex items-center justify-between border-b border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800 lg:hidden">
                 <button type="button" @click="mobileOpen = true"
+                    aria-controls="main-sidebar" :aria-expanded="mobileOpen ? 'true' : 'false'"
                     class="inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                     <span class="sr-only">Open main menu</span>
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

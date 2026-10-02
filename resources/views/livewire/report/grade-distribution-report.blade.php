@@ -76,10 +76,10 @@
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-3">Grade</th>
-                            <th class="px-4 py-3">Total</th>
-                            <th class="px-4 py-3">Male</th>
-                            <th class="px-4 py-3">Female</th>
+                            <th scope="col" class="px-4 py-3">Grade</th>
+                            <th scope="col" class="px-4 py-3">Total</th>
+                            <th scope="col" class="px-4 py-3">Male</th>
+                            <th scope="col" class="px-4 py-3">Female</th>
                         </tr>
                     </thead>
                     <tbody>

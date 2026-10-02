@@ -32,7 +32,7 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input wire:model.live.debounce.300ms="search" type="text"
+                                <input aria-label="Search schools" wire:model.live.debounce.300ms="search" type="text"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
                                     placeholder="Search schools">
                                 <div wire:loading wire:target="search" class="absolute inset-y-0 right-3 flex items-center">
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="w-full max-w-xs">
-                                <select wire:model.live="school"
+                                <select aria-label="School" wire:model.live="school"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                     <option value="">All schools</option>
                                     @foreach ($schools as $s)
@@ -122,9 +122,9 @@
                         <div class="py-4 px-3 no-print">
                             <div class="flex ">
                                 <div class="flex space-x-4 items-center mb-3">
-                                    <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per
+                                    <label for="student-report-perPage" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per
                                         Page</label>
-                                    <select wire:model.live='perPage'
+                                    <select id="student-report-perPage" wire:model.live='perPage'
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                         <option value="5">5</option>
                                         <option value="7">7</option>

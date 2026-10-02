@@ -103,14 +103,14 @@
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-3">#</th>
-                            <th class="px-4 py-3">Name</th>
-                            <th class="px-4 py-3">School</th>
-                            <th class="px-4 py-3">Grade</th>
-                            <th class="px-4 py-3">Guardian</th>
-                            <th class="px-4 py-3">Guardian Phone</th>
-                            <th class="px-4 py-3">Time Stayed</th>
-                            <th class="px-4 py-3">Sign In/Out</th>
+                            <th scope="col" class="px-4 py-3">#</th>
+                            <th scope="col" class="px-4 py-3">Name</th>
+                            <th scope="col" class="px-4 py-3">School</th>
+                            <th scope="col" class="px-4 py-3">Grade</th>
+                            <th scope="col" class="px-4 py-3">Guardian</th>
+                            <th scope="col" class="px-4 py-3">Guardian Phone</th>
+                            <th scope="col" class="px-4 py-3">Time Stayed</th>
+                            <th scope="col" class="px-4 py-3">Sign In/Out</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -164,12 +164,12 @@
             <table class="w-full text-sm text-left">
                 <thead class="text-xs uppercase bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">Name</th>
-                        <th class="px-4 py-3">School</th>
-                        <th class="px-4 py-3">Grade</th>
-                        <th class="px-4 py-3">Time Stayed</th>
-                        <th class="px-4 py-3">Sign In/Out</th>
+                        <th scope="col" class="px-4 py-3">#</th>
+                        <th scope="col" class="px-4 py-3">Name</th>
+                        <th scope="col" class="px-4 py-3">School</th>
+                        <th scope="col" class="px-4 py-3">Grade</th>
+                        <th scope="col" class="px-4 py-3">Time Stayed</th>
+                        <th scope="col" class="px-4 py-3">Sign In/Out</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -106,7 +106,7 @@ test('the Hours by Student table shows each student\'s gender', function () {
         ->call('filter')
         ->html();
 
-    expect($html)->toContain('<th class="px-4 py-3">Gender</th>');
+    expect($html)->toContain('<th scope="col" class="px-4 py-3">Gender</th>');
     expect($html)->toContain('Male');
     // Stored gender casing is normalized for display, same as the other
     // gender breakdowns on this page.

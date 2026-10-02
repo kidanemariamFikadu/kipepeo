@@ -109,7 +109,7 @@ test('the roster table numbers each row', function () {
         ->call('getStudentByDate')
         ->html();
 
-    expect($html)->toContain('<th class="px-4 py-3">#</th>');
+    expect($html)->toContain('<th scope="col" class="px-4 py-3">#</th>');
 });
 
 test('the roster is paginated on screen but the print table has every row', function () {

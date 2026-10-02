@@ -96,11 +96,11 @@
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-3">Volunteer</th>
-                            <th class="px-4 py-3">Days Volunteered</th>
-                            <th class="px-4 py-3">Total Hours</th>
+                            <th scope="col" class="px-4 py-3">Volunteer</th>
+                            <th scope="col" class="px-4 py-3">Days Volunteered</th>
+                            <th scope="col" class="px-4 py-3">Total Hours</th>
                             @if ($showPay)
-                                <th class="px-4 py-3">Est. Stipend</th>
+                                <th scope="col" class="px-4 py-3">Est. Stipend</th>
                             @endif
                         </tr>
                     </thead>
@@ -133,8 +133,8 @@
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-3">Duty</th>
-                            <th class="px-4 py-3">Count</th>
+                            <th scope="col" class="px-4 py-3">Duty</th>
+                            <th scope="col" class="px-4 py-3">Count</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -163,10 +163,10 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-3">Date</th>
-                                <th class="px-4 py-3">Activity Type</th>
-                                <th class="px-4 py-3">Students</th>
-                                <th class="px-4 py-3">Notes</th>
+                                <th scope="col" class="px-4 py-3">Date</th>
+                                <th scope="col" class="px-4 py-3">Activity Type</th>
+                                <th scope="col" class="px-4 py-3">Students</th>
+                                <th scope="col" class="px-4 py-3">Notes</th>
                             </tr>
                         </thead>
                         <tbody>

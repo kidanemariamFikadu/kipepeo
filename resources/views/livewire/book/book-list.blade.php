@@ -19,7 +19,7 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
+                        <input aria-label="Search title or author" wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
                             placeholder="Search title or author">
                     </div>
@@ -152,8 +152,8 @@
                 <div class="py-4 px-3">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
-                            <select wire:model.live='perPage'
+                            <label for="book-list-perPage" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
+                            <select id="book-list-perPage" wire:model.live='perPage'
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                 <option value="5">5</option>
                                 <option value="7">7</option>

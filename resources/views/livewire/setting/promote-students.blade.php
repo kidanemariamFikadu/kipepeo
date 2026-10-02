@@ -39,7 +39,7 @@
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" class="px-4 py-3 w-10">
-                                            <input type="checkbox" wire:click="toggleSelectAll($event.target.checked)"
+                                            <input aria-label="Select all grades" type="checkbox" wire:click="toggleSelectAll($event.target.checked)"
                                                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                                         </th>
                                         <th scope="col" class="px-4 py-3">Current grade</th>

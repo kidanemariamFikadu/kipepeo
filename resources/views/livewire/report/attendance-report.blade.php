@@ -189,10 +189,10 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-3">Date</th>
-                                <th class="px-4 py-3">Total Students</th>
-                                <th class="px-4 py-3">Avg. Duration</th>
-                                <th class="px-4 py-3">By Gender</th>
+                                <th scope="col" class="px-4 py-3">Date</th>
+                                <th scope="col" class="px-4 py-3">Total Students</th>
+                                <th scope="col" class="px-4 py-3">Avg. Duration</th>
+                                <th scope="col" class="px-4 py-3">By Gender</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -222,10 +222,10 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3">Date</th>
-                            <th class="px-4 py-3">Total Students</th>
-                            <th class="px-4 py-3">Avg. Duration</th>
-                            <th class="px-4 py-3">By Gender</th>
+                            <th scope="col" class="px-4 py-3">Date</th>
+                            <th scope="col" class="px-4 py-3">Total Students</th>
+                            <th scope="col" class="px-4 py-3">Avg. Duration</th>
+                            <th scope="col" class="px-4 py-3">By Gender</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -253,10 +253,10 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-3">Student</th>
-                                <th class="px-4 py-3">Gender</th>
-                                <th class="px-4 py-3">Days Present</th>
-                                <th class="px-4 py-3">Total Hours</th>
+                                <th scope="col" class="px-4 py-3">Student</th>
+                                <th scope="col" class="px-4 py-3">Gender</th>
+                                <th scope="col" class="px-4 py-3">Days Present</th>
+                                <th scope="col" class="px-4 py-3">Total Hours</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,10 +287,10 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3">Student</th>
-                            <th class="px-4 py-3">Gender</th>
-                            <th class="px-4 py-3">Days Present</th>
-                            <th class="px-4 py-3">Total Hours</th>
+                            <th scope="col" class="px-4 py-3">Student</th>
+                            <th scope="col" class="px-4 py-3">Gender</th>
+                            <th scope="col" class="px-4 py-3">Days Present</th>
+                            <th scope="col" class="px-4 py-3">Total Hours</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -317,9 +317,9 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-3">Grade</th>
-                                <th class="px-4 py-3">Students</th>
-                                <th class="px-4 py-3">Total Hours</th>
+                                <th scope="col" class="px-4 py-3">Grade</th>
+                                <th scope="col" class="px-4 py-3">Students</th>
+                                <th scope="col" class="px-4 py-3">Total Hours</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -349,9 +349,9 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3">Grade</th>
-                            <th class="px-4 py-3">Students</th>
-                            <th class="px-4 py-3">Total Hours</th>
+                            <th scope="col" class="px-4 py-3">Grade</th>
+                            <th scope="col" class="px-4 py-3">Students</th>
+                            <th scope="col" class="px-4 py-3">Total Hours</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -380,13 +380,13 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-3">#</th>
-                                <th class="px-4 py-3">Student</th>
-                                <th class="px-4 py-3">Gender</th>
-                                <th class="px-4 py-3">Grade</th>
-                                <th class="px-4 py-3">Days Present</th>
-                                <th class="px-4 py-3">Total Hours</th>
-                                <th class="px-4 py-3">Consistency</th>
+                                <th scope="col" class="px-4 py-3">#</th>
+                                <th scope="col" class="px-4 py-3">Student</th>
+                                <th scope="col" class="px-4 py-3">Gender</th>
+                                <th scope="col" class="px-4 py-3">Grade</th>
+                                <th scope="col" class="px-4 py-3">Days Present</th>
+                                <th scope="col" class="px-4 py-3">Total Hours</th>
+                                <th scope="col" class="px-4 py-3">Consistency</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -432,13 +432,13 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3">#</th>
-                            <th class="px-4 py-3">Student</th>
-                            <th class="px-4 py-3">Gender</th>
-                            <th class="px-4 py-3">Grade</th>
-                            <th class="px-4 py-3">Days Present</th>
-                            <th class="px-4 py-3">Total Hours</th>
-                            <th class="px-4 py-3">Consistency</th>
+                            <th scope="col" class="px-4 py-3">#</th>
+                            <th scope="col" class="px-4 py-3">Student</th>
+                            <th scope="col" class="px-4 py-3">Gender</th>
+                            <th scope="col" class="px-4 py-3">Grade</th>
+                            <th scope="col" class="px-4 py-3">Days Present</th>
+                            <th scope="col" class="px-4 py-3">Total Hours</th>
+                            <th scope="col" class="px-4 py-3">Consistency</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -468,9 +468,9 @@
                         <table class="w-full text-sm text-left text-gray-700 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400">
                                 <tr>
-                                    <th class="px-4 py-3">Date</th>
-                                    <th class="px-4 py-3">Time In / Out</th>
-                                    <th class="px-4 py-3">Total Time</th>
+                                    <th scope="col" class="px-4 py-3">Date</th>
+                                    <th scope="col" class="px-4 py-3">Time In / Out</th>
+                                    <th scope="col" class="px-4 py-3">Total Time</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -505,9 +505,9 @@
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs uppercase bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3">Date</th>
-                                <th class="px-4 py-3">Time In / Out</th>
-                                <th class="px-4 py-3">Total Time</th>
+                                <th scope="col" class="px-4 py-3">Date</th>
+                                <th scope="col" class="px-4 py-3">Time In / Out</th>
+                                <th scope="col" class="px-4 py-3">Total Time</th>
                             </tr>
                         </thead>
                         <tbody>

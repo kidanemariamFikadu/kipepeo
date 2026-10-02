@@ -20,14 +20,14 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
+                        <input aria-label="Search students" wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
                             placeholder="Search students">
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <label class="text-sm font-medium text-gray-900 dark:text-gray-300">School</label>
-                        <select wire:model.live="school"
+                        <label for="student-list-school" class="text-sm font-medium text-gray-900 dark:text-gray-300">School</label>
+                        <select id="student-list-school" wire:model.live="school"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
                             <option value="">All schools</option>
                             @foreach ($this->schoolList as $school)
@@ -63,7 +63,7 @@
                             <tr>
                                 @if (auth()->user()->isAdmin())
                                     <th scope="col" class="px-4 py-3 w-10">
-                                        <input type="checkbox" wire:click="toggleSelectAll"
+                                        <input aria-label="Select all students on this page" type="checkbox" wire:click="toggleSelectAll"
                                             class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                             {{ count($selectedStudents) === $students->count() && $students->count() > 0 ? 'checked' : '' }}>
                                     </th>
@@ -94,7 +94,9 @@
                                 <tr wire:key="{{ $student->id }}" class="border-b dark:border-gray-700">
                                     @if (auth()->user()->isAdmin())
                                         <td class="px-4 py-3">
-                                            <input type="checkbox" wire:model="selectedStudents"
+                                            {{-- Named per row: these select students for bulk
+                                                 deletion, so "checkbox" alone is not enough. --}}
+                                            <input aria-label="Select {{ $student->name }}" type="checkbox" wire:model="selectedStudents"
                                                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                                 value="{{ $student->id }}">
                                         </td>
@@ -171,8 +173,8 @@
                 <div class="py-4 px-3">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
-                            <select wire:model.live='perPage'
+                            <label for="student-list-perPage" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
+                            <select id="student-list-perPage" wire:model.live='perPage'
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="5">5</option>
                                 <option value="7">7</option>
