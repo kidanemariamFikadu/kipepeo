@@ -131,7 +131,7 @@ test('no view leaves a text or select control without an accessible name', funct
         preg_match_all('/<label[^>]*\sfor="([^"]+)"/', $source, $labelled);
         $labelledIds = array_flip($labelled[1]);
 
-        preg_match_all('/<(input|select|textarea)\b[^>]*>/s', $source, $tags);
+        preg_match_all('/<(input|select|textarea|x-input|x-select|x-textarea)\b[^>]*>/s', $source, $tags);
 
         foreach ($tags[0] as $tag) {
             if (! str_contains($tag, 'wire:model')) {

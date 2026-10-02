@@ -19,20 +19,18 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input aria-label="Search students" wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
-                            placeholder="Search students">
+                        <x-input aria-label="Search students" wire:model.live.debounce.300ms="search" type="text"
+                            placeholder="Search students" class="block w-full pl-10 p-2" />
                     </div>
 
                     <div class="flex items-center gap-2">
                         <label for="student-list-school" class="text-sm font-medium text-gray-900 dark:text-gray-300">School</label>
-                        <select id="student-list-school" wire:model.live="school"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
+                        <x-select id="student-list-school" wire:model.live="school" class="block p-2.5">
                             <option value="">All schools</option>
                             @foreach ($this->schoolList as $school)
                                 <option value="{{ $school->id }}">{{ $school->name }}</option>
                             @endforeach
-                        </select>
+                        </x-select>
                     </div>
                 </div>
 
@@ -172,15 +170,14 @@
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
                             <label for="student-list-perPage" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per Page</label>
-                            <select id="student-list-perPage" wire:model.live='perPage'
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            <x-select id="student-list-perPage" wire:model.live='perPage' class="block w-full p-2.5">
                                 <option value="5">5</option>
                                 <option value="7">7</option>
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
                                 <option value="100">100</option>
-                            </select>
+                            </x-select>
                         </div>
                     </div>
                     {{ $students->links() }}

@@ -164,3 +164,53 @@ test('every modal still renders a close control', function () {
         ->toContain('wire:click="closeModal"')
         ->toContain('type="button"');
 });
+
+test('no search box or filter select is left without its dark variants', function () {
+    // 25 hand-rolled controls carried the component's light classes and none
+    // of its dark: ones, so every search box and filter dropdown stayed
+    // bright white on a dark page.
+    $files = [];
+    $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(resource_path('views/livewire')));
+    foreach ($dir as $file) {
+        if (str_ends_with((string) $file, '.blade.php')) {
+            $files[] = (string) $file;
+        }
+    }
+
+    $offenders = [];
+
+    foreach ($files as $file) {
+        $source = file_get_contents($file);
+        $short = str_replace(resource_path('views/livewire').DIRECTORY_SEPARATOR, '', $file);
+
+        preg_match_all('/class="(bg-gray-50[^"]*)"/s', $source, $matches);
+
+        foreach ($matches[1] as $class) {
+            if (! str_contains($class, 'dark:')) {
+                $offenders[] = $short.': '.substr(preg_replace('/\s+/', ' ', $class), 0, 80);
+            }
+        }
+
+        // The brand colour is primary; four selects and eight icon buttons
+        // had kept Flowbite's blue.
+        if (str_contains($source, 'blue-')) {
+            $offenders[] = $short.': still uses a blue utility class';
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
+
+test('the select component matches the input component', function () {
+    // x-input existed; every <select> was hand-rolled, which is how the
+    // dropdowns drifted away from the text fields.
+    $input = Blade::render('<x-input type="text" />');
+    $select = Blade::render('<x-select><option>A</option></x-select>');
+
+    foreach (['bg-gray-50', 'dark:bg-gray-700', 'dark:text-white', 'focus:ring-primary-500'] as $class) {
+        expect($input)->toContain($class);
+        expect($select)->toContain($class);
+    }
+
+    expect($select)->toContain('<option>A</option>');
+});

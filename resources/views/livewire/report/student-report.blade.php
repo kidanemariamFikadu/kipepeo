@@ -32,9 +32,8 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input aria-label="Search schools" wire:model.live.debounce.300ms="search" type="text"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
-                                    placeholder="Search schools">
+                                <x-input aria-label="Search schools" wire:model.live.debounce.300ms="search" type="text"
+                                    placeholder="Search schools" class="block w-full pl-10 p-2" />
                                 <div wire:loading wire:target="search" class="absolute inset-y-0 right-3 flex items-center">
                                     <x-spinner class="h-4 w-4" />
                                 </div>
@@ -124,15 +123,14 @@
                                 <div class="flex space-x-4 items-center mb-3">
                                     <label for="student-report-perPage" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-300">Per
                                         Page</label>
-                                    <select id="student-report-perPage" wire:model.live='perPage'
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                    <x-select id="student-report-perPage" wire:model.live='perPage' class="block w-full p-2.5">
                                         <option value="5">5</option>
                                         <option value="7">7</option>
                                         <option value="10">10</option>
                                         <option value="20">20</option>
                                         <option value="50">50</option>
                                         <option value="100">100</option>
-                                    </select>
+                                    </x-select>
                                 </div>
                             </div>
                             {{ $schoolReport->links() }}
