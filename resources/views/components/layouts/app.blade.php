@@ -35,6 +35,10 @@
             ['href' => route('reports.alumni'), 'label' => 'Alumni Report', 'active' => request()->routeIs('reports.alumni')],
             ['href' => route('reports.volunteer'), 'label' => 'Volunteer Activity', 'active' => request()->routeIs('reports.volunteer')],
         ];
+        // Offered only to admins, matching the gate in the component.
+        if (Auth::user()->isAdmin()) {
+            $reportLinks[] = ['href' => route('reports.narrative'), 'label' => 'Narrative Report', 'active' => request()->routeIs('reports.narrative')];
+        }
         $adminLinks = [];
         if (Auth::user()->isAdmin()) {
             $adminLinks[] = ['href' => '/users', 'label' => 'Users', 'active' => request()->is('users*')];
