@@ -77,3 +77,9 @@ Route::middleware([
         Route::get('/promote-students', \App\Livewire\Setting\PromoteStudents::class)->name('promote-students');
     });
 });
+
+// Jetstream registers /user/profile, but this app replaced that screen with
+// /my-profile and profile/show.blade.php was deleted long ago, so the route
+// only ever produced a crash page. Declared here so it wins over the one
+// Jetstream registers.
+Route::redirect('/user/profile', '/my-profile');

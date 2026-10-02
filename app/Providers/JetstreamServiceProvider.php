@@ -13,7 +13,11 @@ class JetstreamServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Jetstream's only remaining route is /user/profile, whose view was
+        // deleted when this app replaced that screen with /my-profile -- so
+        // the route served nothing but a stack trace. Dropping it lets the
+        // redirect in web.php answer stale bookmarks instead.
+        Jetstream::ignoreRoutes();
     }
 
     /**
