@@ -33,9 +33,9 @@
                                         {{ $book['title'] }}
                                     </span>
 
-                                    <span class="shrink-0 whitespace-nowrap rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
+                                    <x-badge tone="danger" size="sm" soft class="shrink-0">
                                         {{ $book['daysOverdue'] }}d late
-                                    </span>
+                                    </x-badge>
 
                                     {{-- Opens the same Return Book modal used on the book and
                                          student pages. It shows the title, borrower and dates

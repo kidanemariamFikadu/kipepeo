@@ -1,4 +1,14 @@
-<?php
+            if (! str_contains(, 'text-xs')) {
+                continue;
+            }
+
+            // Horizontal padding is what separates a badge from an avatar
+            // circle, which is fixed-size and has none. Keying on inline-flex
+            // instead let one real badge through -- the "Nd late" pill on the
+            // overdue card, which is shrink-0 rather than inline-flex.
+            if (! preg_match('/px-[0-9]/', )) {
+                continue;
+            }<?php
 
 use App\Models\Book;
 use App\Models\Student;
@@ -58,7 +68,15 @@ test('no view hand-rolls a status pill any more', function () {
             if (! str_contains($flat, 'rounded-full')) {
                 continue;
             }
-            if (! str_contains($flat, 'text-xs') || ! str_contains($flat, 'inline-flex')) {
+            if (! str_contains($flat, 'text-xs')) {
+                continue;
+            }
+
+            // Horizontal padding is what separates a badge from an avatar
+            // circle, which is fixed-size and has none. Keying on inline-flex
+            // instead let one real badge through: the "Nd late" pill on the
+            // overdue-books card is shrink-0, not inline-flex.
+            if (! preg_match('/\bpx-[0-9]/', $flat)) {
                 continue;
             }
             if (! preg_match('/bg-(primary|green|red|amber|gray)-(50|100)/', $flat)) {
