@@ -235,7 +235,7 @@
                         </thead>
                         <tbody>
                             @foreach ($fullRentals as $rental)
-                                <tr class="border-b">
+                                <tr wire:key="rental-print-{{ $rental->id }}" class="border-b">
                                     <td class="px-4 py-3 font-medium">{{ $rental->book?->title ?? 'Deleted book' }}</td>
                                     <td class="px-4 py-3">{{ $rental->checkedOutTo?->name ?? 'Deleted student' }}</td>
                                     <td class="px-4 py-3">{{ \Carbon\Carbon::parse($rental->rented_at)->format('M j, Y') }}</td>

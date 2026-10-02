@@ -196,7 +196,7 @@
                         </thead>
                         <tbody>
                             @foreach ($dailyStatisticsPage as $statistics)
-                                <tr class="border-b dark:border-gray-700">
+                                <tr wire:key="daily-{{ $statistics['date'] }}" class="border-b dark:border-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                         {{ \Carbon\Carbon::parse($statistics['date'])->format('M j, Y') }}</td>
                                     <td class="px-4 py-3">{{ $statistics['totalStudents'] }}</td>
@@ -229,7 +229,7 @@
                     </thead>
                     <tbody>
                         @foreach ($dailyStatistics as $statistics)
-                            <tr class="border-b">
+                            <tr wire:key="daily-print-{{ $statistics['date'] }}" class="border-b">
                                 <td class="px-4 py-3 font-medium">
                                     {{ \Carbon\Carbon::parse($statistics['date'])->format('M j, Y') }}</td>
                                 <td class="px-4 py-3">{{ $statistics['totalStudents'] }}</td>

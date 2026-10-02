@@ -30,7 +30,7 @@
                 @foreach ($this->gradeList->chunk($chunkSize) as $chunk)
                     <div class="pr-2 w-1/2">
                         @foreach ($chunk as $grade)
-                            <li class="pb-3 sm:pb-4">
+                            <li wire:key="grade-{{ $grade->id }}" class="pb-3 sm:pb-4">
                                 <div class="flex items-center space-x-4 rtl:space-x-reverse">
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-medium text-gray-900 dark:text-white">

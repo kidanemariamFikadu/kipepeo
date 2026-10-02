@@ -222,9 +222,7 @@
             <div class="relative border-t border-white/10 p-2.5">
                 <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" data-dropdown-placement="top"
                     type="button" class="flex w-full items-center gap-2.5 rounded-lg p-1.5 text-left hover:bg-white/10">
-                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                        {{ Str::of(Auth::user()->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
-                    </span>
+                    <x-avatar :name="Auth::user()->name" size="sm" />
                     <span class="min-w-0 flex-1" :class="{ 'lg:hidden': collapsed }">
                         <span class="block truncate text-xs font-semibold text-white">{{ Auth::user()->name }}</span>
                         <span class="block truncate text-[11px] text-gray-400">{{ Auth::user()->email }}</span>

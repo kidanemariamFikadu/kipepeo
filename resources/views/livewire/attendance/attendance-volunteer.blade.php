@@ -56,12 +56,11 @@
                                     <th scope="row"
                                         class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         <div class="flex items-center gap-3">
-                                            <span class="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                                                {{ Str::of($volunteer->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
+                                            <x-avatar :name="$volunteer->name" size="sm" class="relative">
                                                 @if ($isIn)
                                                     <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"></span>
                                                 @endif
-                                            </span>
+                                            </x-avatar>
                                             {{ $volunteer->name }}
                                         </div>
                                     </th>

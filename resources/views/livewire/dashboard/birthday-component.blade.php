@@ -5,11 +5,8 @@
         @else
             <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                 @foreach ($currentWeekBirthdays as $student)
-                    <li class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                        <span
-                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                            {{ Str::of($student->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
-                        </span>
+                    <li wire:key="birthday-{{ $student->id }}" class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                        <x-avatar :name="$student->name" size="md" />
                         <a href="{{ route('student-detail', $student->id) }}"
                             class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:text-white dark:hover:text-primary-400">
                             {{ $student->name }}

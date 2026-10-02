@@ -99,9 +99,7 @@
                                     @endif
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         <div class="flex items-center gap-3">
-                                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                                                {{ Str::of($student->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
-                                            </span>
+                                            <x-avatar :name="$student->name" size="sm" />
                                             {{ $student->name }}
                                         </div>
                                     </th>

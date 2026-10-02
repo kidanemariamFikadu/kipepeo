@@ -120,7 +120,7 @@
                         </thead>
                         <tbody>
                             @foreach ($attendance->attrs as $attr)
-                                <tr @class([
+                                <tr wire:key="attr-{{ $attr->id }}" @class([
                                     'border-b dark:border-gray-700',
                                     'bg-green-50 dark:bg-green-950' => !$attr->time_out,
                                     'bg-white dark:bg-gray-800' => $attr->time_out,

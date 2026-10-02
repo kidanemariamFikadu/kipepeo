@@ -28,12 +28,11 @@
                     @endphp
                     <li wire:key="{{ $volunteer->id }}" class="flex items-center justify-between gap-3 py-2.5">
                         <div class="flex items-center gap-3 min-w-0">
-                            <span class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                                {{ Str::of($volunteer->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
+                            <x-avatar :name="$volunteer->name" size="md" class="relative">
                                 @if ($isIn)
                                     <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-700"></span>
                                 @endif
-                            </span>
+                            </x-avatar>
                             <div class="min-w-0">
                                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $volunteer->name }}</p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">

@@ -22,11 +22,10 @@
                         $overdueTooltip = $attendance->student->rentals->map(fn ($r) => ($r->book?->title ?? 'Unknown book') . ' - overdue')->implode("\n");
                     @endphp
                     <li class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                        <span class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200">
-                            {{ Str::of($attendance->student->name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
+                        <x-avatar :name="$attendance->student->name" size="md" class="relative">
                             <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"
                                 title="Currently checked in"></span>
-                        </span>
+                        </x-avatar>
                         <a href="{{ route('student-detail', $attendance->student->id) }}"
                             class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 hover:text-primary-700 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 rounded dark:text-white dark:hover:text-primary-400">
                             {{ $attendance->student->name }}

@@ -14,10 +14,8 @@
     @else
         <ul class="divide-y divide-gray-100 dark:divide-gray-700">
             @foreach ($students as $student)
-                <li class="flex items-start gap-3 py-2.5 first:pt-0">
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700 dark:bg-amber-900 dark:text-amber-200">
-                        {{ Str::of($student['studentName'])->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') }}
-                    </span>
+                <li wire:key="overdue-student-{{ $student['studentId'] }}" class="flex items-start gap-3 py-2.5 first:pt-0">
+                    <x-avatar :name="$student['studentName']" size="md" tone="warning" />
 
                     <div class="min-w-0 flex-1">
                         <a href="{{ route('student-detail', $student['studentId']) }}"
@@ -27,7 +25,7 @@
 
                         <ul class="mt-1 space-y-1">
                             @foreach ($student['books'] as $book)
-                                <li class="flex items-center gap-2">
+                                <li wire:key="overdue-rental-{{ $book['rentalId'] }}" class="flex items-center gap-2">
                                     <span class="min-w-0 flex-1 truncate text-xs text-gray-500 dark:text-gray-400"
                                         title="{{ $book['title'] }}">
                                         {{ $book['title'] }}
