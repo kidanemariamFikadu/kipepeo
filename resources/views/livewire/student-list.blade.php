@@ -5,7 +5,24 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Students</h2>
-                <x-button size="sm" wire:click="$dispatch('openModal', { component: 'student.create-student' })">+ Add student</x-button>
+                <div class="flex items-center gap-2">
+                    {{-- Exports the children the list is filtered to, not just
+                         the page on screen. --}}
+                    <button type="button" wire:click="exportRegistrations" wire:loading.attr="disabled"
+                        wire:target="exportRegistrations"
+                        class="inline-flex items-center p-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm disabled:opacity-50">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                        </svg>
+                        <span wire:loading.remove wire:target="exportRegistrations">Export to Excel</span>
+                        <span wire:loading wire:target="exportRegistrations" class="inline-flex items-center">
+                            <x-spinner class="h-4 w-4 mr-1.5 text-white" />
+                            Preparing…
+                        </span>
+                    </button>
+                    <x-button size="sm" wire:click="$dispatch('openModal', { component: 'student.create-student' })">+ Add student</x-button>
+                </div>
             </div>
 
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
