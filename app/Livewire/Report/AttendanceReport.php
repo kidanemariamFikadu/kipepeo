@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Report;
 
-use App\Models\Attendance;
+use App\Exports\AttendanceExport;
 use App\Models\Grade;
 use App\Models\Student;
+use App\Services\Reports\AttendanceQuery;
 use App\Support\ReportMetrics;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -256,21 +258,45 @@ class AttendanceReport extends Component
      */
     private function baseQuery()
     {
-        return Attendance::query()
-            ->whereBetween('date', [
-                Carbon::parse($this->fromDate)->toDateString(),
-                Carbon::parse($this->toDate)->toDateString(),
-            ])
-            // Soft-deleted students keep their attendance rows, which
-            // otherwise still count towards every total and chart on this
-            // page under a blank name.
-            ->whereHas('student')
-            // Scoping here (not just the log at the bottom) means every card
-            // and chart above reflects the selected student instead of the
-            // whole cohort once one is picked.
-            ->when($this->studentId, fn ($q) => $q->where('attendances.student_id', $this->studentId))
-            ->when($this->gender, fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('gender', $this->gender)))
-            ->when($this->gradeId, fn ($q) => $q->whereHas('student.grades', fn ($sq) => $sq->where('is_current', true)->where('grade', $this->gradeId)));
+        // Scoping the whole page (not just the log at the bottom) means every
+        // card and chart above reflects the selected student rather than the
+        // whole cohort once one is picked. The definition lives in
+        // AttendanceQuery because the Excel export has to apply exactly these
+        // filters -- a file that disagreed with the page it came from would
+        // give no sign of it.
+        return AttendanceQuery::build($this->exportFilters());
+    }
+
+    /**
+     * The filter state, in the shape the shared query and the export expect.
+     */
+    private function exportFilters(): array
+    {
+        return [
+            'fromDate' => $this->fromDate,
+            'toDate' => $this->toDate,
+            'studentId' => $this->studentId,
+            'gender' => $this->gender,
+            'gradeId' => $this->gradeId,
+        ];
+    }
+
+    /**
+     * One row per child per day, matching whatever is filtered on screen.
+     */
+    public function exportExcel()
+    {
+        $this->validate([
+            'fromDate' => 'required|date',
+            'toDate' => 'required|date|after_or_equal:fromDate',
+            'studentId' => 'nullable|exists:students,id',
+            'gender' => 'nullable|in:male,female,other',
+            'gradeId' => 'nullable|exists:grades,id',
+        ]);
+
+        $filters = $this->exportFilters();
+
+        return Excel::download(new AttendanceExport($filters), AttendanceQuery::filename($filters));
     }
 
     function secondsToHms($seconds)
