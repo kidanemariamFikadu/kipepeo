@@ -4,12 +4,14 @@ namespace App\Exports;
 
 use App\Services\Reports\StudentRosterQuery;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -27,7 +29,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * import, so the heading says "on System" rather than anything that would
  * read as a join date.
  */
-class StudentRegistrationExport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStyles, WithTitle
+/**
+ * WithStrictNullComparison is load-bearing, not decoration: without it
+ * PhpSpreadsheet compares each value against its null placeholder loosely,
+ * and 0 == null in PHP, so every "0 days attended" was skipped and left as
+ * a blank cell -- the precise thing the zero in map() exists to avoid.
+ */
+class StudentRegistrationExport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithStyles, WithTitle
 {
     public function __construct(private readonly array $filters) {}
 
@@ -39,12 +47,22 @@ class StudentRegistrationExport implements FromQuery, ShouldAutoSize, WithColumn
     public function query()
     {
         return StudentRosterQuery::build($this->filters)
-            ->with(['grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable')]);
+            ->with(['grades' => fn ($q) => $q->where('is_current', true)->with('gradeTable')])
+            // Counted in SQL as one subquery across the whole result rather
+            // than a query per child. Distinct dates, not rows: there is one
+            // attendance row per child per day today, but counting days is
+            // what the column claims, so count days.
+            ->withCount([
+                'attendances as days_attended' => fn ($q) => $q->select(DB::raw('COUNT(DISTINCT date)')),
+            ]);
     }
 
     public function headings(): array
     {
-        return ['Name', 'Grade', 'Date Registered on System'];
+        // "All Time" because the students list carries no date filter, unlike
+        // the attendance export, which is scoped to a chosen period. Without
+        // it the two files look like they should agree, and they will not.
+        return ['Name', 'Grade', 'Date Registered on System', 'Days Attended (All Time)'];
     }
 
     public function map($student): array
@@ -56,6 +74,10 @@ class StudentRegistrationExport implements FromQuery, ShouldAutoSize, WithColumn
             // created_at is never null for a saved record, but a hand-built
             // row could carry one, and a blank beats the Unix epoch.
             $student->created_at ? ExcelDate::dateTimeToExcel(Carbon::parse($student->created_at)) : null,
+            // A real number, and 0 rather than blank for a child who has
+            // never attended: an empty cell would be read as missing data
+            // rather than as none.
+            (int) ($student->days_attended ?? 0),
         ];
     }
 
@@ -77,7 +99,7 @@ class StudentRegistrationExport implements FromQuery, ShouldAutoSize, WithColumn
                 $lastRow = max($sheet->getHighestRow(), 1);
 
                 $sheet->freezePane('A2');
-                $sheet->setAutoFilter('A1:C'.$lastRow);
+                $sheet->setAutoFilter('A1:D'.$lastRow);
             },
         ];
     }

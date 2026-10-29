@@ -51,12 +51,13 @@ test('the export writes name, grade and the day the record was created', functio
 
     $export = new StudentRegistrationExport(rosterFilters());
 
-    expect($export->headings())->toBe(['Name', 'Grade', 'Date Registered on System']);
+    expect($export->headings())->toBe(['Name', 'Grade', 'Date Registered on System', 'Days Attended (All Time)']);
 
     $rows = registrationRows(rosterFilters());
     expect($rows)->toHaveCount(1);
 
-    [$name, $gradeLabel, $registered] = $rows[0];
+    [$name, $gradeLabel, $registered, $daysAttended] = $rows[0];
+    expect($daysAttended)->toBe(0);
     expect($name)->toBe('Amina Hassan');
     expect($gradeLabel)->toBe('Grade 5');
 
@@ -207,4 +208,107 @@ test('select all still picks up the filtered page after the refactor', function 
         ->set('school', $riverside->id)
         ->call('toggleSelectAll')
         ->assertSet('selectedStudents', [$wanted->id]);
+});
+
+test('the export counts the days each child came to the space', function () {
+    $amina = registeredStudent('Amina Hassan', '2026-02-01 09:00:00');
+    $brian = registeredStudent('Brian Otieno', '2026-02-02 09:00:00');
+
+    foreach (['2026-03-02', '2026-03-03', '2026-03-09'] as $date) {
+        \App\Models\Attendance::create([
+            'student_id' => $amina->id, 'date' => $date, 'current_in' => false, 'total_time' => 3600,
+        ]);
+    }
+    \App\Models\Attendance::create([
+        'student_id' => $brian->id, 'date' => '2026-03-02', 'current_in' => false, 'total_time' => 3600,
+    ]);
+
+    $rows = registrationRows(rosterFilters());
+
+    expect((new StudentRegistrationExport(rosterFilters()))->headings())
+        ->toBe(['Name', 'Grade', 'Date Registered on System', 'Days Attended (All Time)']);
+
+    expect($rows[0][0])->toBe('Amina Hassan');
+    expect($rows[0][3])->toBe(3);
+    expect($rows[1][0])->toBe('Brian Otieno');
+    expect($rows[1][3])->toBe(1);
+});
+
+test('a child who has never attended shows zero, not a blank cell', function () {
+    registeredStudent('Never Came', '2026-02-01 09:00:00');
+
+    $row = registrationRows(rosterFilters())[0];
+
+    // Blank would read as missing data; this child genuinely has none.
+    expect($row[3])->toBe(0);
+    expect($row[3])->not->toBeNull();
+});
+
+test('days attended counts days, not attendance rows', function () {
+    $student = registeredStudent('Twice In A Day', '2026-02-01 09:00:00');
+
+    // One attendance row per child per day is the rule today, but the count
+    // must survive the day that stops being true.
+    foreach (['2026-03-02', '2026-03-02', '2026-03-03'] as $date) {
+        \App\Models\Attendance::create([
+            'student_id' => $student->id, 'date' => $date, 'current_in' => false, 'total_time' => 3600,
+        ]);
+    }
+
+    expect(registrationRows(rosterFilters())[0][3])->toBe(2);
+});
+
+test('counting the days does not add a query per child', function () {
+    foreach (range(1, 12) as $i) {
+        $student = registeredStudent("Child {$i}", '2026-02-01 09:00:00');
+        \App\Models\Attendance::create([
+            'student_id' => $student->id, 'date' => '2026-03-02', 'current_in' => false, 'total_time' => 3600,
+        ]);
+    }
+
+    \Illuminate\Support\Facades\DB::enableQueryLog();
+    \Illuminate\Support\Facades\DB::flushQueryLog();
+    registrationRows(rosterFilters());
+    $queries = count(\Illuminate\Support\Facades\DB::getQueryLog());
+    \Illuminate\Support\Facades\DB::disableQueryLog();
+
+    // The roster, its grades, and the counting subquery folded into the
+    // roster query -- not one count per child.
+    expect($queries)->toBeLessThan(5);
+});
+
+test('zero days survives into the written file as a 0, not a blank cell', function () {
+    // Testing map() alone missed this: map returned 0 correctly, and the
+    // file still came out blank. PhpSpreadsheet compares each value against
+    // its null placeholder loosely, and 0 == null in PHP, so the cell was
+    // skipped on the way to disk. Only reading the real file catches it.
+    registeredStudent('Never Came', '2026-02-01 09:00:00');
+    $attended = registeredStudent('Zz Came Once', '2026-02-01 09:00:00');
+    \App\Models\Attendance::create([
+        'student_id' => $attended->id, 'date' => '2026-03-02', 'current_in' => false, 'total_time' => 3600,
+    ]);
+
+    $path = storage_path('app/testing-registrations.xlsx');
+    @unlink($path);
+
+    \Maatwebsite\Excel\Facades\Excel::store(
+        new StudentRegistrationExport(rosterFilters()),
+        'testing-registrations.xlsx',
+        'local'
+    );
+
+    $stored = storage_path('app/private/testing-registrations.xlsx');
+    if (! file_exists($stored)) {
+        $stored = $path;
+    }
+
+    $sheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($stored)->getActiveSheet();
+
+    expect($sheet->getCell('A2')->getValue())->toBe('Never Came');
+    expect($sheet->getCell('D2')->getValue())->not->toBeNull();
+    expect((int) $sheet->getCell('D2')->getValue())->toBe(0);
+
+    expect($sheet->getCell('D3')->getValue())->toBe(1);
+
+    @unlink($stored);
 });
