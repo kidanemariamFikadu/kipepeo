@@ -92,6 +92,20 @@
                     </svg>
                     Print
                 </button>
+                {{-- Downloads exactly the rows the filters above select, so
+                     the file and the page cannot tell different stories. --}}
+                <button type="button" wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
+                    class="inline-flex items-center p-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm disabled:opacity-50">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                    </svg>
+                    <span wire:loading.remove wire:target="exportExcel">Export to Excel</span>
+                    <span wire:loading wire:target="exportExcel" class="inline-flex items-center">
+                        <x-spinner class="h-4 w-4 mr-1.5 text-white" />
+                        Preparing…
+                    </span>
+                </button>
             </div>
         </div>
     </form>
